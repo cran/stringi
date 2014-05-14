@@ -31,6 +31,7 @@
 
 
 #include "stri_stringi.h"
+#include "stri_container_listutf8.h"
 
 
 /**
@@ -89,8 +90,6 @@ StriContainerListUTF8::StriContainerListUTF8(StriContainerListUTF8& container)
 }
 
 
-
-
 StriContainerListUTF8& StriContainerListUTF8::operator=(StriContainerListUTF8& container)
 {
    this->~StriContainerListUTF8();
@@ -111,7 +110,6 @@ StriContainerListUTF8& StriContainerListUTF8::operator=(StriContainerListUTF8& c
 
    return *this;
 }
-
 
 
 StriContainerListUTF8::~StriContainerListUTF8()

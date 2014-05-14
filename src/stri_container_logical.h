@@ -34,12 +34,13 @@
 #define __stri_container_logical_h
 
 
-
+#include "stri_container_base.h"
 
 
 /**
  * A wrapper-class for R logical vectors
- * @version 0.1 (Marek Gagolewski, 2013-06-15)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-15)
  */
 class StriContainerLogical : public StriContainerBase {
 

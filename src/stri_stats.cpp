@@ -31,15 +31,24 @@
 
 
 #include "stri_stringi.h"
+#include "stri_container_utf8.h"
 
 /**
  * General statistics for a character vector
  *
  * @param str a character vector
  * @return integer vector, see R man for details
- * @version 0.1 (Marek Gagolewski)
- * @version 0.2 (Marek Gagolewski, 2013-06-09) Use StriContainerUTF8
- * @version 0.3 (Marek Gagolewski, 2013-06-16) make StriException-friendly
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-09)
+ *                Use StriContainerUTF8
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-16)
+ *                make StriException-friendly
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-01)
+ *                detect invalid UTF-8 byte streams
  */
 SEXP stri_stats_general(SEXP str)
 {
@@ -58,7 +67,7 @@ SEXP stri_stats_general(SEXP str)
    };
 
    SEXP ret;
-   PROTECT(ret = Rf_allocVector(INTSXP, gsAll));
+   STRI__PROTECT(ret = Rf_allocVector(INTSXP, gsAll));
    int* stats = INTEGER(ret);
    for (int i=0; i<gsAll; ++i)
       stats[i] = 0;
@@ -74,8 +83,10 @@ SEXP stri_stats_general(SEXP str)
 
       for (int j=0; j<cn; ) {
          U8_NEXT(cs, j, cn, c);
-         if (c == (UChar32)'\n' || c == (UChar32)'\r') {
-            UNPROTECT(1);
+         if (c < 0)
+            throw StriException(MSG__INVALID_UTF8);
+         // @TODO: follow Unicode Newline Guidelines - Unicode Technical Report #13
+         else if (c == (UChar32)'\n' || c == (UChar32)'\r') {
             throw StriException(MSG__NEWLINE_FOUND);
          }
          ++stats[gsNumChars]; // another character [code point]
@@ -91,12 +102,10 @@ SEXP stri_stats_general(SEXP str)
    }
 
    stri__set_names(ret, gsAll, "Lines", "LinesNEmpty", "Chars", "CharsNWhite");
-   UNPROTECT(1);
+   STRI__UNPROTECT_ALL
    return ret;
    STRI__ERROR_HANDLER_END(;/* nothing special to be done on error */)
 }
-
-
 
 
 /**
@@ -107,9 +116,17 @@ SEXP stri_stats_general(SEXP str)
  *
  * @param str a character vector
  * @return integer vector, see R man for details
- * @version 0.1 (Marek Gagolewski)
- * @version 0.2 (Marek Gagolewski, 2013-06-09) Use StriContainerUTF8
- * @version 0.3 (Marek Gagolewski, 2013-06-16) make StriException-friendly
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-09)
+ *          Use StriContainerUTF8
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-16)
+ *          make StriException-friendly
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-01)
+ *                detect invalid UTF-8 byte streams
  */
 SEXP stri_stats_latex(SEXP str)
 {
@@ -137,7 +154,7 @@ SEXP stri_stats_latex(SEXP str)
    };
 
    SEXP ret;
-   PROTECT(ret = Rf_allocVector(INTSXP, lsAll));
+   STRI__PROTECT(ret = Rf_allocVector(INTSXP, lsAll));
    int* stats = INTEGER(ret);
    for (int i=0; i<lsAll; ++i) stats[i] = 0;
 
@@ -153,11 +170,13 @@ SEXP stri_stats_latex(SEXP str)
       for (int j=0; j<cn; ) {
          U8_NEXT(cs, j, cn, c);
 
-         if (c == (UChar32)'\n') {
-            UNPROTECT(1);
+         if (c < 0)
+            throw StriException(MSG__INVALID_UTF8);
+         // @TODO: follow Unicode Newline Guidelines - Unicode Technical Report #13
+         else if (c == (UChar32)'\n' || c == (UChar32)'\r') {
             throw StriException(MSG__NEWLINE_FOUND);
          }
-         
+
          UBool isLetter = u_isUAlphabetic(c); // u_hasBinaryProperty(c, UCHAR_ALPHABETIC)
          UBool isNumber = u_isdigit(c); // U_DECIMAL_DIGIT_NUMBER    Nd
 
@@ -271,7 +290,7 @@ SEXP stri_stats_latex(SEXP str)
 
    stri__set_names(ret, lsAll, "CharsWord", "CharsCmdEnvir", "CharsWhite",
       "Words", "Cmds", "Envirs");
-   UNPROTECT(1);
+   STRI__UNPROTECT_ALL
    return ret;
    STRI__ERROR_HANDLER_END(;/* nothing special to be done on error */)
 }

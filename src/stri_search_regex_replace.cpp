@@ -31,58 +31,8 @@
 
 
 #include "stri_stringi.h"
-
-
-
-/**
- * Replace all occurences of a regex pattern
- *
- * @param str strings to search in
- * @param pattern regex patterns to search for
- * @param replacement replacements
- * @param opts_regex list
- * @return character vector
- *
- * @version 0.1 (Marek Gagolewski, 2013-06-21)
- */
-SEXP stri_replace_all_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts_regex)
-{
-   return stri__replace_allfirstlast_regex(str, pattern, replacement, opts_regex, 0);
-}
-
-
-/**
- * Replace first occurence of a regex pattern
- *
- * @param str strings to search in
- * @param pattern regex patterns to search for
- * @param replacement replacements
- * @param opts_regex list
- * @return character vector
- *
- * @version 0.1 (Marek Gagolewski, 2013-06-21)
- */
-SEXP stri_replace_first_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts_regex)
-{
-   return stri__replace_allfirstlast_regex(str, pattern, replacement, opts_regex, 1);
-}
-
-
-/**
- * Replace last occurence of a regex pattern
- *
- * @param str strings to search in
- * @param pattern regex patterns to search for
- * @param replacement replacements
- * @param opts_regex list
- * @return character vector
- *
- * @version 0.1 (Marek Gagolewski, 2013-06-21)
- */
-SEXP stri_replace_last_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts_regex)
-{
-   return stri__replace_allfirstlast_regex(str, pattern, replacement, opts_regex, -1);
-}
+#include "stri_container_utf16.h"
+#include "stri_container_regex.h"
 
 
 /**
@@ -94,10 +44,16 @@ SEXP stri_replace_last_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts
  * @param opts_regex list
  * @return character vector
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski)  - use StriContainerUTF16's vectorization
- * @version 0.3 (Marek Gagolewski, 2013-06-21) - use StriContainerRegexPattern + more general
- * @version 0.4 (Marek Gagolewski, 2013-07-10) - BUGFIX: wrong behavior on empty str
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *          use StriContainerUTF16's vectorization
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-21)
+ *          use StriContainerRegexPattern + more general
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-07-10)
+ *          BUGFIX: wrong behavior on empty str
  */
 SEXP stri__replace_allfirstlast_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts_regex, int type)
 {
@@ -113,7 +69,7 @@ SEXP stri__replace_allfirstlast_regex(SEXP str, SEXP pattern, SEXP replacement, 
    StriContainerUTF16 replacement_cont(replacement, vectorize_length);
 
    SEXP ret;
-   PROTECT(ret = Rf_allocVector(STRSXP, vectorize_length));
+   STRI__PROTECT(ret = Rf_allocVector(STRSXP, vectorize_length));
 
    for (R_len_t i = pattern_cont.vectorize_init();
          i != pattern_cont.vectorize_end();
@@ -164,7 +120,58 @@ SEXP stri__replace_allfirstlast_regex(SEXP str, SEXP pattern, SEXP replacement, 
       SET_STRING_ELT(ret, i, str_cont.toR(i));
    }
 
-   UNPROTECT(1);
+   STRI__UNPROTECT_ALL
    return ret;
    STRI__ERROR_HANDLER_END(;/* nothing special to be done on error */)
+}
+
+
+/**
+ * Replace all occurences of a regex pattern
+ *
+ * @param str strings to search in
+ * @param pattern regex patterns to search for
+ * @param replacement replacements
+ * @param opts_regex list
+ * @return character vector
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-21)
+ */
+SEXP stri_replace_all_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts_regex)
+{
+   return stri__replace_allfirstlast_regex(str, pattern, replacement, opts_regex, 0);
+}
+
+
+/**
+ * Replace first occurence of a regex pattern
+ *
+ * @param str strings to search in
+ * @param pattern regex patterns to search for
+ * @param replacement replacements
+ * @param opts_regex list
+ * @return character vector
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-21)
+ */
+SEXP stri_replace_first_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts_regex)
+{
+   return stri__replace_allfirstlast_regex(str, pattern, replacement, opts_regex, 1);
+}
+
+
+/**
+ * Replace last occurence of a regex pattern
+ *
+ * @param str strings to search in
+ * @param pattern regex patterns to search for
+ * @param replacement replacements
+ * @param opts_regex list
+ * @return character vector
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-21)
+ */
+SEXP stri_replace_last_regex(SEXP str, SEXP pattern, SEXP replacement, SEXP opts_regex)
+{
+   return stri__replace_allfirstlast_regex(str, pattern, replacement, opts_regex, -1);
 }

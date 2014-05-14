@@ -29,27 +29,77 @@
 ## EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-invisible(NULL) # TO BE DONE, version >= 0.2
-#
-# #' Pad the start of a string
-# #'
-# #' Add whitespace at the begining or/and at the end of string.
-# #' Works like str_pad but faster and it's vectorized not only over s, but
-# #' also over width, side and pad. And works with NA value.
-# #'
-# #' @param str character vector
-# #' @param width pad strings to this minimum width
-# #' @param side side on which padding character is added (left, right or both)
-# #' @param pad character vector of single padding character (default is space)
-# #' @return character vector
-# #' @details If string is longer than width, then string is returned unchanged. Look at the example.
-# #' @examples
-# #' stri_pad("stringi",10,"#")
-# #' stri_pad("stringi",5:9,pad="$")
-# #' stri_pad("1",3,pad=LETTERS)
-# #' @export
-# stri_pad <- function(str, length, pad = " ") {
-#    # prepare_arg done internally
-#    #side <- pmatch(side, c("left", "right", "both"),1,T)
-#    .Call("stri_pad", str, length, pad, PACKAGE="stringi")
-# }
+#' @title
+#' Pad (Center/Left/Right Align) a String
+#'
+#' @description
+#' Adds multiple \code{pad} characters at the given \code{side}(s) of each string
+#' so that each output string consists of at least \code{min_length} code points.
+#' This function may be used to center or left/right-align each string.
+#'
+#' @details
+#' Vectorized over \code{str}, \code{min_length}, and \code{pad}.
+#' Each string in \code{pad} should consist of exactly one code point.
+#'
+#' \code{stri_pad} is a convenience function, which dispatches
+#' control to \code{stri_pad_*}. Unless you are very lazy, do not use it:
+#' it is a little bit slower.
+#'
+#' Note that Unicode code points may have various widths when
+#' printed on screen. This function acts like each code point
+#' is of width 1. This function should rather be used with
+#' text in Latin script.
+#'
+#' See \code{\link{stri_trim_left}} (among others) for reverse operation.
+#' Also check out \code{\link{stri_wrap}} for line wrapping.
+#'
+#' @param str character vector
+#' @param min_length integer vector giving minimal output string lengths
+#' @param side [\code{stri_pad} only] single character string;
+#'    sides on which padding character is added
+#'    (\code{left}, \code{right}, or \code{both})
+#' @param pad character vector giving padding code points
+#'
+#' @return Returns a character vector.
+#'
+#' @rdname stri_pad
+#' @examples
+#' stri_pad_left("stringi", 10, pad="#")
+#' stri_pad_both("stringi", 8:12, pad="*")
+#' # center on screen:
+#' cat(stri_pad_both(c("the", "string", "processing", "package"),
+#'    getOption("width")*0.9), sep='\n')
+#' @export
+stri_pad_both <- function(str, min_length=floor(0.9*getOption("width")), pad=" ") {
+   .Call("stri_pad", str, min_length, 2L, pad, PACKAGE="stringi")
+}
+
+
+#' @rdname stri_pad
+#' @export
+stri_pad_left <- function(str, min_length=floor(0.9*getOption("width")), pad=" ") {
+   .Call("stri_pad", str, min_length, 0L, pad, PACKAGE="stringi")
+}
+
+
+#' @rdname stri_pad
+#' @export
+stri_pad_right <- function(str, min_length=floor(0.9*getOption("width")), pad=" ") {
+   .Call("stri_pad", str, min_length, 1L, pad, PACKAGE="stringi")
+}
+
+
+#' @rdname stri_pad
+#' @export
+stri_pad <- function(str, min_length=floor(0.9*getOption("width")),
+   side=c("left", "right", "both"), pad=" ")
+{
+   # `left` is the default for compatibility with stringr
+   side <- match.arg(side) # this is slow
+
+   switch(side,
+          both  =stri_pad_both(str, min_length, pad),
+          left  =stri_pad_left(str, min_length, pad),
+          right =stri_pad_right(str, min_length, pad)
+   )
+}

@@ -33,8 +33,8 @@
 #' Duplicate Strings
 #'
 #' @description
-#' Duplicates each string \code{times} times. This is done by
-#' copying the contents of \code{str} at the end of \code{str}.
+#' Duplicates each string \code{times} times
+#' and concatenates the results.
 #'
 #' @details
 #' Vectorized over \code{str} and \code{times}.
@@ -42,7 +42,7 @@
 #' @param str character vector of strings to be duplicated
 #' @param times integer vector with the numbers of times to duplicate each string
 #'
-#' @return Returns a character vector.
+#' @return Returns a character vector of the same length as \code{str}.
 #'
 #' @export
 #' @family join
@@ -51,24 +51,21 @@
 #' stri_dup(c("a", NA, "ba"), 4)
 #' stri_dup(c("abc", "pqrst"), c(4, 2))
 stri_dup <- function(str, times) {
-   # prepare_arg done internally
    .Call("stri_dup", str, times, PACKAGE="stringi")
 }
-
 
 
 #' @title
 #' Concatenate Two Character Vectors
 #'
 #' @description
-#' A binary operator for joining (concatenating) two character vectors,
+#' Binary operators for joining (concatenating) two character vectors,
 #' with a typical \R look-and-feel.
 #'
 #' @details
 #' Vectorized over \code{e1} and \code{e2}.
 #'
-#' This operator works like a call to \code{\link{stri_join}(e1, e2, sep="")}
-#' (but is slightly faster).
+#' These operators act like a call to \code{\link{stri_join}(e1, e2, sep="")}.
 #' However, note that joining 3 vectors, e.g. \code{e1 \%+\% e2 \%+\% e3}
 #' is slower than \code{\link{stri_join}(e1, e2, e3, sep="")},
 #' because it creates a new (temporary) result vector each time
@@ -77,19 +74,29 @@ stri_dup <- function(str, times) {
 #' @usage
 #' e1 \%+\% e2
 #'
-#' @param e1 character vector
-#' @param e2 character vector
+#' e1 \%stri+\% e2
+#'
+#' @param e1 character vector or an object coercible to a character vector
+#' @param e2 character vector or an object coercible to a character vector
 #'
 #' @return Returns a character vector.
 #'
 #'
 #' @examples
-#' c('abc','123','\u0105\u0104')%+%letters[1:6]
-#' 'ID_'%+%1:5
+#' c('abc', '123', '\u0105\u0104') %stri+% letters[1:6]
+#' 'ID_' %stri+% 1:5
 #' @rdname oper_plus
 #' @export
 "%+%" <- function(e1, e2) {
-   .Call("stri_join2", e1, e2, PACKAGE="stringi")
+   .Call("stri_join2_nocollapse", e1, e2, PACKAGE="stringi")
+}
+
+#' @usage
+#' e1 \%stri+\% e2
+#' @rdname oper_plus
+#' @export
+"%stri+%" <- function(e1, e2) {
+   .Call("stri_join2_nocollapse", e1, e2, PACKAGE="stringi")
 }
 
 
@@ -97,11 +104,13 @@ stri_dup <- function(str, times) {
 #' Concatenate Character Vectors
 #'
 #' @description
-#' This is the \pkg{stringi}'s equivalents of the built-in \code{\link{paste}} function.
+#' These are the \pkg{stringi}'s equivalents of the built-in
+#' \code{\link{paste}} function.
+#' \code{stri_c} and \code{stri_paste} are aliases for \code{stri_join}.
+#' Use whichever you want, they are exactly the same.
 #'
 #' @details
-#' \code{stri_c} and \code{stri_paste} are aliases for \code{stri_join}.
-#' Use whichever you want, they are equivalent.
+#' Vectorized over each vector in `\code{...}`.
 #'
 #' If \code{collapse} is not \code{NULL}, then the result will be a single string.
 #' Otherwise, you will get a character vector of length equal
@@ -114,25 +123,35 @@ stri_dup <- function(str, times) {
 #' If \code{collapse} or \code{sep} has length > 1, then only first string
 #' will be used.
 #'
-#' In case of any \code{NA}, \code{NA} is set to the corresponding element.
+#' In case of any \code{NA} in an input vector,
+#' \code{NA} is set to the corresponding element.
+#' Note that this behavior is different from \code{\link{paste}},
+#' which treats missing values as ordinary strings \code{"NA"}.
+#' Moreover, as usual in \pkg{stringi}, the resulting strings are
+#' always in UTF-8.
 #'
-#' @param ... character vectors which corresponding elements should be concatenated
-#' @param sep single string; separates terms
-#' @param collapse single string; separates the results
+#' @param ... character vectors (or objects coercible to character vectors)
+#' which corresponding elements are to be concatenated.
+#' @param sep single string; separates terms.
+#' @param collapse single string or \code{NULL}; an optional
+#' results separator.
 #'
 #' @return Returns a character vector.
 #'
 #' @export
 #' @examples
 #' stri_join(1:13, letters)
-#' stri_join(c('abc','123','\u0105\u0104'),'###', 1:5, sep='...')
-#' stri_join(c('abc','123','\u0105\u0104'),'###', 1:5, sep='...', collapse='?')
+#' stri_join(1:13, letters, sep='!')
+#' stri_join(1:13, letters, collapse='?')
+#' stri_join(1:13, letters, sep='!', collapse='?')
+#' stri_join(c('abc', '123', '\u0105\u0104'),'###', 1:5, sep='...')
+#' stri_join(c('abc', '123', '\u0105\u0104'),'###', 1:5, sep='...', collapse='?')
+#'
 #' @family join
 #' @rdname stri_join
 stri_join <- function(..., sep="", collapse=NULL) {
-   .Call("stri_join", list(...), sep, collapse, PACKAGE="stringi")
+   .Call("stri_join_withcollapse", list(...), sep, collapse, PACKAGE="stringi")
 }
-
 
 
 #' @rdname stri_join
@@ -151,11 +170,11 @@ stri_paste <- stri_join
 #' Joins the elements of a character vector into one string.
 #'
 #' @details
-#' \code{stri_flatten(str, collapse='XXX')} works like
-#' \code{\link{paste}(str, collapse='XXX', sep="")}.
+#' The \code{stri_flatten(str, collapse='XXX')} call
+#' is equivalent to \code{\link{paste}(str, collapse='XXX', sep="")}.
 #'
-#' If you wish to use some more fancy \code{collapse} separators
-#' between flattened strings,
+#' If you wish to use some more fancy (e.g. differing)
+#' separators between flattened strings,
 #' call \code{\link{stri_join}(str, separators, collapse='')}.
 #'
 #' If \code{str} is not empty, then a single string is returned.
@@ -172,12 +191,11 @@ stri_paste <- stri_join
 #' @examples
 #' stri_flatten(LETTERS)
 #' stri_flatten(LETTERS, collapse=",")
-#' stri_flatten(c('abc','123','\u0105\u0104'))
+#' stri_flatten(c('abc', '123', '\u0105\u0104'))
 #' stri_flatten(stri_dup(letters[1:6],1:3))
 #'
 #' @export
 #' @family join
 stri_flatten <- function(str, collapse="") {
-   # prepare_arg done internally
-   .Call("stri_flatten", str, collapse, PACKAGE="stringi")
+   .Call("stri_flatten_withressep", str, collapse, PACKAGE="stringi")
 }

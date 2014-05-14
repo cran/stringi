@@ -64,8 +64,8 @@
 #' e.g. search for one pattern in each given string,
 #' or search for each pattern in one given string.
 #'
-#' We of course took great care of performance issues: e.g. in regular expression
-#' searching, regex matchers are reused
+#' We of course took great care of performance issues:
+#' e.g. in regular expression searching, regex matchers are reused
 #' from iteration to iteration, as long it is possible.
 #'
 #' Functions with some non-vectorized arguments are rare:
@@ -94,9 +94,8 @@
 #' (e.g. \code{\link{names}}, \code{\link{dim}}, etc.).
 #' This is generally because
 #' of advanced vectorization and for efficiency reasons.
-#' Currently, there is only one exception to this rule:
-#' the \code{\link{stri_sort}} function.
-#' Thus, if this is needed, please remember to copy important attributes manually
+#' Thus, if arguments' preserving is needed,
+#' please remember to copy important attributes manually
 #' or use e.g. the subsetting operation like \code{x[] <- stri_...(x, ...)}.
 #'
 #' @name stringi-arguments
@@ -174,7 +173,6 @@ stri_prepare_arg_integer <- function(x) {
 }
 
 
-
 #' @title
 #' Prepare a Logical Vector Argument [internal]
 #'
@@ -219,7 +217,6 @@ stri_prepare_arg_logical <- function(x) {
 stri_prepare_arg_raw <- function(x) {
    .Call("stri_prepare_arg_raw", x, NULL, PACKAGE="stringi")
 }
-
 
 
 #' @title
@@ -283,7 +280,6 @@ stri_prepare_arg_double_1 <- function(x) {
 stri_prepare_arg_integer_1 <- function(x) {
    .Call("stri_prepare_arg_integer_1", x, NULL, PACKAGE="stringi")
 }
-
 
 
 #' @title

@@ -33,37 +33,72 @@
 #ifndef __stri_exception_h
 #define __stri_exception_h
 
-
-#define STRI__ERROR_HANDLER_BEGIN try {
-
-#define STRI__ERROR_HANDLER_END(cleanup) \
-   } \
-   catch (StriException e) { \
-      cleanup; \
-      e.throwRerror(); \
-      return R_NilValue; /* to avoid compiler warning */ \
-   }
-
+#include <cstdarg>
+using namespace std;
 
 
 #define StriException_BUFSIZE 1024
 
 
+#define STRI__ERROR_HANDLER_BEGIN                           \
+   int __stri_protected_sexp_num = 0;                       \
+   char* __stri_error_msg;                                  \
+   try {
+
+#define STRI__ERROR_HANDLER_END(cleanup)                    \
+   }                                                        \
+   catch (StriException e) {                                \
+      cleanup;                                              \
+      STRI__UNPROTECT_ALL                                   \
+      /*don't do this, memleaks!: e.throwRerror();*/        \
+      __stri_error_msg = R_alloc(StriException_BUFSIZE, 1); \
+      strcpy(__stri_error_msg, e.getMessage());             \
+      /*return R_NilValue;*/                                \
+   }                                                        \
+   /* call Rf_error here, when e is deleted, no memleaks */ \
+   Rf_error(__stri_error_msg);                              \
+   /* to avoid compiler warning: */                         \
+   return R_NilValue;
+
+
+#define STRI__PROTECT(s) {                                  \
+   PROTECT(s);                                              \
+   ++__stri_protected_sexp_num; }
+
+#ifndef NDEBUG
+#define STRI__UNPROTECT(n) {                                \
+   UNPROTECT(n);                                            \
+   if (n > __stri_protected_sexp_num)                       \
+      Rf_warning("STRI__UNPROTECT: stack imbalance!");      \
+   __stri_protected_sexp_num -= n; }
+#else
+#define STRI__UNPROTECT(n) {                                \
+   UNPROTECT(n);                                            \
+   __stri_protected_sexp_num -= n; }
+#endif
+
+#define STRI__UNPROTECT_ALL {                               \
+   UNPROTECT(__stri_protected_sexp_num);                    \
+   __stri_protected_sexp_num = 0; }
+
+
 /**
- * Class representing exceptions
+ * A class representing exceptions
  *
- * @version 0.1 (Marek Gagolewski, 2013-06-16)
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-16)
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-18)
+ *          do not use R_alloc for msg
  */
 class StriException {
 
 private:
 
-   char* msg; ///< message to be passed to error(); allocated by R_alloc -> freed automatically
+   char msg[StriException_BUFSIZE]; ///< message to be passed to error()
 
 public:
 
    StriException(const char* format, ...) {
-      msg = R_alloc(StriException_BUFSIZE, (int)sizeof(char));
       va_list args;
       va_start(args, format);
       vsprintf(msg, format, args);
@@ -71,13 +106,16 @@ public:
    }
 
    StriException(UErrorCode status) {
-      msg = R_alloc(StriException_BUFSIZE, (int)sizeof(char));
       sprintf(msg, MSG__ICU_ERROR, getICUerrorName(status), u_errorName(status));
    }
 
 
    void throwRerror() {
       Rf_error(msg);
+   }
+
+   const char* getMessage() const {
+      return msg;
    }
 
    static const char* getICUerrorName(UErrorCode status);

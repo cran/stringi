@@ -38,8 +38,9 @@
 #define STRI__MAKE_CALL_METHOD(name, args) \
    {#name, (DL_FUNC)&name, args}
 
+
 /**
- * List of functions available in R via .Call()
+ * List of functions available via .Call() in R
  *
  * Form:
  * \code{\{"method_name", (DL_FUNC)pointer, number_of_args\}} -
@@ -47,28 +48,32 @@
  */
 static const R_CallMethodDef cCallMethods[] = {
 
-   STRI__MAKE_CALL_METHOD(stri_trans_case,                 3),
 //   STRI__MAKE_CALL_METHOD(stri_charcategories,             0),  // TO BE v>=0.2
 //   STRI__MAKE_CALL_METHOD(stri_chartype,                   1),  // TO BE v>=0.2
-   STRI__MAKE_CALL_METHOD(stri_compare,                    3),
+   STRI__MAKE_CALL_METHOD(stri_cmp_codepoints,             3),
+   STRI__MAKE_CALL_METHOD(stri_cmp_integer,                3),
+   STRI__MAKE_CALL_METHOD(stri_cmp_logical,                4),
    STRI__MAKE_CALL_METHOD(stri_count_charclass,            2),
-   STRI__MAKE_CALL_METHOD(stri_count_fixed,                3),
+   STRI__MAKE_CALL_METHOD(stri_count_fixed,                2),
+   STRI__MAKE_CALL_METHOD(stri_count_coll,                 3),
    STRI__MAKE_CALL_METHOD(stri_count_regex,                3),
    STRI__MAKE_CALL_METHOD(stri_detect_charclass,           2),
-   STRI__MAKE_CALL_METHOD(stri_detect_fixed,               3),
+   STRI__MAKE_CALL_METHOD(stri_detect_coll,           3),
+   STRI__MAKE_CALL_METHOD(stri_detect_fixed,               2),
    STRI__MAKE_CALL_METHOD(stri_detect_regex,               3),
    STRI__MAKE_CALL_METHOD(stri_dup,                        2),
+   STRI__MAKE_CALL_METHOD(stri_duplicated,                 3),
+   STRI__MAKE_CALL_METHOD(stri_duplicated_any,             3),
    STRI__MAKE_CALL_METHOD(stri_enc_detect,                 2),
    STRI__MAKE_CALL_METHOD(stri_enc_detect2,                2),
-   STRI__MAKE_CALL_METHOD(stri_enc_info,                   1),
    STRI__MAKE_CALL_METHOD(stri_enc_isenc,                  2),
+   STRI__MAKE_CALL_METHOD(stri_enc_info,                   1),
    STRI__MAKE_CALL_METHOD(stri_enc_list,                   0),
-   STRI__MAKE_CALL_METHOD(stri_enc_isnf,                   2),
-   STRI__MAKE_CALL_METHOD(stri_enc_nf,                     2),
+   STRI__MAKE_CALL_METHOD(stri_enc_mark,                   1),
    STRI__MAKE_CALL_METHOD(stri_enc_set,                    1),
    STRI__MAKE_CALL_METHOD(stri_enc_fromutf32,              1),
    STRI__MAKE_CALL_METHOD(stri_enc_toascii,                1),
-   STRI__MAKE_CALL_METHOD(stri_enc_toutf8,                 2),
+   STRI__MAKE_CALL_METHOD(stri_enc_toutf8,                 3),
    STRI__MAKE_CALL_METHOD(stri_enc_toutf32,                1),
    STRI__MAKE_CALL_METHOD(stri_encode,                     4),
    STRI__MAKE_CALL_METHOD(stri_encode_from_marked,         3),
@@ -76,38 +81,43 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MAKE_CALL_METHOD(stri_extract_first_charclass,    2),
    STRI__MAKE_CALL_METHOD(stri_extract_last_charclass,     2),
    STRI__MAKE_CALL_METHOD(stri_extract_all_charclass,      3),
-   STRI__MAKE_CALL_METHOD(stri_extract_first_fixed,        3),
-   STRI__MAKE_CALL_METHOD(stri_extract_last_fixed,         3),
-   STRI__MAKE_CALL_METHOD(stri_extract_all_fixed,          3),
+   STRI__MAKE_CALL_METHOD(stri_extract_first_coll,         3),
+   STRI__MAKE_CALL_METHOD(stri_extract_last_coll,          3),
+   STRI__MAKE_CALL_METHOD(stri_extract_all_coll,           3),
    STRI__MAKE_CALL_METHOD(stri_extract_first_regex,        3),
    STRI__MAKE_CALL_METHOD(stri_extract_last_regex,         3),
    STRI__MAKE_CALL_METHOD(stri_extract_all_regex,          3),
-   STRI__MAKE_CALL_METHOD(stri_flatten,                    2),
-   STRI__MAKE_CALL_METHOD(stri_flatten_nosep,              1),
+   STRI__MAKE_CALL_METHOD(stri_extract_words,              2),
+   STRI__MAKE_CALL_METHOD(stri_flatten_withressep,         2),
    STRI__MAKE_CALL_METHOD(stri_info,                       0),
    STRI__MAKE_CALL_METHOD(stri_isempty,                    1),
-   STRI__MAKE_CALL_METHOD(stri_join,                       3),
-   STRI__MAKE_CALL_METHOD(stri_join2,                      2),
+   STRI__MAKE_CALL_METHOD(stri_join_withcollapse,          3),
+   STRI__MAKE_CALL_METHOD(stri_join2_nocollapse,           2),
 //   STRI__MAKE_CALL_METHOD(stri_justify,                    2),  // TODO: version >= 0.2
    STRI__MAKE_CALL_METHOD(stri_length,                     1),
    STRI__MAKE_CALL_METHOD(stri_locale_info,                1),
    STRI__MAKE_CALL_METHOD(stri_locale_list,                0),
    STRI__MAKE_CALL_METHOD(stri_locale_set,                 1),
+   STRI__MAKE_CALL_METHOD(stri_locate_boundaries,          3),
    STRI__MAKE_CALL_METHOD(stri_locate_first_charclass,     2),
    STRI__MAKE_CALL_METHOD(stri_locate_last_charclass,      2),
    STRI__MAKE_CALL_METHOD(stri_locate_all_charclass,       3),
-   STRI__MAKE_CALL_METHOD(stri_locate_last_fixed,          3),
-   STRI__MAKE_CALL_METHOD(stri_locate_first_fixed,         3),
-   STRI__MAKE_CALL_METHOD(stri_locate_all_fixed,           3),
+   STRI__MAKE_CALL_METHOD(stri_locate_last_fixed,          2),
+   STRI__MAKE_CALL_METHOD(stri_locate_first_fixed,         2),
+   STRI__MAKE_CALL_METHOD(stri_locate_all_fixed,           2),
+   STRI__MAKE_CALL_METHOD(stri_locate_last_coll,           3),
+   STRI__MAKE_CALL_METHOD(stri_locate_first_coll,          3),
+   STRI__MAKE_CALL_METHOD(stri_locate_all_coll,            3),
    STRI__MAKE_CALL_METHOD(stri_locate_all_regex,           3),
    STRI__MAKE_CALL_METHOD(stri_locate_first_regex,         3),
    STRI__MAKE_CALL_METHOD(stri_locate_last_regex,          3),
+   STRI__MAKE_CALL_METHOD(stri_locate_words,               2),
    STRI__MAKE_CALL_METHOD(stri_match_first_regex,          3),
    STRI__MAKE_CALL_METHOD(stri_match_last_regex,           3),
    STRI__MAKE_CALL_METHOD(stri_match_all_regex,            3),
    STRI__MAKE_CALL_METHOD(stri_numbytes,                   1),
-   STRI__MAKE_CALL_METHOD(stri_order,                      3),
-//   STRI__MAKE_CALL_METHOD(stri_pad,                        3), // TODO: version >= 0.2
+   STRI__MAKE_CALL_METHOD(stri_order_or_sort,              5),
+   STRI__MAKE_CALL_METHOD(stri_pad,                        4),
    STRI__MAKE_CALL_METHOD(stri_prepare_arg_string,         2),
    STRI__MAKE_CALL_METHOD(stri_prepare_arg_double,         2),
    STRI__MAKE_CALL_METHOD(stri_prepare_arg_integer,        2),
@@ -117,18 +127,26 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MAKE_CALL_METHOD(stri_prepare_arg_double_1,       2),
    STRI__MAKE_CALL_METHOD(stri_prepare_arg_integer_1,      2),
    STRI__MAKE_CALL_METHOD(stri_prepare_arg_logical_1,      2),
-   STRI__MAKE_CALL_METHOD(stri_replace_all_fixed,          4),
-   STRI__MAKE_CALL_METHOD(stri_replace_first_fixed,        4),
-   STRI__MAKE_CALL_METHOD(stri_replace_last_fixed,         4),
+   STRI__MAKE_CALL_METHOD(stri_rand_shuffle,               1),
+   STRI__MAKE_CALL_METHOD(stri_rand_strings,               3),
+   STRI__MAKE_CALL_METHOD(stri_replace_na,                 2),
+   STRI__MAKE_CALL_METHOD(stri_replace_all_fixed,          3),
+   STRI__MAKE_CALL_METHOD(stri_replace_first_fixed,        3),
+   STRI__MAKE_CALL_METHOD(stri_replace_last_fixed,         3),
+   STRI__MAKE_CALL_METHOD(stri_replace_all_coll,           4),
+   STRI__MAKE_CALL_METHOD(stri_replace_first_coll,         4),
+   STRI__MAKE_CALL_METHOD(stri_replace_last_coll,          4),
    STRI__MAKE_CALL_METHOD(stri_replace_all_regex,          4),
    STRI__MAKE_CALL_METHOD(stri_replace_first_regex,        4),
    STRI__MAKE_CALL_METHOD(stri_replace_last_regex,         4),
-   STRI__MAKE_CALL_METHOD(stri_replace_all_charclass,      3),
+   STRI__MAKE_CALL_METHOD(stri_replace_all_charclass,      4),
    STRI__MAKE_CALL_METHOD(stri_replace_first_charclass,    3),
    STRI__MAKE_CALL_METHOD(stri_replace_last_charclass,     3),
    STRI__MAKE_CALL_METHOD(stri_reverse,                    1),
+   STRI__MAKE_CALL_METHOD(stri_split_boundaries,           3),
    STRI__MAKE_CALL_METHOD(stri_split_charclass,            4),
-   STRI__MAKE_CALL_METHOD(stri_split_fixed,                5),
+   STRI__MAKE_CALL_METHOD(stri_split_coll,                 5),
+   STRI__MAKE_CALL_METHOD(stri_split_fixed,                4),
    STRI__MAKE_CALL_METHOD(stri_split_lines,                3),
    STRI__MAKE_CALL_METHOD(stri_split_lines1,               1),
    STRI__MAKE_CALL_METHOD(stri_split_regex,                5),
@@ -141,15 +159,19 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MAKE_CALL_METHOD(stri_test_returnasis,            1),
    STRI__MAKE_CALL_METHOD(stri_test_UnicodeContainer16,    1),
    STRI__MAKE_CALL_METHOD(stri_test_UnicodeContainer8,     1),
+   STRI__MAKE_CALL_METHOD(stri_trans_casemap,              3),
+   STRI__MAKE_CALL_METHOD(stri_trans_isnf,                 2),
+   STRI__MAKE_CALL_METHOD(stri_trans_general,              2),
+   STRI__MAKE_CALL_METHOD(stri_trans_list,                 0),
+   STRI__MAKE_CALL_METHOD(stri_trans_nf,                   2),
    STRI__MAKE_CALL_METHOD(stri_trim_both,                  2),
    STRI__MAKE_CALL_METHOD(stri_trim_left,                  2),
    STRI__MAKE_CALL_METHOD(stri_trim_right,                 2),
    STRI__MAKE_CALL_METHOD(stri_unescape_unicode,           1),
+   STRI__MAKE_CALL_METHOD(stri_unique,				           2),
+   STRI__MAKE_CALL_METHOD(stri_wrap,                       4),
 //   STRI__MAKE_CALL_METHOD(stri_trim_double,                3), // TODO: version >= 0.2
 //   STRI__MAKE_CALL_METHOD(stri_width,                      1), // TODO: version >= 0.2
-//   STRI__MAKE_CALL_METHOD(stri_wrap,                       4), // TODO: version >= 0.2
-//   STRI__MAKE_CALL_METHOD(stri_wrap_greedy,                3), // TODO: version >= 0.2
-//   STRI__MAKE_CALL_METHOD(stri_wrap_dynamic,               3), // TODO: version >= 0.2
 
    // the list must be NULL-terminated:
    {NULL,                           NULL,                  0}
@@ -157,6 +179,10 @@ static const R_CallMethodDef cCallMethods[] = {
 };
 
 
+/** Sets ICU data dir
+ *
+ * @param libpath
+ */
 void stri_set_icu_data_directory(const char* libpath)
 {
    // libpath == "...../libs"      -> "...../libs"
@@ -180,7 +206,7 @@ void stri_set_icu_data_directory(const char* libpath)
  *
  * R calls this automatically on lib load/attach.
  */
-extern "C" void R_init_stringi(DllInfo *dll)
+extern "C" void R_init_stringi(DllInfo* dll)
 {
    R_registerRoutines(dll, NULL, cCallMethods, NULL, NULL);
    R_useDynamicSymbols(dll, Rboolean(FALSE));
@@ -213,14 +239,19 @@ extern "C" void R_init_stringi(DllInfo *dll)
 
 
 
+#ifndef NDEBUG
 
-///**
-// * ... not needed ...
-// */
-//extern "C" void  R_unload_stringi(DllInfo *info)
-//{
-//#ifndef NDEBUG
-//   fprintf(stdout, "!NDEBUG: Dynamic library 'stringi' unloaded.\n");
-////   u_cleanup(); // this is just for DEBUG- memtrace
-//#endif
-//}
+#include <unicode/uclean.h>
+
+/**
+ * Library cleanup
+ */
+extern "C" void  R_unload_stringi(DllInfo*)
+{
+   fprintf(stdout, "!NDEBUG: ************************************************\n");
+   fprintf(stdout, "!NDEBUG: Dynamic library 'stringi' unloaded.\n");
+   fprintf(stdout, "!NDEBUG: ************************************************\n");
+   u_cleanup();
+}
+
+#endif

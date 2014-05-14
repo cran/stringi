@@ -37,14 +37,30 @@
 #define MSG__INCORRECT_UCHAR_CLASS_ID \
    "incorrect class identifier"
 
+#define MSG__INCORRECT_MATCH_OPTION \
+   "incorrect option for `%s`"
+
 #define MSG__INCORRECT_COLLATOR_OPTION \
    "incorrect collator option: `%s`. ignoring"
+
+#define MSG__INCORRECT_COLLATOR_OPTION_SPEC \
+   "incorrect collator option specifier. see ?stri_opts_collator"
+
 
 #define MSG__INCORRECT_REGEX_OPTION \
    "incorrect regex option: `%s`. ignoring"
 
 #define MSG__INVALID_CODE_POINT \
    "invalid Unicode codepoint \\U%08.8x"
+
+#define MSG__INVALID_CODE_POINT_FIXING \
+   "invalid UTF-8 codepoint definition. fixing"
+
+#define MSG__INVALID_CODE_POINT_REPLNA \
+   "invalid UTF-8 codepoint definition. setting string to NA. see also stri_enc_toutf8()"
+
+#define MSG__INVALID_UTF8 \
+   "invalid UTF-8 byte sequence detected. perhaps you should try calling stri_enc_toutf8()"
 
 #define MSG__INVALID_ESCAPE \
    "invalid escape sequence detected. Setting NA"
@@ -71,6 +87,9 @@
 #define MSG__WARN_RECYCLING_RULE \
    "longer object length is not a multiple of shorter object length"
 
+#define MSG__WARN_RECYCLING_RULE2 \
+   "vector length not consistent with other arguments"
+
 #define MSG__INCORRECT_INTERNAL_ARG \
    "incorrect argument"
 
@@ -81,22 +100,10 @@
    "%s (%s)"
 
 #define MSG__EXPECTED_NONNEGATIVE \
-   "incorrect argument: expected a nonnegative numeric value"
+   "argument `%s`: expected a nonnegative numeric value"
 
 #define MSG__EXPECTED_POSITIVE \
-   "incorrect argument: expected a positive numeric value"
-
-#define MSG__EXPECTED_CHARACTER \
-   "incorrect argument: expected a character vector"
-
-#define MSG__EXPECTED_DOUBLE \
-   "incorrect argument: expected a numeric vector"
-
-#define MSG__EXPECTED_INTEGER \
-   "incorrect argument: expected an integer vector"
-
-#define MSG__EXPECTED_LOGICAL \
-   "incorrect argument: expected a logical vector"
+   "argument `%s`: expected a positive numeric value"
 
 
 #define MSG__EXPECTED_ASCII \
@@ -132,6 +139,9 @@
 #define MSG__REGEXP_FAILED \
    "regexp search failed"
 
+#define MSG__REGEXP_CONFIG_FAILED \
+   "regexp engine config failed"
+
 #define MSG__REGEXP_FAILED_DETAILS \
    "regexp search failed: %s"
 
@@ -139,7 +149,7 @@
    "string search failed"
 
 #define MSG__RESOURCE_ERROR_GET \
-   "required resource unavailable; do you have ICU data installed (icudtXX.dat)?"
+   "required resource unavailable; try calling stri_install_check()"
 
 #define MSG__RESOURCE_ERROR_APPLY \
    "error while applying operation"
@@ -153,13 +163,14 @@
 #define MSG__NEWLINE_FOUND \
    "newline character found in a string"
 
-
+#define MSG__NOT_EQ_N_CODEPOINTS \
+   "each string in `%s` should consist of exactly %d code points"
 
 #define MSG__CHARCLASS_INCORRECT_WHICH \
    "unknown charclass `%s`. assuming NA"
 
 #define MSG__CHARCLASS_INCORRECT \
-   "unknown charclass. assuming NA"
+   "unknown charclass"
 
 #define MSG__ARG_EXPECTED_NOT_NA \
    "missing value in argument `%s` is not supported"
@@ -188,6 +199,10 @@
 #define MSG__ARG_EXPECTED_LIST_STRING \
    "argument `%s` should be a list of character vectors (or an object coercible to)"
 
+#define MSG__ARG_EXPECTED_LIST_INTEGER \
+   "argument `%s` should be a list of integer vectors or an integer vector (or an object coercible to)"
+
+
 #define MSG__ARG_EXPECTED_RAW \
    "argument `%s` should be a raw vector (or an object coercible to)"
 
@@ -202,6 +217,9 @@
 
 #define MSG__ARG_EXPECTED_STRING_NO_COERCION \
    "argument `%s` should be a character vector"
+
+#define MSG__ARG_EXPECTED_RAW_IN_LIST_NO_COERCION \
+   "all elements in `%s` should be a raw vectors"
 
 #define MSG__ARG_EXPECTED_RAW_NO_COERCION \
    "argument `%s` should be a raw vector"

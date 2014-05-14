@@ -30,13 +30,14 @@
 
 
 #' @title
-#' Generate a List with Collator Options
+#' Generate a List with Collator Settings
 #'
 #' @description
-#' A convenience function to tune the Collator's behavior,
+#' A convenience function to tune the \pkg{ICU} Collator's behavior,
 #' e.g. in \code{\link{stri_compare}}, \code{\link{stri_order}},
-#' \code{\link{stri_detect_fixed}},
-#' and other \link{stringi-search-fixed} functions.
+#' \code{\link{stri_unique}}, \code{\link{stri_duplicated}},
+#' as well as \code{\link{stri_detect_coll}}
+#' and other \link{stringi-search-coll} functions.
 #'
 #'
 #' @details
@@ -44,7 +45,7 @@
 #' alike string comparison.
 #' This is a more reliable way of establishing relationships between
 #' string than that provided by base \R, and definitely
-#' one that is more complex than ordinary byte-comparison.
+#' one that is more complex and appropriate than ordinary byte-comparison.
 #'
 #' A note on collation \code{strength}:
 #' generally, \code{strength} set to 4 is
@@ -83,11 +84,10 @@
 #'  This is a way to get '100' to sort AFTER '2'.
 #'
 #' @return
-#' Returns a named list object; missing options are left with default values.
+#' Returns a named list object; missing settings are left with default values.
 #'
 #' @export
 #' @family locale_sensitive
-#' @family search_fixed
 #'
 #' @references
 #' \emph{Collation} -- ICU User Guide,
@@ -100,11 +100,9 @@
 #' \url{http://www.icu-project.org/apiref/icu4c/classicu_1_1Collator.html}
 #'
 #' @examples
-#' \dontrun{
 #' stri_cmp("zupa100", "zupa2") != stri_cmp("zupa100", "zupa2", stri_opts_collator(numeric=TRUE))
 #' stri_cmp("above mentioned", "above-mentioned")
 #' stri_cmp("above mentioned", "above-mentioned", stri_opts_collator(alternate_shifted=TRUE))
-#' }
 stri_opts_collator <- function(locale=NULL, strength=3L,
    alternate_shifted=FALSE, french=FALSE,
    uppercase_first=NA, case_level=FALSE,
@@ -123,12 +121,11 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 }
 
 
-
 #' @title
-#' Generate a List with Regex Matcher Options
+#' Generate a List with Regex Matcher Settings
 #'
 #' @description
-#' A convenience function to tune regular expressions matcher behavior,
+#' A convenience function to tune the \pkg{ICU} regular expressions matcher's behavior,
 #' e.g. in \code{\link{stri_count_regex}}
 #' and other \link{stringi-search-regex} functions.
 #'
@@ -158,13 +155,14 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 #' letters without a known special meaning;
 #' otherwise, these escaped letters represent themselves.
 #'
-#' Note that some regex options may be changed using ICU regex flag
-#' settings inside regexes. For example, \code{"(?i)pattern"} does
+#' Note that some regex settings may be changed using ICU regex flags
+#' inside regexes. For example, \code{"(?i)pattern"} does
 #' a case-insensitive match of a given pattern,
-#' see the ICU User Guide entry on Regular Expressions in the References section.
+#' see the \pkg{ICU} User Guide entry on Regular Expressions
+#' in the References section.
 #'
 #' @return
-#' Returns a named list object; missing options are left with default values.
+#' Returns a named list object; missing settings are left with default values.
 #'
 #' @export
 #' @family search_regex
@@ -178,11 +176,9 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 #' \url{http://userguide.icu-project.org/strings/regexp}
 #'
 #' @examples
-#' \dontrun{
 #' stri_detect_regex("ala", "ALA") # case-sensitive by default
 #' stri_detect_regex("ala", "ALA", stri_opts_regex(case_insensitive=TRUE))
 #' stri_detect_regex("ala", "(?i:)ALA") # equivalent
-#' }
 stri_opts_regex <- function(case_insensitive, comments, dotall, literal,
                             multiline, unix_lines, uword, error_on_unknown_escapes)
 {

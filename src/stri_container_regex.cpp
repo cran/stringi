@@ -31,6 +31,7 @@
 
 
 #include "stri_stringi.h"
+#include "stri_container_regex.h"
 
 
 /**
@@ -40,7 +41,6 @@
 StriContainerRegexPattern::StriContainerRegexPattern()
    : StriContainerUTF16()
 {
-   this->str = NULL;
    this->lastMatcher = NULL;
 }
 
@@ -59,7 +59,6 @@ StriContainerRegexPattern::StriContainerRegexPattern(SEXP rstr, R_len_t _nrecycl
 }
 
 
-
 /** Copy constructor
  *
  */
@@ -69,8 +68,6 @@ StriContainerRegexPattern::StriContainerRegexPattern(StriContainerRegexPattern& 
    this->lastMatcher = NULL;
    this->flags = container.flags;
 }
-
-
 
 
 StriContainerRegexPattern& StriContainerRegexPattern::operator=(StriContainerRegexPattern& container)
@@ -93,8 +90,6 @@ StriContainerRegexPattern::~StriContainerRegexPattern()
       lastMatcher = NULL;
    }
 }
-
-
 
 
 /** the returned matcher shall not be deleted by the user
@@ -123,8 +118,11 @@ RegexMatcher* StriContainerRegexPattern::getMatcher(R_len_t i)
 
    UErrorCode status = U_ZERO_ERROR;
    lastMatcher = new RegexMatcher(this->get(i), flags, status);
-   if (U_FAILURE(status))
+   if (U_FAILURE(status)) {
+      delete lastMatcher;
+      lastMatcher = NULL;
       throw StriException(status);
+   }
 #ifndef NDEBUG
    debugMatcherIndex = (i % n);
 #endif
@@ -133,24 +131,35 @@ RegexMatcher* StriContainerRegexPattern::getMatcher(R_len_t i)
 }
 
 
-
+/** Read regex flags from a list
+ *
+ * may call Rf_error
+ *
+ * @param opts_regex list
+ * @return flags
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.2-3 (Marek Gagolewski, 2014-05-09)
+ *          allow NULL for opts_regex
+ */
 uint32_t StriContainerRegexPattern::getRegexFlags(SEXP opts_regex)
 {
    uint32_t flags = 0;
-   if (!Rf_isVectorList(opts_regex))
+   if (!isNull(opts_regex) && !Rf_isVectorList(opts_regex))
       Rf_error(MSG__ARG_EXPECTED_LIST, "opts_regex"); // error() call allowed here
 
-   R_len_t narg = LENGTH(opts_regex);
+   R_len_t narg = isNull(opts_regex)?0:LENGTH(opts_regex);
 
    if (narg > 0) {
 
       SEXP names = Rf_getAttrib(opts_regex, R_NamesSymbol);
       if (names == R_NilValue || LENGTH(names) != narg)
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() call allowed here
+         Rf_error(MSG__REGEXP_CONFIG_FAILED); // error() call allowed here
 
       for (R_len_t i=0; i<narg; ++i) {
          if (STRING_ELT(names, i) == NA_STRING)
-            Rf_error(MSG__RESOURCE_ERROR_GET); // error() call allowed here
+            Rf_error(MSG__REGEXP_CONFIG_FAILED); // error() call allowed here
 
          const char* curname = CHAR(STRING_ELT(names, i));
 

@@ -47,15 +47,6 @@
 #define  UNISTR_FROM_CHAR_EXPLICIT   explicit
 #define  UNISTR_FROM_STRING_EXPLICIT explicit
 
-#include <cstdarg>
-#include <iostream>
-#include <deque>
-#include <queue>
-#include <algorithm>
-#include <vector>
-#include <map>
-using namespace std;
-
 
 #include <unicode/ptypes.h>
 #include <unicode/uchar.h>
@@ -65,18 +56,6 @@ using namespace std;
 #include <unicode/stringpiece.h>
 #include <unicode/utf8.h>
 #include <unicode/utf16.h>
-#include <unicode/normalizer2.h>
-#include <unicode/locid.h>
-#include <unicode/uloc.h>
-#include <unicode/regex.h>
-#include <unicode/brkiter.h>
-#include <unicode/coll.h>
-#include <unicode/ucol.h>
-#include <unicode/ucsdet.h>
-#include <unicode/stsearch.h>
-#include <unicode/ulocdata.h>
-#include <unicode/usearch.h>
-#include <unicode/uniset.h>
 using namespace icu;
 
 #define USE_RINTERNALS
@@ -86,6 +65,5 @@ using namespace icu;
 #include <Rmath.h>
 #include <Rdefines.h>
 #include <R_ext/Rdynload.h>
-
 
 #endif

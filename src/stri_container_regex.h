@@ -34,12 +34,18 @@
 #define __stri_container_regex_h
 
 
+#include <unicode/regex.h>
 
+#include "stri_container_utf16.h"
 
 
 /**
- * A class to handle regex patterns
- * @version 0.1 (Marek Gagolewski, 2013-06-17)
+ * A class to handle regex searches
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-17)
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-18)
+ *          BUGFIX: memleaks on StriException
  */
 class StriContainerRegexPattern : public StriContainerUTF16 {
 

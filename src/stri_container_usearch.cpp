@@ -31,6 +31,7 @@
 
 
 #include "stri_stringi.h"
+#include "stri_container_usearch.h"
 
 
 /**
@@ -59,7 +60,6 @@ StriContainerUStringSearch::StriContainerUStringSearch(SEXP rstr, R_len_t _nrecy
 }
 
 
-
 /** Copy constructor
  *
  */
@@ -69,8 +69,6 @@ StriContainerUStringSearch::StriContainerUStringSearch(StriContainerUStringSearc
    this->lastMatcher = NULL;
    this->col = container.col;
 }
-
-
 
 
 StriContainerUStringSearch& StriContainerUStringSearch::operator=(StriContainerUStringSearch& container)
@@ -97,8 +95,6 @@ StriContainerUStringSearch::~StriContainerUStringSearch()
 }
 
 
-
-
 /** the returned matcher shall not be deleted by the user
  *
  * it is assumed that \code{vectorize_next()} is used:
@@ -117,7 +113,11 @@ UStringSearch* StriContainerUStringSearch::getMatcher(R_len_t i, const UnicodeSt
       UErrorCode status = U_ZERO_ERROR;
       lastMatcher = usearch_openFromCollator(this->get(i).getBuffer(), this->get(i).length(),
             searchStr.getBuffer(), searchStr.length(), col, NULL, &status);
-      if (U_FAILURE(status)) throw StriException(status);
+      if (U_FAILURE(status)) {
+         usearch_close(lastMatcher);
+         lastMatcher = NULL;
+         throw StriException(status);
+      }
       return lastMatcher;
    }
 
@@ -131,12 +131,20 @@ UStringSearch* StriContainerUStringSearch::getMatcher(R_len_t i, const UnicodeSt
    else {
       UErrorCode status = U_ZERO_ERROR;
       usearch_setPattern(lastMatcher, this->get(i).getBuffer(), this->get(i).length(), &status);
-      if (U_FAILURE(status)) throw StriException(status);
+      if (U_FAILURE(status)) {
+         usearch_close(lastMatcher);
+         lastMatcher = NULL;
+         throw StriException(status);
+      }
    }
 
    UErrorCode status = U_ZERO_ERROR;
    usearch_setText(lastMatcher, searchStr.getBuffer(), searchStr.length(), &status);
-   if (U_FAILURE(status)) throw StriException(status);
+   if (U_FAILURE(status)) {
+      usearch_close(lastMatcher);
+      lastMatcher = NULL;
+      throw StriException(status);
+   }
 
 #ifndef NDEBUG
    debugMatcherIndex = (i % n);

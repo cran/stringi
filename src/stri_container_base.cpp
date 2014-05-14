@@ -31,7 +31,7 @@
 
 
 #include "stri_stringi.h"
-
+#include "stri_container_base.h"
 
 
 /**
@@ -42,21 +42,21 @@ StriContainerBase::StriContainerBase()
 {
    this->n = 0;
    this->nrecycle = 0;
+   this->sexp = (SEXP)NULL;
 #ifndef NDEBUG
    this->isShallow = true;
 #endif
 }
 
 
-
 /**
- *
+ * Initialize object data
  *
  */
-void StriContainerBase::init_Base(R_len_t _n, R_len_t _nrecycle, bool _shallowrecycle)
+void StriContainerBase::init_Base(R_len_t _n, R_len_t _nrecycle, bool _shallowrecycle, SEXP _sexp)
 {
 #ifndef NDEBUG
-   if (this->n != 0)
+   if (this->n != 0 || this->nrecycle != 0 || this->sexp != (SEXP)NULL)
       throw StriException("StriContainerBase::init_Base(...): already initialized");
    this->isShallow = _shallowrecycle;
 #endif
@@ -64,10 +64,12 @@ void StriContainerBase::init_Base(R_len_t _n, R_len_t _nrecycle, bool _shallowre
    if (_n == 0 || _nrecycle == 0) {
       this->nrecycle = 0;
       this->n = 0;
+      this->sexp = _sexp;
    }
    else {
       this->nrecycle = _nrecycle;
       this->n = (_shallowrecycle)?_n:_nrecycle;
+      this->sexp = _sexp;
 
 #ifndef NDEBUG
    if (this->n < _n)
@@ -77,38 +79,3 @@ void StriContainerBase::init_Base(R_len_t _n, R_len_t _nrecycle, bool _shallowre
 #endif
    }
 }
-
-
-
-
-//StriContainerBase::StriContainerBase(StriContainerBase& container)
-//{
-//   this->n = container.n;
-//   this->nrecycle = container.nrecycle;
-//#ifndef NDEBUG
-//   this->isShallow = container.isShallow;
-//#endif
-//}
-
-
-
-//StriContainerBase& StriContainerBase::operator=(StriContainerBase& container)
-//{
-//   this->~StriContainerBase();
-//
-//   this->n = container.n;
-//   this->nrecycle = container.nrecycle;
-//#ifndef NDEBUG
-//   this->isShallow = container.isShallow;
-//#endif
-//
-//   return *this;
-//}
-
-
-
-//StriContainerBase::~StriContainerBase()
-//{
-//   this->n = 0;
-//   this->nrecycle = 0;
-//}

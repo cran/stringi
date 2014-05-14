@@ -33,24 +33,26 @@
 #ifndef __stri_container_listraw_h
 #define __stri_container_listraw_h
 
-
-
+#include "stri_container_base.h"
 
 
 /**
  * Contains R lists of raw vectors, single raw vectors,
- * or character strings treated as "byte"-encoded.
+ * or character string vectors treated as "byte"-encoded.
  * Useful for encoding conversion or detection.
  * Each string is represented by the String8 class,
  * with shallow copy of byte data.
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-08)
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-08)
+ *
+ * @version 0.2-1  (Marek Gagolewski, 2014-03-25)
+ *          data as String8* and not String8** (performance gain)
  */
 class StriContainerListRaw : public StriContainerBase {
 
    private:
 
-      String8** data; // vectors [NULL for NA]
+      String8* data;
 
 
    public:
@@ -71,7 +73,7 @@ class StriContainerListRaw : public StriContainerBase {
          if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerListRaw::isNA(): INDEX OUT OF BOUNDS");
 #endif
-         return (data[i%n] == NULL);
+         return (data[i%n].isNA());
       }
 
 
@@ -83,10 +85,10 @@ class StriContainerListRaw : public StriContainerBase {
 #ifndef NDEBUG
          if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerListRaw::get(): INDEX OUT OF BOUNDS");
-         if (data[i%n] == NULL)
+         if (data[i%n].isNA())
             throw StriException("StriContainerListRaw::get(): isNA");
 #endif
-         return (*(data[i%n]));
+         return data[i%n];
       }
 };
 

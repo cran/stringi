@@ -29,49 +29,97 @@
 ## EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+#' @title
+#' Word Wrap Text to Format Paragraphs
+#'
+#' @description
+#' This function breaks text paragraphs into lines,
+#' each consisting of at most \code{width} code points.
+#'
+#' @details
+#' Vectorized over \code{str}.
+#'
+#' Any of the strings must not contain \code{\\r}, \code{\\n},
+#' or other new line characters, otherwise you will get at error.
+#' You should split the input text into lines
+#' or e.g. substitute line breaks with spaces
+#' before applying this function.
+#'
+#' Multiple white spaces between the word boundaries are
+#' preserved withing each wrapped line. If you wish to substitute
+#' all such sequences with single spaces, call e.g.
+#' \code{stri_trim(stri_replace_all_charclass(str, "\\p{WHITE_SPACE}", " ", TRUE))}
+#' prior to string wrapping.
+#'
+#' The greedy algorithm (for \code{cost_exponent} being non-positive)
+#' provides a very simple way for word wrapping.
+#' It always puts as many words in each line as possible.
+#' This method -- contrary to the dynamic algorithm -- does not minimize
+#' the number of space left at the end of every line.
+#' The dynamic algorithm (a.k.a. Knuth's word wrapping algorithm)
+#' is more complex, but it returns text wrapped
+#' in a more aesthetic way. This method minimizes the squared
+#' (by default, see \code{cost_exponent}) number of spaces  (raggedness)
+#' at the end of each line, so the text is mode arranged evenly.
+#'
+#' Note that Unicode code points may have various widths when
+#' printed on screen. This function acts like each code point
+#' is of width 1. This function should rather be used with
+#' text in Latin script.
+#'
+#' \pkg{ICU}'s line-\code{BreakIterator} is used to determine
+#' text boundaries at which a line break is possible.
+#'
+#' @param str character vector of strings to reformat
+#' @param width single positive integer giving the desired
+#'        maximal number of code points per line
+#' @param cost_exponent single numeric value, values not greater than zero
+#'        will select a greedy word-wrapping algorithm; otherwise
+#'        this value denotes the exponent in the cost function
+#'        of a (more aesthetic) dynamic programming-based algorithm
+#'        (values in [2, 3] are recommended)
+#' @param simplify single logical value, see Value
+#' @param locale \code{NULL} or \code{""} for text boundary analysis following
+#' the conventions of the default locale, or a single string with
+#' locale identifier, see \link{stringi-locale}
+#'
+#' @return
+#' If \code{simplify} is \code{TRUE}, then a character vector is returned.
+#' Otherwise, you will get a list of \code{length(str)} character vectors.
+#'
+#' @rdname stri_wrap
+#' @family locale_sensitive
+#' @family text_boundaries
+#' @examples
+#' s <- "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Proin "%+%
+#'       "nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel "%+%
+#'       "lorem. Etiam pellentesque aliquet tellus."
+#' cat(stri_wrap(s, 20, 0.0), sep="\n") # greedy
+#' cat(stri_wrap(s, 20, 2.0), sep="\n") # dynamic
+#' cat(stri_pad(stri_wrap(s), side='both'), sep="\n")
+#'
+#' @export
+#' @references
+#' D.E. Knuth, M.F. Plass,
+#' Breaking paragraphs into lines, \emph{Software: Practice and Experience} 11(11),
+#' 1981, pp. 1119--1184
+stri_wrap <- function(str, width=floor(0.9*getOption("width")),
+   cost_exponent=2.0, simplify=TRUE, locale=NULL)
+{
+   simplify <- as.logical(simplify)
 
-invisible(NULL) # TO BE DONE, version >= 0.2
+#   # @TODO: add param normalize?
+#   normalize <- as.logical(normalize)
+#   if (normalize) {
+#      str <- unlist(stri_split_lines(str))
+#      str <- stri_trim(stri_replace_all_charclass(str, "\\p{WHITE_SPACE}", " ", TRUE))
+#      str <- stri_paste(str, collapse=' ')
+#   }
 
+   ret <- .Call("stri_wrap", str, width, cost_exponent, locale, PACKAGE="stringi")
 
-# #' Wrap strings to paragraphs
-# #'
-# #' Function is vectorized over str, width, method and spacecost
-# #'
-# #' @description Wrap strings to paragraphs
-# #' @usage stri_wrap(s, width = 76, method = "greedy", spaces = "(\\p{Z}|\\n)+", spacecost = 1)
-# #' @param s character vector of strings to format into paragraphs
-# #' @param width positive integer giving the target column for wrapping lines
-# #' @param method indicates which method is used for wrapping ("greedy" or "dynamic"). You can specify just the initial letter of the value. See 'Details' for description of possible methods.
-# #' @param spaces length one character vector or expression ?...
-# #' @param spacecost positive integer which determines the cost of one space (gap between each word)
-# #' @details Greedy algorithm is simple way of word wrapping and it always puts as many words on each line as possible. This method minimize the number of space left at the end of every line and always uses the minimum number of lines. Disadvantage of this method could be fact that the number of empty space at the end of lines may be various. Dynamic algorithm is more complex, but it returns text wrapped more aesthetic. This method minimize the squared number of space, so the text is arranged evenly.
-# #'
-# #' @return character vector of reformatted strings
-# #'
-# #' @examples
-# #' s <- "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Proin
-# #'       nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel
-# #'       lorem. Etiam pellentesque aliquet tellus."
-# #' stri_wrap(s,20,"d")
-# #' cat(stri_wrap(s,20,"d"))
-# #' cat(stri_wrap(s,20,"g"))
-# #'
-# #' @export
-#
-# #  TODO the default parameter spaces should be different (class WHITESPACE)
-# #  TODO add indent and exdent parameter (see strwrap)
-#
-# stri_wrap <- function(str,width=76,method="greedy",spaces="(\\p{Z}|\\n|\\t)+",spacecost=1)
-# {
-#    str <- stri_prepare_arg_string(str)
-#    width <- stri_prepare_arg_integer(width)
-#    stopifnot(is.finite(width)&&width>0)
-#    spacecost <- stri_prepare_arg_integer(spacecost)
-#    stopifnot(is.finite(spacecost)&&spacecost>0)
-#    method <- pmatch(method,c("greedy","dynamic"),1,T)
-#    # when stri_split will work with regexp use this line:
-#    # wordslist <- stri_split_class(str, whitespaces)
-#    # for now we can only split by " "
-#    wordslist <- stri_split_fixed(enc2utf8(str), enc2utf8(" "), omitempty=TRUE)
-#    .Call("stri_wrap",wordslist,method,width,spacecost,PACKAGE="stringi")
-# }
+   if (simplify) # this will give an informative warning or error if sth is wrong
+      as.character(unlist(ret))
+   else
+      ret
+}

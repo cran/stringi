@@ -31,6 +31,19 @@
 
 
 #include "stri_stringi.h"
+#include <unicode/ucsdet.h>
+#include <unicode/locid.h>
+#include <unicode/uloc.h>
+#include <unicode/locid.h>
+#include <unicode/ulocdata.h>
+#include <unicode/uniset.h>
+#include <map>
+#include <vector>
+#include <algorithm>
+#include "stri_container_listraw.h"
+#include "stri_container_logical.h"
+#include "stri_ucnv.h"
+using namespace std;
 
 
 /** Check if a string may be valid 8-bit (including UTF-8) encoded
@@ -43,9 +56,13 @@
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski, 2013-08-06) separate func
- * @version 0.3 (Marek Gagolewski, 2013-08-13) warnchars count added
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-06)
+ *          separate func
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-13)
+ *          warnchars count added
  */
 double stri__enc_check_8bit(const char* str_cur_s, R_len_t str_cur_n, bool get_confidence) {
    R_len_t warnchars = 0;
@@ -79,9 +96,13 @@ double stri__enc_check_8bit(const char* str_cur_s, R_len_t str_cur_n, bool get_c
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski, 2013-08-06) separate func
- * @version 0.3 (Marek Gagolewski, 2013-08-13) warnchars count added
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-06)
+ *          separate func
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-13)
+ *          warnchars count added
  */
 double stri__enc_check_ascii(const char* str_cur_s, R_len_t str_cur_n, bool get_confidence) {
    R_len_t warnchars = 0;
@@ -104,7 +125,6 @@ double stri__enc_check_ascii(const char* str_cur_s, R_len_t str_cur_n, bool get_
 }
 
 
-
 /** Check if a string is valid UTF-8
  *
  * checks if a string is probably UTF-8-encoded;
@@ -117,9 +137,13 @@ double stri__enc_check_ascii(const char* str_cur_s, R_len_t str_cur_n, bool get_
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski, 2013-08-06) separate func
- * @version 0.3 (Marek Gagolewski, 2013-08-13) confidence calculation basing on ICU's i18n/csrutf8.cpp
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-06)
+ *          separate func
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-13)
+ *          confidence calculation basing on ICU's i18n/csrutf8.cpp
  */
 double stri__enc_check_utf8(const char* str_cur_s, R_len_t str_cur_n, bool get_confidence)
 {
@@ -138,9 +162,9 @@ double stri__enc_check_utf8(const char* str_cur_s, R_len_t str_cur_n, bool get_c
    else {
       // Based on ICU's i18n/csrutf8.cpp [with own mods]
       bool hasBOM = (str_cur_n >= 3 &&
-            (uint8_t)(str_cur_s[0]) == (uint8_t)0xEF &&
-            (uint8_t)(str_cur_s[1]) == (uint8_t)0xBB &&
-            (uint8_t)(str_cur_s[2]) == (uint8_t)0xBF);
+            (uint8_t)(str_cur_s[0]) == UTF8_BOM_BYTE1 &&
+            (uint8_t)(str_cur_s[1]) == UTF8_BOM_BYTE2 &&
+            (uint8_t)(str_cur_s[2]) == UTF8_BOM_BYTE3);
       R_len_t numValid = 0;   // counts only valid UTF-8 multibyte seqs
       R_len_t numInvalid = 0;
 
@@ -210,7 +234,6 @@ double stri__enc_check_utf8(const char* str_cur_s, R_len_t str_cur_n, bool get_c
 }
 
 
-
 /** Check if a string is valid UTF-16LE or UTF-16BE
  *
  * @param str_cur_s character vector
@@ -220,8 +243,10 @@ double stri__enc_check_utf8(const char* str_cur_s, R_len_t str_cur_n, bool get_c
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-09)
- * @version 0.2 (Marek Gagolewski, 2013-08-14) confidence calculation basing on ICU's i18n/csucode.cpp
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-09)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-14)
+ *          confidence calculation basing on ICU's i18n/csucode.cpp
  */
 double stri__enc_check_utf16(const char* str_cur_s, R_len_t str_cur_n,
    bool get_confidence, bool le)
@@ -275,7 +300,7 @@ double stri__enc_check_utf16(const char* str_cur_s, R_len_t str_cur_n,
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-09)
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-09)
  */
 double stri__enc_check_utf16be(const char* str_cur_s, R_len_t str_cur_n, bool get_confidence)
 {
@@ -291,7 +316,7 @@ double stri__enc_check_utf16be(const char* str_cur_s, R_len_t str_cur_n, bool ge
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-09)
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-09)
  */
 double stri__enc_check_utf16le(const char* str_cur_s, R_len_t str_cur_n, bool get_confidence)
 {
@@ -308,8 +333,10 @@ double stri__enc_check_utf16le(const char* str_cur_s, R_len_t str_cur_n, bool ge
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-09)
- * @version 0.2 (Marek Gagolewski, 2013-08-13) confidence calculation basing on ICU's i18n/csucode.cpp
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-09)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-13)
+ *          confidence calculation basing on ICU's i18n/csucode.cpp
  */
 double stri__enc_check_utf32(const char* str_cur_s, R_len_t str_cur_n,
    bool get_confidence, bool le)
@@ -367,13 +394,12 @@ double stri__enc_check_utf32(const char* str_cur_s, R_len_t str_cur_n,
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-13)
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-13)
  */
 double stri__enc_check_utf32be(const char* str_cur_s, R_len_t str_cur_n, bool get_confidence)
 {
    return stri__enc_check_utf32(str_cur_s, str_cur_n, get_confidence, false);
 }
-
 
 
 /** Check if a string is valid UTF-32LE
@@ -384,14 +410,12 @@ double stri__enc_check_utf32be(const char* str_cur_s, R_len_t str_cur_n, bool ge
  *
  * @return confidence value in [0,1]
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-13)
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-13)
  */
 double stri__enc_check_utf32le(const char* str_cur_s, R_len_t str_cur_n, bool get_confidence)
 {
    return stri__enc_check_utf32(str_cur_s, str_cur_n, get_confidence, true);
 }
-
-
 
 
 /** Which string is in given encoding
@@ -401,9 +425,13 @@ double stri__enc_check_utf32le(const char* str_cur_s, R_len_t str_cur_n, bool ge
  *  @param type (single integer, internal)
  *  @return logical vector
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski, 2013-08-08) use StriContainerListRaw
- * @version 0.3 (Marek Gagolewski, 2013-08-09) one function for is_*, do dispatch
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-08)
+ *          use StriContainerListRaw
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-09)
+ *          one function for is_*, do dispatch
  */
 SEXP stri_enc_isenc(SEXP str, SEXP type)
 {
@@ -429,7 +457,7 @@ SEXP stri_enc_isenc(SEXP str, SEXP type)
    R_len_t str_length = str_cont.get_n();
 
    SEXP ret;
-   PROTECT(ret = Rf_allocVector(LGLSXP, str_length));
+   STRI__PROTECT(ret = Rf_allocVector(LGLSXP, str_length));
    int* ret_tab = LOGICAL(ret); // may be faster than LOGICAL(ret)[i] all the time
 
    for (R_len_t i=0; i < str_length; ++i) {
@@ -442,7 +470,7 @@ SEXP stri_enc_isenc(SEXP str, SEXP type)
       ret_tab[i] = isenc(str_cont.get(i).c_str(), str_cont.get(i).length(), get_confidence) != 0.0;
    }
 
-   UNPROTECT(1);
+   STRI__UNPROTECT_ALL
    return ret;
 
    STRI__ERROR_HANDLER_END({ /* no-op on error */ })
@@ -456,8 +484,10 @@ SEXP stri_enc_isenc(SEXP str, SEXP type)
  *
  * @return list
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-03)
- * @version 0.2 (Marek Gagolewski, 2013-08-08) use StriContainerListRaw + BUGFIX
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-03)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-08)
+ *          use StriContainerListRaw + BUGFIX
  */
 SEXP stri_enc_detect(SEXP str, SEXP filter_angle_brackets)
 {
@@ -480,14 +510,14 @@ SEXP stri_enc_detect(SEXP str, SEXP filter_angle_brackets)
    str_cont.set_nrecycle(vectorize_length); // must be set after container creation
 
    SEXP ret, names, wrong;
-   PROTECT(ret = Rf_allocVector(VECSXP, vectorize_length));
+   STRI__PROTECT(ret = Rf_allocVector(VECSXP, vectorize_length));
 
-   PROTECT(names = Rf_allocVector(STRSXP, 3));
+   STRI__PROTECT(names = Rf_allocVector(STRSXP, 3));
    SET_STRING_ELT(names, 0, Rf_mkChar("Encoding"));
    SET_STRING_ELT(names, 1, Rf_mkChar("Language"));
    SET_STRING_ELT(names, 2, Rf_mkChar("Confidence"));
 
-   PROTECT(wrong = Rf_allocVector(VECSXP, 3));
+   STRI__PROTECT(wrong = Rf_allocVector(VECSXP, 3));
    SET_VECTOR_ELT(wrong, 0, stri__vector_NA_strings(1));
    SET_VECTOR_ELT(wrong, 1, stri__vector_NA_strings(1));
    SET_VECTOR_ELT(wrong, 2, stri__vector_NA_integers(1));
@@ -518,9 +548,9 @@ SEXP stri_enc_detect(SEXP str, SEXP filter_angle_brackets)
 
 
       SEXP val_enc, val_lang, val_conf;
-      PROTECT(val_enc  = Rf_allocVector(STRSXP, matchesFound));
-      PROTECT(val_lang = Rf_allocVector(STRSXP, matchesFound));
-      PROTECT(val_conf = Rf_allocVector(REALSXP, matchesFound));
+      STRI__PROTECT(val_enc  = Rf_allocVector(STRSXP, matchesFound));
+      STRI__PROTECT(val_lang = Rf_allocVector(STRSXP, matchesFound));
+      STRI__PROTECT(val_conf = Rf_allocVector(REALSXP, matchesFound));
 
       for (R_len_t j=0; j<matchesFound; ++j) {
          status = U_ZERO_ERROR;
@@ -546,20 +576,20 @@ SEXP stri_enc_detect(SEXP str, SEXP filter_angle_brackets)
       }
 
       SEXP val;
-      PROTECT(val = Rf_allocVector(VECSXP, 3));
+      STRI__PROTECT(val = Rf_allocVector(VECSXP, 3));
       SET_VECTOR_ELT(val, 0, val_enc);
       SET_VECTOR_ELT(val, 1, val_lang);
       SET_VECTOR_ELT(val, 2, val_conf);
       Rf_setAttrib(val, R_NamesSymbol, names);
       SET_VECTOR_ELT(ret, i, val);
-      UNPROTECT(4);
+      STRI__UNPROTECT(4);
    }
 
    if (ucsdet) {
       ucsdet_close(ucsdet);
       ucsdet = NULL;
    }
-   UNPROTECT(3);
+   STRI__UNPROTECT_ALL
    return ret;
 
    STRI__ERROR_HANDLER_END(
@@ -568,7 +598,6 @@ SEXP stri_enc_detect(SEXP str, SEXP filter_angle_brackets)
          ucsdet = NULL;
       })
 }
-
 
 
 // -----------------------------------------------------------------------
@@ -580,9 +609,16 @@ SEXP stri_enc_detect(SEXP str, SEXP filter_angle_brackets)
  *
  * help struct for stri_enc_detect2
  *
- * @version 0.1
- * @version 0.2 (Marek Gagolewski, 2013-08-18) be locale-dependent, use ICU ulocdata
- * @version 0.3 (Marek Gagolewski, 2013-11-13) allow only ASCII-supersets
+ * @version 0.1-??
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-18)
+ *          be locale-dependent, use ICU ulocdata
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-11-13)
+ *          allow only ASCII-supersets
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-03-28)
+ *          use StriUcnv
  */
 struct Converter8bit {
    bool isNA;
@@ -593,19 +629,13 @@ struct Converter8bit {
    Converter8bit(const char* _name, const UnicodeSet* exset) {
       isNA = true;
       name = NULL;
-      UConverter* ucnv = NULL;
+      StriUcnv ucnv_obj(_name);
+      if (!ucnv_obj.is8bit())
+         return; // not an 8-bit converter
 
-      UErrorCode err = U_ZERO_ERROR;
-      ucnv = ucnv_open(_name, &err);
-      if (U_FAILURE(err)) {
-         throw StriException(MSG__INTERNAL_ERROR);
-      }
+      ucnv_obj.setCallBackSubstitute(); // restore default (no warn) callbacks
+      UConverter* ucnv = ucnv_obj.getConverter();
 
-      if (ucnv_getMaxCharSize(ucnv) != 1 || ucnv_getMinCharSize(ucnv) != 1) {
-         // not an 8-bit converter
-         ucnv_close(ucnv);
-         return;
-      }
 
       // Check which characters in given encoding
       // are not mapped to Unicode [badChars]
@@ -626,16 +656,13 @@ struct Converter8bit {
       const char* text_end   = allChars+256;
       ucnv_reset(ucnv);
       for (R_len_t i=1; i<256; ++i) {
-         err = U_ZERO_ERROR;
-         UChar32 c = ucnv_getNextUChar(ucnv, &text_start, text_end, &err);
-         if (U_FAILURE(err)) {
-//            throw StriException(err);
-            ucnv_close(ucnv);
+         UErrorCode status = U_ZERO_ERROR;
+         UChar32 c = ucnv_getNextUChar(ucnv, &text_start, text_end, &status);
+         if (U_FAILURE(status)) {
             return;
          }
          if (i >= 32 && i <= 127 && c != (UChar32)i) {
             // allow only ASCII supersets
-            ucnv_close(ucnv);
             return;
          }
 
@@ -653,7 +680,6 @@ struct Converter8bit {
 
       if (!curset.containsAll(*exset)) {
          // not all characters are representable in given encoding
-         ucnv_close(ucnv);
          return;
       }
 
@@ -670,24 +696,24 @@ struct Converter8bit {
 
       isNA = false;
       this->name = _name;
-      ucnv_close(ucnv);
    }
 };
 
 
-
-
 // -----------------------------------------------------------------------
 // -----------------------------------------------------------------------
 // -----------------------------------------------------------------------
-
 
 
 /** Guesses text encoding; help struct for stri_enc_detect2
  *
- * @version 0.1 (Marek Gagolewski)
- * @version 0.2 (Marek Gagolewski, 2013-08-18) locale-dependent, use ulocdata
- * @version 0.3 (Marek Gagolewski, 2013-11-13) allow qloc==NULL in 8bit check
+ * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-18)
+ *          locale-dependent, use ulocdata
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-11-13)
+ *          allow qloc==NULL in 8bit check
  */
 struct EncGuess {
    const char* name;
@@ -796,7 +822,7 @@ struct EncGuess {
 
       R_len_t ucnv_count = (R_len_t)ucnv_countAvailable();
       for (R_len_t i=0; i<ucnv_count; ++i) { // for each converter
-         Converter8bit conv(stri__ucnv_getFriendlyName(ucnv_getAvailableName(i)), exset);
+         Converter8bit conv(StriUcnv::getFriendlyName(ucnv_getAvailableName(i)), exset);
          if (!conv.isNA) converters.push_back(conv);
       }
 
@@ -858,18 +884,23 @@ struct EncGuess {
 
 /** Detect encoding with initial guess
  *
- * @param str character vector
+ * @param str character or raw vector or a list of raw vectors
  * @param loc locale id
  *
  * @return list
  *
- * @version 0.1 (2013-08-15, Marek Gagolewski)
- * @version 0.2 (2013-08-18, Marek Gagolewski) improved 8-bit confidence measurement,
- * some code moved to structs, use locale & ICU locdata
- * @version 0.3 (2013-11-13, Marek Gagolewski) added loc NA handling (no locale)
+ * @version 0.1-?? (2013-08-15, Marek Gagolewski)
+ *
+ * @version 0.1-?? (2013-08-18, Marek Gagolewski)
+ *          improved 8-bit confidence measurement,
+ *          some code moved to structs, use locale & ICU locdata
+ *
+ * @version 0.1-?? (2013-11-13, Marek Gagolewski)
+ *          added loc NA handling (no locale)
  */
 SEXP stri_enc_detect2(SEXP str, SEXP loc)
 {
+   // raw vector, character vector, or list of raw vectors:
    str = stri_prepare_arg_list_raw(str, "str");
    const char* qloc = stri__prepare_arg_locale(loc, "locale", true, true); // allowdefault, allowna
 
@@ -879,14 +910,14 @@ SEXP stri_enc_detect2(SEXP str, SEXP loc)
    R_len_t str_n = str_cont.get_n();
 
    SEXP ret, names, wrong;
-   PROTECT(ret = Rf_allocVector(VECSXP, str_n));
+   STRI__PROTECT(ret = Rf_allocVector(VECSXP, str_n));
 
-   PROTECT(names = Rf_allocVector(STRSXP, 3));
+   STRI__PROTECT(names = Rf_allocVector(STRSXP, 3));
    SET_STRING_ELT(names, 0, Rf_mkChar("Encoding"));
    SET_STRING_ELT(names, 1, Rf_mkChar("Language"));
    SET_STRING_ELT(names, 2, Rf_mkChar("Confidence"));
 
-   PROTECT(wrong = Rf_allocVector(VECSXP, 3));
+   STRI__PROTECT(wrong = Rf_allocVector(VECSXP, 3));
    SET_VECTOR_ELT(wrong, 0, stri__vector_NA_strings(1));
    SET_VECTOR_ELT(wrong, 1, stri__vector_NA_strings(1));
    SET_VECTOR_ELT(wrong, 2, stri__vector_NA_integers(1));
@@ -921,9 +952,9 @@ SEXP stri_enc_detect2(SEXP str, SEXP loc)
       std::stable_sort(guesses.begin(), guesses.end());
 
       SEXP val_enc, val_lang, val_conf;
-      PROTECT(val_enc  = Rf_allocVector(STRSXP, matchesFound));
-      PROTECT(val_lang = Rf_allocVector(STRSXP, matchesFound));
-      PROTECT(val_conf = Rf_allocVector(REALSXP, matchesFound));
+      STRI__PROTECT(val_enc  = Rf_allocVector(STRSXP, matchesFound));
+      STRI__PROTECT(val_lang = Rf_allocVector(STRSXP, matchesFound));
+      STRI__PROTECT(val_conf = Rf_allocVector(REALSXP, matchesFound));
 
       for (R_len_t j=0; j<matchesFound; ++j) {
          SET_STRING_ELT(val_enc, j, Rf_mkChar(guesses[j].name));
@@ -932,16 +963,16 @@ SEXP stri_enc_detect2(SEXP str, SEXP loc)
       }
 
       SEXP val;
-      PROTECT(val = Rf_allocVector(VECSXP, 3));
+      STRI__PROTECT(val = Rf_allocVector(VECSXP, 3));
       SET_VECTOR_ELT(val, 0, val_enc);
       SET_VECTOR_ELT(val, 1, val_lang);
       SET_VECTOR_ELT(val, 2, val_conf);
       Rf_setAttrib(val, R_NamesSymbol, names);
       SET_VECTOR_ELT(ret, i, val);
-      UNPROTECT(4);
+      STRI__UNPROTECT(4);
    }
 
-   UNPROTECT(3);
+   STRI__UNPROTECT_ALL
    return ret;
 
    STRI__ERROR_HANDLER_END({ /* no-op on error */ })

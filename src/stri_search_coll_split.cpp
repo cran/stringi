@@ -1,0 +1,154 @@
+/* This file is part of the 'stringi' package for R.
+ * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+ * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+#include "stri_stringi.h"
+#include "stri_container_utf16.h"
+#include "stri_container_usearch.h"
+#include "stri_container_integer.h"
+#include "stri_container_logical.h"
+#include <deque>
+#include <utility>
+using namespace std;
+
+
+/**
+ * Split a string into parts [with collation]
+ *
+ * The pattern matches identify delimiters that separate the input into fields.
+ * The input data between the matches becomes the fields themselves.
+ *
+ * @param str character vector
+ * @param pattern character vector
+ * @param n_max integer vector
+ * @param omit_empty logical vector
+ * @param opts_collator passed to stri__ucol_open(),
+ * if \code{NA}, then \code{stri_detect_fixed_byte} is called
+ * @return list of character vectors
+ *
+ *
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-25)
+ *          StriException friendly, use StriContainerUTF16
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-07-10)
+ *          BUGFIX: wrong behavior on empty str
+ *
+ * @version 0.2-3 (Marek Gagolewski, 2014-05-08)
+ *          new fun: stri_split_coll (opts_collator == NA not allowed)
+ */
+SEXP stri_split_coll(SEXP str, SEXP pattern, SEXP n_max, SEXP omit_empty, SEXP opts_collator)
+{
+   str = stri_prepare_arg_string(str, "str");
+   pattern = stri_prepare_arg_string(pattern, "pattern");
+   n_max = stri_prepare_arg_integer(n_max, "n_max");
+   omit_empty = stri_prepare_arg_logical(omit_empty, "omit_empty");
+
+   UCollator* collator = NULL;
+   collator = stri__ucol_open(opts_collator);
+
+   STRI__ERROR_HANDLER_BEGIN
+   R_len_t vectorize_length = stri__recycling_rule(true, 4, LENGTH(str), LENGTH(pattern), LENGTH(n_max), LENGTH(omit_empty));
+   StriContainerUTF16 str_cont(str, vectorize_length);
+   StriContainerUStringSearch pattern_cont(pattern, vectorize_length, collator);  // collator is not owned by pattern_cont
+   StriContainerInteger   n_max_cont(n_max, vectorize_length);
+   StriContainerLogical   omit_empty_cont(omit_empty, vectorize_length);
+
+   SEXP ret;
+   STRI__PROTECT(ret = Rf_allocVector(VECSXP, vectorize_length));
+
+   for (R_len_t i = pattern_cont.vectorize_init();
+         i != pattern_cont.vectorize_end();
+         i = pattern_cont.vectorize_next(i))
+   {
+      if (n_max_cont.isNA(i) || omit_empty_cont.isNA(i)) {
+         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));
+         continue;
+      }
+
+      int  n_max_cur        = n_max_cont.get(i);
+      int  omit_empty_cur   = omit_empty_cont.get(i);
+
+      STRI__CONTINUE_ON_EMPTY_OR_NA_STR_PATTERN(str_cont, pattern_cont,
+         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));,
+         SET_VECTOR_ELT(ret, i, stri__vector_empty_strings((omit_empty_cur || n_max_cur == 0)?0:1));)
+
+      UStringSearch *matcher = pattern_cont.getMatcher(i, str_cont.get(i));
+      usearch_reset(matcher);
+
+
+      if (n_max_cur < 0)
+         n_max_cur = INT_MAX;
+      else if (n_max_cur == 0) {
+         SET_VECTOR_ELT(ret, i, Rf_allocVector(STRSXP, 0));
+         continue;
+      }
+
+      R_len_t k;
+      deque< pair<R_len_t, R_len_t> > fields; // byte based-indices
+      fields.push_back(pair<R_len_t, R_len_t>(0,0));
+      UErrorCode status = U_ZERO_ERROR;
+
+      for (k=1; k < n_max_cur && USEARCH_DONE != usearch_next(matcher, &status) && !U_FAILURE(status); ) {
+         R_len_t s1 = (R_len_t)usearch_getMatchedStart(matcher);
+         R_len_t s2 = (R_len_t)usearch_getMatchedLength(matcher) + s1;
+
+         if (omit_empty_cur && fields.back().first == s1)
+            fields.back().first = s2; // don't start new field
+         else {
+            fields.back().second = s1;
+            fields.push_back(pair<R_len_t, R_len_t>(s2, s2)); // start new field here
+            ++k; // another field
+         }
+      }
+      if (U_FAILURE(status)) throw StriException(status);
+      fields.back().second = str_cont.get(i).length();
+      if (omit_empty_cur && fields.back().first == fields.back().second)
+         fields.pop_back();
+
+      R_len_t noccurences = (R_len_t)fields.size();
+      StriContainerUTF16 out_cont(noccurences);
+      deque< pair<R_len_t, R_len_t> >::iterator iter = fields.begin();
+      for (k = 0; iter != fields.end(); ++iter, ++k) {
+         pair<R_len_t, R_len_t> curoccur = *iter;
+         out_cont.getWritable(k).setTo(str_cont.get(i), curoccur.first, curoccur.second-curoccur.first);
+      }
+      SET_VECTOR_ELT(ret, i, out_cont.toR());
+   }
+
+   if (collator) { ucol_close(collator); collator=NULL; }
+   STRI__UNPROTECT_ALL
+   return ret;
+   STRI__ERROR_HANDLER_END(
+      if (collator) ucol_close(collator);
+   )
+}

@@ -31,7 +31,8 @@
 
 
 #include "stri_stringi.h"
-
+#include "stri_container_utf8.h"
+#include "stri_container_charclass.h"
 
 
 /**
@@ -41,23 +42,36 @@
  * @param pattern character vector
  * @return logical vector
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski, 2013-06-02) Use StrContainerUTF8 and CharClass classes
- * @version 0.3 (Marek Gagolewski, 2013-06-15) Use StrContainerCharClass
- * @version 0.4 (Marek Gagolewski, 2013-06-16) make StriException-friendly
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-02)
+ *          Use StrContainerUTF8 and CharClass classes
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-15)
+ *          Use StrContainerCharClass
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-16)
+ *          make StriException-friendly
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-03)
+ *          detects invalid UTF-8 byte stream
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-05)
+ *          StriContainerCharClass now relies on UnicodeSet
  */
 SEXP stri_detect_charclass(SEXP str, SEXP pattern)
 {
    str = stri_prepare_arg_string(str, "str");
    pattern = stri_prepare_arg_string(pattern, "pattern");
-   R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
+   R_len_t vectorize_length =
+      stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
 
    STRI__ERROR_HANDLER_BEGIN
    StriContainerUTF8 str_cont(str, vectorize_length);
    StriContainerCharClass pattern_cont(pattern, vectorize_length);
 
    SEXP ret;
-   PROTECT(ret = Rf_allocVector(LGLSXP, vectorize_length));
+   STRI__PROTECT(ret = Rf_allocVector(LGLSXP, vectorize_length));
    int* ret_tab = LOGICAL(ret);
 
    for (R_len_t i = pattern_cont.vectorize_init();
@@ -69,23 +83,24 @@ SEXP stri_detect_charclass(SEXP str, SEXP pattern)
          continue;
       }
 
-      CharClass pattern_cur = pattern_cont.get(i);
+      const UnicodeSet* pattern_cur = &pattern_cont.get(i);
       R_len_t     str_cur_n = str_cont.get(i).length();
       const char* str_cur_s = str_cont.get(i).c_str();
-      ret_tab[i] = FALSE;
-      R_len_t j;
-      UChar32 chr;
 
-      for (j=0; j<str_cur_n; ) {
+      UChar32 chr = 0;
+      ret_tab[i] = FALSE;
+      for (R_len_t j=0; j<str_cur_n; ) {
          U8_NEXT(str_cur_s, j, str_cur_n, chr);
-         if (pattern_cur.test(chr)) {
+         if (chr < 0) // invalid utf-8 sequence
+            throw StriException(MSG__INVALID_UTF8);
+         if (pattern_cur->contains(chr)) {
             ret_tab[i] = TRUE;
             break;
          }
       }
    }
 
-   UNPROTECT(1);
+   STRI__UNPROTECT_ALL
    return ret;
    STRI__ERROR_HANDLER_END(;/* nothing special to be done on error */)
 }

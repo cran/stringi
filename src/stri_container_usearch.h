@@ -33,11 +33,19 @@
 #ifndef __stri_container_usearch_h
 #define __stri_container_usearch_h
 
+#include "stri_container_utf16.h"
+#include <unicode/coll.h>
+#include <unicode/ucol.h>
+#include <unicode/stsearch.h>
 
 
 /**
- * A class to handle UStringSearch patterns
- * @version 0.1 (Marek Gagolewski, 2013-06-23)
+ * A class to handle UStringSearch searches
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-23)
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-18)
+ *          BUGFIX: memleaks on StriException
  */
 class StriContainerUStringSearch : public StriContainerUTF16 {
 

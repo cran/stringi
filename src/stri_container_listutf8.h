@@ -33,13 +33,14 @@
 #ifndef __stri_container_listutf8_h
 #define __stri_container_listutf8_h
 
-
-
+#include "stri_container_utf8.h"
 
 
 /**
- * A class to handle conversion between R lists of character vectors and lists of UTF-8 string vectors
- * @version 0.1 (Marek Gagolewski, 2013-06-16)
+ * A class to handle conversion between R lists of character
+ * vectors and lists of UTF-8 string vectors
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-16)
  */
 class StriContainerListUTF8 : public StriContainerBase {
 

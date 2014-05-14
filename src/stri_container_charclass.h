@@ -33,19 +33,25 @@
 #ifndef __stri_container_charclass_h
 #define __stri_container_charclass_h
 
-
-
+#include "stri_container_base.h"
+#include "stri_container_utf8.h"
+#include <unicode/uniset.h>
 
 
 /**
- * A wrapper-class for R logical vectors
- * @version 0.1 (Marek Gagolewski, 2013-06-15)
+ * A container handling charclass searches
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-15)
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-04-05)
+ *          Use StriContainerUTF8 to convert pattern strings in a constructor;
+ *          Use UnicodeSet instead of stringi::CharClass
  */
 class StriContainerCharClass : public StriContainerBase {
 
    private:
 
-      CharClass* data;
+      UnicodeSet* data; // array
 
    public:
 
@@ -56,17 +62,32 @@ class StriContainerCharClass : public StriContainerBase {
 
       StriContainerCharClass(SEXP rvec, R_len_t _nrecycle)
       {
-         this->data = NULL;
 #ifndef NDEBUG
          if (!isString(rvec))
-            throw StriException("DEBUG: !isString in StriContainerCharClass");
+            throw StriException("DEBUG: !isString in StriContainerCharClass::StriContainerCharClass(SEXP rvec)");
 #endif
-         R_len_t ndata = LENGTH(rvec);
-         this->init_Base(ndata, _nrecycle, true);
-         if (ndata > 0) {
-            this->data = new CharClass[ndata];
-            for (int i=0; i<ndata; ++i)
-               this->data[i] = CharClass(STRING_ELT(rvec, i));
+         int _n = LENGTH(rvec);
+         this->init_Base(_n, _nrecycle, true);
+
+         this->data = NULL;
+         if (_n > 0) {
+            StriContainerUTF8 rvec_cont(rvec, _n, true);
+            this->data = new UnicodeSet[_n];
+            for (int i=0; i<_n; ++i) {
+               if (rvec_cont.isNA(i))
+                  this->data[i].setToBogus();
+               else {
+                  UErrorCode status = U_ZERO_ERROR;
+                  this->data[i].applyPattern(
+                     UnicodeString::fromUTF8(rvec_cont.get(i).c_str()), status);
+                  if (U_FAILURE(status)) {
+                     delete [] data;
+                     data = NULL;
+                     throw StriException(status);
+                  }
+                  this->data[i].freeze();
+               }
+            }
          }
       }
 
@@ -74,7 +95,7 @@ class StriContainerCharClass : public StriContainerBase {
          :StriContainerBase((StriContainerBase&)container)
       {
          if (container.data) {
-            this->data = new CharClass[container.n];
+            this->data = new UnicodeSet[container.n];
             for (int i=0; i<container.n; ++i)
                this->data[i] = container.data[i];
          }
@@ -91,7 +112,7 @@ class StriContainerCharClass : public StriContainerBase {
          this->~StriContainerCharClass();
          (StriContainerBase&) (*this) = (StriContainerBase&)container;
          if (container.data) {
-            this->data = new CharClass[container.n];
+            this->data = new UnicodeSet[container.n];
             for (int i=0; i<container.n; ++i)
                this->data[i] = container.data[i];
          }
@@ -110,7 +131,7 @@ class StriContainerCharClass : public StriContainerBase {
          if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerCharClass::isNA(): INDEX OUT OF BOUNDS");
 #endif
-         return data[i%n].isNA();
+         return data[i%n].isBogus();
       }
 
 
@@ -118,11 +139,11 @@ class StriContainerCharClass : public StriContainerBase {
        * @param i index
        * @return integer
        */
-      inline const CharClass& get(R_len_t i) const {
+      inline const UnicodeSet& get(R_len_t i) const {
 #ifndef NDEBUG
          if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerCharClass::get(): INDEX OUT OF BOUNDS");
-         if (data[i%n].isNA())
+         if (data[i%n].isBogus())
             throw StriException("StriContainerCharClass::get(): isNA");
 #endif
          return (data[i%n]);

@@ -33,13 +33,13 @@
 #ifndef __stri_container_integer_h
 #define __stri_container_integer_h
 
-
-
+#include "stri_container_base.h"
 
 
 /**
  * A wrapper-class for R integer vectors
- * @version 0.1 (Marek Gagolewski, 2013-06-15)
+ *
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-15)
  */
 class StriContainerInteger : public StriContainerBase {
 

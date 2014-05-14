@@ -31,8 +31,7 @@
 
 
 #include "stri_stringi.h"
-
-
+#include <unicode/uloc.h>
 
 
 /**
@@ -40,19 +39,19 @@
  * or character vector argument
  *
  * Useful when dealing with raw data, like in string encoding
- * conversion or detection.
+ * conversion or detection. For use e.g. with StriContainerListRaw.
  *
  * If the object cannot be coerced, then an error will be generated
  *
  * WARNING: this fuction is allowed to call the error() function.
  * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
  *
- * @param x a list
+ * @param x a list /  raw vector / character vector
  * @param argname argument name (message formatting)
  * @return coercion is only done on character vector input. otherwise
  * check only is performed
  *
- * @version 0.1 (Marek Gagolewski, 2013-08-08)
+ * @version 0.1-?? (Marek Gagolewski, 2013-08-08)
  */
 SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
 {
@@ -68,13 +67,67 @@ SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
          SEXP cur = VECTOR_ELT(x, i);
          if (isNull(cur))
             continue; // NA
-         if (!isRaw(cur))  // this cannot be treated with stri_prepare_arg*, as str may be a mem-shared object
-            Rf_error(MSG__ARG_EXPECTED_RAW_NO_COERCION, argname);  // error() allowed here
+         if (!isRaw(cur))
+            Rf_error(MSG__ARG_EXPECTED_RAW_IN_LIST_NO_COERCION, argname);  // error() allowed here
       }
       return x;
    }
    else
       return stri_prepare_arg_string(x, argname);
+}
+
+
+/**
+ * Prepare list of integer vectors or an integer vector argument
+ *
+ *  For use e.g. with StriContainerListInt.
+ *
+ * If the object cannot be coerced, then an error will be generated
+ *
+ * WARNING: this fuction is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ * @param x a list of integer vectors / integer vector
+ * @param argname argument name (message formatting)
+ * @return a list vector
+ *
+ * @version 0.2-1 (Marek Gagolewski, 2014-03-25)
+ */
+SEXP stri_prepare_arg_list_integer(SEXP x, const char* argname)
+{
+   if ((SEXP*)argname == (SEXP*)R_NilValue)
+      argname = "<noname>";
+
+   if (isNull(x)) {
+       return x;
+   }
+   else if (Rf_isVectorList(x)) {
+      R_len_t narg = LENGTH(x);
+      if (narg <= 0) return x;
+
+      if (NAMED(x) > 0) {
+         // the object should be copied
+         SEXP xold = x;
+         PROTECT(x = Rf_allocVector(VECSXP, narg));
+         for (R_len_t i=0; i<narg; ++i) {
+            if (isNull(VECTOR_ELT(xold, i)))
+               SET_VECTOR_ELT(x, i, R_NilValue);
+            // @TODO: stri_prepare_arg_integer may call Rf_error, no UNPROTECT
+            else
+               SET_VECTOR_ELT(x, i, stri_prepare_arg_integer(VECTOR_ELT(xold, i), argname));
+         }
+         UNPROTECT(1);
+      }
+      else {
+         // the object may be modified in place
+         for (R_len_t i=0; i<narg; ++i)
+            if (!isNull(VECTOR_ELT(x, i)))
+               SET_VECTOR_ELT(x, i, stri_prepare_arg_integer(VECTOR_ELT(x, i), argname));
+      }
+      return x;
+   }
+   else
+      return stri_prepare_arg_integer(x, argname);
 }
 
 
@@ -89,11 +142,11 @@ SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
  * WARNING: this fuction is allowed to call the error() function.
  * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
  *
- * @param x a list
+ * @param x a list of strings
  * @param argname argument name (message formatting)
  * @return a list vector
  *
- * @version 0.1 (Marek Gagolewski, 2013-06-16)
+ * @version 0.1-?? (Marek Gagolewski, 2013-06-16)
  */
 SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
 {
@@ -110,8 +163,10 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
       // the object should be copied
       SEXP xold = x;
       PROTECT(x = Rf_allocVector(VECSXP, narg));
-      for (R_len_t i=0; i<narg; ++i)
+      for (R_len_t i=0; i<narg; ++i) {
+         // @TODO: stri_prepare_arg_string may call Rf_error, no UNPROTECT
          SET_VECTOR_ELT(x, i, stri_prepare_arg_string(VECTOR_ELT(xold, i), argname));
+      }
       UNPROTECT(1);
    }
    else {
@@ -136,8 +191,10 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return character vector
  *
- * @version 0.1 (Marek Gagolewski)
- * @version 0.2 (Marek Gagolewski) - argname added
+ * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *          argname added
  */
 SEXP stri_prepare_arg_string(SEXP x, const char* argname)
 {
@@ -150,8 +207,8 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-   	x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-   	UNPROTECT(1);
+      x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
+      UNPROTECT(1);
       return x;
    }
    else if (Rf_isVectorAtomic(x))
@@ -162,7 +219,6 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
    Rf_error(MSG__ARG_EXPECTED_STRING, argname); // allowed here
    return x; // avoid compiler warning
 }
-
 
 
 /**
@@ -178,8 +234,10 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return numeric vector
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski) - argname added
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *          argname added
  */
 SEXP stri_prepare_arg_double(SEXP x, const char* argname)
 {
@@ -191,7 +249,7 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
       x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-   	UNPROTECT(1);
+      UNPROTECT(1);
       return Rf_coerceVector(x, REALSXP);
    }
    else if(isReal(x))
@@ -217,8 +275,10 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return integer vector
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski) - argname added
+ * @version 0.1?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *          argname added
  */
 SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
 {
@@ -229,8 +289,8 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-   	x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-   	UNPROTECT(1);
+      x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
+      UNPROTECT(1);
       return Rf_coerceVector(x, INTSXP);
    }
    else if (Rf_isInteger(x))
@@ -256,8 +316,10 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return logical vector
  *
- * @version 0.1 (Bartek Tartanus)
- * @version 0.2 (Marek Gagolewski) - argname added
+ * @version 0.1-?? (Bartek Tartanus)
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *          argname added
  */
 SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
 {
@@ -269,7 +331,7 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
       x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-   	UNPROTECT(1);
+      UNPROTECT(1);
       return Rf_coerceVector(x, LGLSXP);
    }
    else if (isLogical(x))
@@ -280,8 +342,6 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
    Rf_error(MSG__ARG_EXPECTED_LOGICAL, argname); // allowed here
    return x; // avoid compiler warning
 }
-
-
 
 
 /**
@@ -297,7 +357,7 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return raw vector
  *
- * @version 0.1 (Marek Gagolewski)
+ * @version 0.1-?? (Marek Gagolewski)
  */
 SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
 {
@@ -309,7 +369,7 @@ SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
       x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-   	UNPROTECT(1);
+      UNPROTECT(1);
       return Rf_coerceVector(x, RAWSXP);
    }
    else if (TYPEOF(x) == RAWSXP)
@@ -320,9 +380,6 @@ SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
    Rf_error(MSG__ARG_EXPECTED_RAW, argname); // allowed here
    return x; // avoid compiler warning
 }
-
-
-
 
 
 /** Prepare string argument - one string
@@ -338,7 +395,7 @@ SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return always an R character vector with >=1 element
  *
- * @version 0.1 (Marek Gagolewski)
+ * @version 0.1-?? (Marek Gagolewski)
  */
 SEXP stri_prepare_arg_string_1(SEXP x, const char* argname)
 {
@@ -376,7 +433,7 @@ SEXP stri_prepare_arg_string_1(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return always an R double vector with >=1 element
  *
- * @version 0.1 (Marek Gagolewski)
+ * @version 0.1-?? (Marek Gagolewski)
  */
 SEXP stri_prepare_arg_double_1(SEXP x, const char* argname)
 {
@@ -414,7 +471,7 @@ SEXP stri_prepare_arg_double_1(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return always an R integer vector with >=1 element
  *
- * @version 0.1 (Marek Gagolewski)
+ * @version 0.1-?? (Marek Gagolewski)
  */
 SEXP stri_prepare_arg_integer_1(SEXP x, const char* argname)
 {
@@ -452,7 +509,7 @@ SEXP stri_prepare_arg_integer_1(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return always an R logical vector with >=1 element
  *
- * @version 0.1 (Marek Gagolewski)
+ * @version 0.1-?? (Marek Gagolewski)
  */
 SEXP stri_prepare_arg_logical_1(SEXP x, const char* argname)
 {
@@ -477,7 +534,6 @@ SEXP stri_prepare_arg_logical_1(SEXP x, const char* argname)
 }
 
 
-
 /** Prepare logical argument - one value, not NA
  *
  * If there are 0 elements -> error
@@ -491,7 +547,7 @@ SEXP stri_prepare_arg_logical_1(SEXP x, const char* argname)
  * @param argname argument name (message formatting)
  * @return a boolean value
  *
- * @version 0.1 (Marek Gagolewski)
+ * @version 0.1-?? (Marek Gagolewski)
  */
 bool stri__prepare_arg_logical_1_notNA(SEXP x, const char* argname)
 {
@@ -500,6 +556,56 @@ bool stri__prepare_arg_logical_1_notNA(SEXP x, const char* argname)
    if (xval == NA_LOGICAL)
       Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // allowed here
    return (bool)xval;
+}
+
+
+/** Prepare integer argument - one value, not NA
+ *
+ * If there are 0 elements -> error
+ * If there are >1 elements -> warning
+ *
+ * WARNING: this fuction is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ *
+ * @param x R object to be checked/coerced
+ * @param argname argument name (message formatting)
+ * @return an integer value
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ */
+int stri__prepare_arg_integer_1_notNA(SEXP x, const char* argname)
+{
+   x = stri_prepare_arg_integer_1(x, argname);
+   int xval = INTEGER(x)[0];
+   if (xval == NA_INTEGER)
+      Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // allowed here
+   return (int)xval;
+}
+
+
+/** Prepare double argument - one value, not NA
+ *
+ * If there are 0 elements -> error
+ * If there are >1 elements -> warning
+ *
+ * WARNING: this fuction is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ *
+ * @param x R object to be checked/coerced
+ * @param argname argument name (message formatting)
+ * @return a double value
+ *
+ * @version 0.2-2 (Marek Gagolewski, 2014-04-26)
+ */
+double stri__prepare_arg_double_1_notNA(SEXP x, const char* argname)
+{
+   x = stri_prepare_arg_double_1(x, argname);
+   double xval = REAL(x)[0];
+   if (ISNA(xval))
+      Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // allowed here
+   return (double)xval;
 }
 
 
@@ -522,8 +628,10 @@ bool stri__prepare_arg_logical_1_notNA(SEXP x, const char* argname)
  * @return string a \code{C} string with extracted locale name
  *
  *
- * @version 0.1 (Marek Gagolewski)
- * @version 0.2 (Marek Gagolewski) - argname added
+ * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *          argname added
  */
 const char* stri__prepare_arg_locale(SEXP loc, const char* argname, bool allowdefault, bool allowna)
 {
@@ -571,8 +679,10 @@ const char* stri__prepare_arg_locale(SEXP loc, const char* argname, bool allowde
  * (NULL for default charset so that it can be passed to ICU's \code{ucnv_open()})
  * Do not delete.
  *
- * @version 0.1 (Marek Gagolewski)
- * @version 0.2 (Marek Gagolewski) - argname added
+ * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.1-?? (Marek Gagolewski)
+ *          argname added
  *
  */
 const char* stri__prepare_arg_enc(SEXP enc, const char* argname, bool allowdefault)

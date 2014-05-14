@@ -34,7 +34,6 @@
 #define __stri_macros_h
 
 
-
 // undef R's length macro (conflicts with std::string.length())
 // use LENGTH instead
 #undef length
@@ -111,32 +110,6 @@
 
 #define isRaw(x) (TYPEOF(x) == RAWSXP)
 
-/**
- * ...
- */
-enum StriEnc {
-   STRI_ENC_UNDEFINED=0,
-   STRI_ENC_ASCII,
-   STRI_ENC_LATIN1,
-   STRI_ENC_UTF8,
-   STRI_ENC_NATIVE,
-   STRI_ENC_BYTES,
-   STRI_NA
-};
-
-
-/**
- * ...
- */
-enum StriNormalizationForm {
-   STRI_NFC = 10,
-   STRI_NFD = 20,
-   STRI_NFKC = 11,
-   STRI_NFKD = 21,
-   STRI_NFKC_CASEFOLD = 12
-};
-
-
 
 /// Unicode replacement character
 #define UCHAR_REPLACEMENT 0xFFFD
@@ -145,6 +118,9 @@ enum StriNormalizationForm {
 #define UCHAR_REPLACEMENT_UTF8_BYTE1 0xef
 #define UCHAR_REPLACEMENT_UTF8_BYTE2 0xbf
 #define UCHAR_REPLACEMENT_UTF8_BYTE3 0xbd
+#define UTF8_BOM_BYTE1 ((uint8_t)0xef)
+#define UTF8_BOM_BYTE2 ((uint8_t)0xbb)
+#define UTF8_BOM_BYTE3 ((uint8_t)0xbf)
 #define ASCII_CR 0x0D
 #define ASCII_LF 0x0A
 #define ASCII_FF 0x0C

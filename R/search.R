@@ -36,18 +36,21 @@
 #' operations in \pkg{stringi}.
 #'
 #' @details
-#' There are three independent string searching ``engines'' in \pkg{stringi}.
+#' There are four independent string searching ``engines'' in \pkg{stringi}.
 #' \itemize{
 #'    \item \code{stri_*_regex} -- \pkg{ICU}'s regular expressions,
 #'         see \link{stringi-search-regex},
-#'    \item \code{stri_*_fixed} -- \pkg{ICU}'s \code{StringSearch},
-#'        locale-sensitive ``fixed'' patterns search , see \link{stringi-search-fixed},
-#'    \item \code{stri_*_charclass} -- character classes search:
-#'    more exactly, location of either Unicode General Categories or Binary Properties,
+#'    \item \code{stri_*_fixed} -- locale-independent bytewise pattern matching,
+#'    \item \code{stri_*_coll} -- \pkg{ICU}'s \code{StringSearch},
+#'        locale-sensitive, Collator-based ``fixed'' patterns search,
+#'        useful for natural language processing tasks,
+#'        see \link{stringi-search-fixed},
+#'    \item \code{stri_*_charclass} -- character classes search,
+#'       e.g. Unicode General Categories or Binary Properties,
 #'        see \link{stringi-search-charclass},
 #' }
 #'
-#' Each ``engine'' is able to perform many search-based operations:
+#' Each ``engine'' is able to perform many search-based operations, including:
 #' \itemize{
 #'    \item \code{stri_detect_*} - detects if a pattern occurs in a string,
 #'    see e.g. \code{\link{stri_detect}},
@@ -69,6 +72,7 @@
 #' @rdname stringi-search
 #' @family search_regex
 #' @family search_fixed
+#' @family search_coll
 #' @family search_charclass
 #' @family search_detect
 #' @family search_count
@@ -79,7 +83,6 @@
 #' @family search_extract
 #' @family stringi_general_topics
 invisible(NULL)
-
 
 
 #' @title
@@ -102,8 +105,8 @@ invisible(NULL)
 #'
 #'
 #' Regular expression patterns in \pkg{ICU} are quite similar in form and behavior
-#' to Perl's regexes.  Their implementation loosely bases
-#' on JDK 1.4 package \code{java.util.regex}.
+#' to Perl's regexes.  Their implementation is loosely inspired
+#' by JDK 1.4 \code{java.util.regex}.
 #' \pkg{ICU} Regular Expressions conform to the Unicode Technical Standard #18
 #' (see References section) and its features are summarized in
 #' the ICU User Guide (see below). A good general introduction
@@ -139,73 +142,73 @@ invisible(NULL)
 invisible(NULL)
 
 
+#' @title
+#' Locale-Insensitive Fixed Pattern Matching in \pkg{stringi}
+#'
+#' @description
+#' String searching facilities described in this very man page
+#' provide a way to locate a specific piece of
+#' text. Note that locale-sensitive searching, especially
+#' on a non-English language text, is a much more complex process
+#' than it seems at the first glance.
+#'
+#'
+#' @section Byte Compare:
+#'
+#' The Knuth-Morris-Pratt search algorithm, with worst time complexity of
+#' O(n+p) (\code{n == length(str)}, \code{p == length(pattern)})
+#' is utilized (with some tweaks for very short search patterns).
+#' For natural language processing, however, this is not what
+#' you probably want. It is because a bitwise match will
+#' not give correct results in cases of:
+#' \enumerate{
+#' \item accented letters;
+#' \item conjoined letters;
+#' \item ignorable punctuation;
+#' \item ignorable case,
+#' }
+#' see also \link{stringi-search-coll}.
+#'
+#' Note that, the conversion of input data
+#' to Unicode is done as usual.
+#'
+#' @name stringi-search-fixed
+#' @rdname stringi-search-fixed
+#' @family search_fixed
+#' @family stringi_general_topics
+invisible(NULL)
+
 
 #' @title
 #' Locale-Sensitive Text Searching in \pkg{stringi}
 #'
 #' @description
 #' String searching facilities described in this very man page
-#' provide a way to detect and extract a specific piece of
-#' text. Note that locale-sensitive searching , especially on a non-English language
-#' text, is a much more complex process than one may think at the first glance.
+#' provide a way to locate a specific piece of
+#' text. Note that locale-sensitive searching, especially
+#' on a non-English text, is a much more complex process
+#' than it seems at the first glance.
 #'
 #'
 #'
 #' @section Locale-Aware String Search Engine:
 #'
-#' By default, all \code{stri_*_fixed} functions in \pkg{stringi} utilize
+#' All \code{stri_*_coll} functions in \pkg{stringi} utilize
 #' \pkg{ICU}'s \code{StringSearch} engine --
-#' which is a language-aware string search algorithm.
-#' Note that a bitwise match will not give correct results in cases of:
-#' \enumerate{
-#' \item accented letters;
-#' \item conjoined letters;
-#' \item ignorable punctuation;
-#' \item ignorable case.
-#' }
-#' The matches are defined using the notion of ``canonical equivalence''
+#' which implements a locale-sensitive string search algorithm.
+#' The matches are defined by using the notion of ``canonical equivalence''
 #' between strings.
-#'
-#' This string search engines uses a modified version of the Boyer-Moore
-#' algorithm (cf. Werner, 1999),
-#' with time complexity of
-#' O(n+p) (\code{n == length(str)}, \code{p == length(pattern)}).
-#' According to the ICU User Guide,
-#' the Boyer-Moore searching algorithm is based on automata
-#' or combinatorial properties of strings and pre-processes
-#' the pattern and known to be much faster than the linear search when
-#' search pattern length is longer.
-#' The Boyer-Moore search is faster than the linear search when
-#' the pattern text is longer than 3 or 4 characters.
 #'
 #' Tuning the Collator's parameters allows you to perform correct matching
 #' that properly takes into account accented letters, conjoined letters,
-#' and ignorable punctuation and letter case.
+#' ignorable punctuation and letter case.
 #'
-#' For more information on \pkg{ICU}'s Collator and SearchEngine
+#' For more information on \pkg{ICU}'s Collator and the search engine
 #' and how to tune it up
 #' in \pkg{stringi}, refer to \code{\link{stri_opts_collator}}.
 #'
-#'
-#'
-#' @section Byte Compare:
-#'
-#' If \code{opts_collator} is \code{NA}, then a very fast (for small p)
-#' bitwise (locale independent) search is performed, with time complexity of
-#' O(n*p) (\code{n == length(str)}, \code{p == length(pattern)})
-#' [Naive implementation
-#' - to be upgraded in some future version of \pkg{stringi}].
-#' For a natural language, non-English text this is, however, not what
-#' you probably want.
-#'
-#' You should note that, however, the conversion of input data
-#' to Unicode is done as usual.
-#'
-#' @section General Notes:
-#'
-#' In all the functions, if a given fixed search \code{pattern}
-#' is empty, then the result is \code{NA}
-#' and a warning is generated.
+#' Please note that \pkg{ICU}'s \code{StringSearch}-based functions
+#' often exhibit poor performance.
 #'
 #'
 #' @references
@@ -215,13 +218,12 @@ invisible(NULL)
 #' L. Werner, \emph{Efficient Text Searching in Java}, 1999,
 #' \url{http://icu-project.org/docs/papers/efficient_text_searching_in_java.html}
 #'
-#' @name stringi-search-fixed
-#' @rdname stringi-search-fixed
-#' @family search_fixed
+#' @name stringi-search-coll
+#' @rdname stringi-search-coll
+#' @family search_coll
 #' @family locale_sensitive
 #' @family stringi_general_topics
 invisible(NULL)
-
 
 
 #' @title Character Classes in \pkg{stringi}
@@ -229,27 +231,87 @@ invisible(NULL)
 #' @description
 #' In this man page we describe how character classes are
 #' declared in the \pkg{stringi} package
-#' so that you may search for their occurrences in your search activities.
+#' so that you may e.g. find their occurrences in your search activities
+#' or generate random codepoints with \code{\link{stri_rand_strings}}.
 #'
 #'
 #' @details
 #' All \code{stri_*_charclass} functions in \pkg{stringi} perform
-#' a single character (i.e. Unicode codepoint) search-based operations.
+#' a single character (Unicode codepoint) search-based operations.
+#' Since stringi_0.2-1 you may obtain
+#' roughly the same results using \link{stringi-search-regex}.
+#' However, these very functions aim to be quite faster.
+#'
+#' Character classes are defined using \pkg{ICU}'s \code{UnicodeSet}
+#' patterns. Below we briefly summarize their syntax.
+#' For more details refer to the bibliographic References below.
 #'
 #'
-#' There are two separate ways to specify character classes in \pkg{stringi}:
+#' @section \code{UnicodeSet} patterns:
+#'
+#' A \code{UnicodeSet} represents a subset of Unicode code points
+#' (recall that \pkg{stringi} converts strings in your native encoding
+#' to Unicode automatically). Legal code points are U+0000 to U+10FFFF,
+#' inclusive.
+#'
+#' Patterns either consist of series of characters either bounded by square brackets
+#' (such patterns follow a syntax similar to that employed
+#' by version 8 regular expression character classes)
+#' or of Perl-like Unicode property set specifiers.
+#'
+#' \code{[]} denotes an empty set, \code{[a]} --
+#' a set consisting of character ``a'',
+#' \code{[\\u0105]} -- a set with character U+0105,
+#' and \code{[abc]} -- a set with ``a'', ``b'', and ``c''.
+#'
+#' \code{[a-z]} denotes a set consisting of characters
+#' ``a'' through ``z'' inclusively, in Unicode code point order.
+#'
+#' Some set-theoretic operations are available.
+#' \code{^} denotes the complement, e.g. \code{[^a-z]} contains
+#' all characters but ``a'' through ``z''.
+#' On the other hand, \code{[[pat1][pat2]]},
+#' \code{[[pat1]\&[pat2]]}, and \code{[[pat1]-[pat2]]}
+#' denote union, intersection, and asymmetric diference of sets
+#' specified by \code{pat1} and \code{pat2}, respectively.
+#'
+#' Note that all white spaces are ignored unless they are quoted or backslashed
+#' (white spaces can be freely used for clarity, as \code{[a c d-f m]}
+#' means the same as \code{[acd-fm]}).
+#' \pkg{stringi} does not allow for including so-called multicharacter strings
+#' (see \code{UnicodeSet} API documentation).
+#' Also, empty string patterns are disallowed.
+#'
+#' Any character may be preceded by
+#' a backslash in order to remove any special meaning.
+#'
+#' A malformed pattern always results in an error.
+#'
+#'
+#' @section Unicode properties:
+#'
+#' Unicode property sets are specified with a POSIX-like syntax,
+#' e.g. \code{[:Letter:]}, or with a (extended) Perl-style syntax,
+#' e.g. \code{\\p{L}}.
+#' The complements of the above sets are
+#' \code{[:^Letter:]} and \code{\\P{L}}, respectively.
+#'
+#' The properties' names are normalized before matching
+#' (for example, the match is case-insensitive).
+#' Moreover, many names have short aliases.
+#'
+#' Among predefined Unicode properties we find e.g.
 #' \itemize{
-#' \item by claiming a Unicode General Category, e.g. \code{Lu} for uppercase letters
-#' (a 1-2 letter identifier, the same may be used in regexes by specifying
-#' e.g. \code{p{Lu}})
-#' \item by requesting a Unicode Binary Property, e.g. \code{WHITE_SPACE}
+#' \item Unicode General Categories, e.g. \code{Lu} for uppercase letters,
+#' \item Unicode Binary Properties, e.g. \code{WHITE_SPACE},
 #' }
-#' Both of them provide access to the \pkg{ICU}'s Unicode Character Database
-#' and are described in detail in the sections below.
+#' and many more (including Unicode scripts).
 #'
-#' Additionally, each class identifier may be preceded with '^',
-#' which is a way to request for a complement of a given character class,
-#' i.e. it is used to match characters not in a class.
+#' Each property provides access to the large and comprehensive
+#' Unicode Character Database.
+#' Generally, the list of properties available in \pkg{ICU}
+#' is not perfectly documented. Please refer to the References section
+#' for some links.
 #'
 #' Please note that some classes may seem to overlap.
 #' However, e.g. General Category \code{Z} (some space) and Binary Property
@@ -260,7 +322,7 @@ invisible(NULL)
 #'
 #' The Unicode General Category property of a code point provides the most
 #' general classification of that code point.
-#' Each code point falls into one and only on Category.
+#' Each code point falls into one and only one Category.
 #'
 #' \itemize{
 #' \item \code{Cc} -- a C0 or C1 control code;
@@ -303,18 +365,14 @@ invisible(NULL)
 #' \item \code{Z}  -- the union of Zs, Zl, Zp.
 #' }
 #'
-#'
-#'
 #' @section Unicode Binary Properties:
 #'
-#' Binary properties identifiers are matched case-insensitively,
-#' and are slightly normalized.
 #' Each character may follow many Binary Properties at a time.
 #'
 #' Here is the complete list of supported Binary Properties:
 #' \itemize{
 #' \item \code{ALPHABETIC}      -- alphabetic character;
-#' \item \code{ASCII_HEX_DIGIT} -- a character matching the \code{[0-9A-Fa-f]} regex;
+#' \item \code{ASCII_HEX_DIGIT} -- a character matching the \code{[0-9A-Fa-f]} charclass;
 #' \item \code{BIDI_CONTROL}    -- a format control which have specific functions
 #'                              in the Bidi (bidirectional text) Algorithm;
 #' \item \code{BIDI_MIRRORED}   -- a character that may change display in right-to-left text;
@@ -330,10 +388,6 @@ invisible(NULL)
 #' \item \code{EXTENDER}        -- a character that extends the value
 #'                              or shape of a preceding alphabetic character,
 #'                              e.g. a length and iteration mark.
-#' \item \code{FULL_COMPOSITION_EXCLUSION} ;
-#' \item \code{GRAPHEME_BASE}  ;
-#' \item \code{GRAPHEME_EXTEND}  ;
-#' \item \code{GRAPHEME_LINK}  ;
 #' \item \code{HEX_DIGIT}       -- a character commonly
 #'                             used for hexadecimal numbers,
 #'                             cf. also \code{ASCII_HEX_DIGIT};
@@ -345,34 +399,17 @@ invisible(NULL)
 #'                  \code{Lu}+\code{Ll}+\code{Lt}+\code{Lm}+\code{Lo}+\code{Nl};
 #' \item \code{IDEOGRAPHIC} -- a CJKV (Chinese-Japanese-Korean-Vietnamese)
 #' ideograph;
-#' \item \code{IDS_BINARY_OPERATOR} ;
-#' \item \code{IDS_TRINARY_OPERATOR} ;
-#' \item \code{JOIN_CONTROL} ;
-#' \item \code{LOGICAL_ORDER_EXCEPTION} ;
 #' \item \code{LOWERCASE} ;
 #' \item \code{MATH} ;
 #' \item \code{NONCHARACTER_CODE_POINT} ;
 #' \item \code{QUOTATION_MARK} ;
-#' \item \code{RADICAL} ;
 #' \item \code{SOFT_DOTTED} -- a character with a ``soft dot'', like i or j,
 #' such that an accent placed on this character causes the dot to disappear;
 #' \item \code{TERMINAL_PUNCTUATION} -- a punctuation character that generally
 #' marks the end of textual units;
-#' \item \code{UNIFIED_IDEOGRAPH} ;
 #' \item \code{UPPERCASE} ;
 #' \item \code{WHITE_SPACE} -- a space character or TAB or CR or LF or ZWSP or ZWNBSP;
-#' \item \code{XID_CONTINUE} ;
-#' \item \code{XID_START} ;
 #' \item \code{CASE_SENSITIVE} ;
-#' \item \code{S_TERM} ;
-#' \item \code{VARIATION_SELECTOR} ;
-#' \item \code{NFD_INERT} ;
-#' \item \code{NFKD_INERT} ;
-#' \item \code{NFC_INERT} ;
-#' \item \code{NFKC_INERT} ;
-#' \item \code{SEGMENT_STARTER} ;
-#' \item \code{PATTERN_SYNTAX} ;
-#' \item \code{PATTERN_WHITE_SPACE} ;
 #' \item \code{POSIX_ALNUM} ;
 #' \item \code{POSIX_BLANK} ;
 #' \item \code{POSIX_GRAPH} ;
@@ -387,11 +424,22 @@ invisible(NULL)
 #' \item \code{CHANGES_WHEN_CASEMAPPED} ;
 #' \item \code{CHANGES_WHEN_NFKC_CASEFOLDED}.
 #' }
-#'
+#' and many more.
 #'
 #' @references
 #' \emph{The Unicode Character Database} -- Unicode Standard Annex #44,
 #' \url{http://www.unicode.org/reports/tr44/}
+#'
+#' \emph{UnicodeSet} -- ICU User Guide,
+#' \url{http://userguide.icu-project.org/strings/unicodeset}
+#'
+#' \emph{Properties} -- ICU User Guide,
+#' \url{http://userguide.icu-project.org/strings/properties}
+#'
+#' \emph{Unicode Script Data}, \url{http://www.unicode.org/Public/UNIDATA/Scripts.txt}
+#'
+#' \emph{icu::Unicodeset Class Reference} -- ICU4C API Documentation,
+#' \url{http://www.icu-project.org/apiref/icu4c/classicu_1_1UnicodeSet.html}
 #'
 #' @name stringi-search-charclass
 #' @rdname stringi-search-charclass
