@@ -1,8 +1,8 @@
-a4da08465ce42e7a0e0950b49f729627 *DESCRIPTION
+2c1ab690b8afe592c293e1fdc8c1a382 *DESCRIPTION
 bed8be9c12b91698fd4b563b0167e4b9 *INSTALL
 6ec2875fc1a1110183f7282bf4386ce4 *LICENSE
 c260a27634185c8cb51cd33890b18a88 *NAMESPACE
-ca35c97b6898d0eb8116aefa14736389 *NEWS
+6124644b27e3eac157c84703498c24a3 *NEWS
 c33a5d4dfa82f82cb808f9716c3f3871 *R/ICU_settings.R
 f06455a2d547c768868bcd871685fa2d *R/charclass.R
 bfd23b43fa393304862c7588573c6d45 *R/compare.R
@@ -895,7 +895,7 @@ f52fe7dce4ac293154ddb9c3f7ce1e9c *src/stri_common.cpp
 9a1c090d3cfaada3b846126c61fd29ee *src/stri_compare.cpp
 4fad39ee5faae90ee66d9d57aee0525a *src/stri_container_base.cpp
 404cc2fe39fc8ca50460aa03a623f66b *src/stri_container_base.h
-14c7c98b0d09098f673246fbbf3d238c *src/stri_container_bytesearch.cpp
+bcf574dbab07622cadc418b38e96b674 *src/stri_container_bytesearch.cpp
 d6ab64e8a4ded8368c9a059cd9a1917c *src/stri_container_bytesearch.h
 7e221ececd3ccfcd12e1214cd9ea2600 *src/stri_container_charclass.h
 b319e6682abaab249e2fb10f645d7e6c *src/stri_container_integer.h
@@ -917,7 +917,7 @@ d9e49e929734811c28149b2551e2f72c *src/stri_container_utf16.cpp
 1c38515dc337cd4b9d83d3c04d2a4e5c *src/stri_container_utf8_indexable.cpp
 9d5608c354d5fb918f61c4a71451e1b0 *src/stri_container_utf8_indexable.h
 f44c25a26439c2def4808bf96043e659 *src/stri_cpp.txt
-d592d69fa550ae4fa1637508c8dca05e *src/stri_encoding_conversion.cpp
+8e63d6973533998087e9744ee345477e *src/stri_encoding_conversion.cpp
 23eef458a32538e672375f60c64f7386 *src/stri_encoding_detection.cpp
 e68227f7d50bcf6900ddcf7bd358d238 *src/stri_encoding_management.cpp
 e24c959666272c68b3e2c295f620628e *src/stri_escape.cpp
@@ -969,7 +969,7 @@ fa474800361270d071565eff714b4a1c *src/stri_splitpos.cpp
 b4fc2b176940d38252f39f3c755955a6 *src/stri_stats.cpp
 b3edaa0f96c0501295724546e7508dcb *src/stri_string8.h
 cec887793451a2cdc59595a6dfe73db6 *src/stri_string8buf.h
-3c94eb99c900034a9f1608cc74a3e4a8 *src/stri_stringi.cpp
+8b3460d2b917785c9b29d9fb27293541 *src/stri_stringi.cpp
 d12658502042025dbbec6246d59dcfce *src/stri_stringi.h
 2c6fd9a649139b0a90ed1f195a675e31 *src/stri_sub.cpp
 bea51c222fe0600f8768f02c23b53e65 *src/stri_test.cpp
