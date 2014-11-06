@@ -35,6 +35,8 @@
 #include "stri_string8buf.h"
 #include <unicode/uloc.h>
 #include <unicode/locid.h>
+#include <unicode/ucasemap.h>
+#include <unicode/brkiter.h>
 
 
 // used 2 times in stri_trans_case() below:
@@ -66,8 +68,8 @@
  *
  *  @param str character vector
  *  @param type internal code of case conversion type
- *  @param locale single string identifying the locale
- *                ("" or NULL for default locale)
+ *  @param opts single string identifying
+ *         the locale ("" or NULL for default locale) or opts_brkiter
  *  @return character vector
  *
  *
@@ -88,26 +90,57 @@
  *          use UCaseMap + StriContainerUTF8
  *          (this is much faster for UTF-8 and slightly faster for 8bit enc)
  *          Estimates minimal buffer size.
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-10-24)
+ *          Use a custom BreakIterator with stri_trans_totitle
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
+ *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
 */
-SEXP stri_trans_casemap(SEXP str, SEXP type, SEXP locale)
+SEXP stri_trans_casemap(SEXP str, SEXP type, SEXP opts)
 {
-   str = stri_prepare_arg_string(str, "str"); // prepare string argument
-   const char* qloc = stri__prepare_arg_locale(locale, "locale", true);
+   if (!Rf_isInteger(type) || LENGTH(type) != 1)
+      Rf_error(MSG__INCORRECT_INTERNAL_ARG); // this is an internal arg, check manually
+   int _type = INTEGER(type)[0];
+   if (_type < 1 || _type > 3)
+      Rf_error(MSG__INTERNAL_ERROR);
+
+   const char* qloc = NULL;
+   UBreakIterator* briter = NULL;
+
+   if (_type != 3) { // tolower, toupper
+      qloc = stri__prepare_arg_locale(opts, "locale", true); /* this is R_alloc'ed */
+   }
+   else { // totitle
+      qloc = stri__opts_brkiter_get_locale(opts); /* this is R_alloc'ed */
+      int brkiter_cur = stri__opts_brkiter_select_iterator(opts, "word");
+      briter = stri__opts_brkiter_get_uiterator(brkiter_cur, qloc);
+   }
+
+   PROTECT(str = stri_prepare_arg_string(str, "str")); // prepare string argument
 
 // version 0.2-1 - Does not work with ICU 4.8 (but we require ICU >= 50)
    UCaseMap* ucasemap = NULL;
 
-   STRI__ERROR_HANDLER_BEGIN
-
-   if (!Rf_isInteger(type) || LENGTH(type) != 1)
-      throw StriException(MSG__INCORRECT_INTERNAL_ARG); // this is an internal arg, check manually
-   int _type = INTEGER(type)[0];
-   if (_type < 1 || _type > 3)
-      throw StriException(MSG__INTERNAL_ERROR);
-
+   STRI__ERROR_HANDLER_BEGIN(1)
    UErrorCode status = U_ZERO_ERROR;
    ucasemap = ucasemap_open(qloc, U_FOLD_CASE_DEFAULT, &status);
    if (U_FAILURE(status)) throw StriException(status);
+
+   // set BreakIterator for stri_totitle
+   if (_type == 3) {
+      status = U_ZERO_ERROR;
+      ucasemap_setBreakIterator(ucasemap, briter, &status);
+      if (U_FAILURE(status))
+         throw StriException(status);
+      else {
+         briter = NULL;
+         // ucasemap_setOptions(ucasemap, U_TITLECASE_NO_LOWERCASE, &status); // to do?
+         // now briter is owned by ucasemap.
+         // it will be released on ucasemap_close
+         // (checked with ICU man & src code)
+      }
+   }
 
    R_len_t str_n = LENGTH(str);
    StriContainerUTF8 str_cont(str, str_n);
@@ -166,13 +199,15 @@ SEXP stri_trans_casemap(SEXP str, SEXP type, SEXP locale)
       SET_STRING_ELT(ret, i, Rf_mkCharLenCE(buf.data(), buf_need, CE_UTF8));
    }
 
-   if (ucasemap) { ucasemap_close(ucasemap); ucasemap = NULL; }
+   if (briter) { ubrk_close(briter); briter = NULL; }
+   if (ucasemap) { ucasemap_close(ucasemap); ucasemap = NULL;}
    STRI__UNPROTECT_ALL
    return ret;
 
-   STRI__ERROR_HANDLER_END(
+   STRI__ERROR_HANDLER_END({
+      if (briter) { ubrk_close(briter); briter = NULL; }
       if (ucasemap) { ucasemap_close(ucasemap); ucasemap = NULL; }
-   )
+   })
 }
 
 

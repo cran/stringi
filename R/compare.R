@@ -68,7 +68,7 @@
 #' \code{stri_cmp_ge} whether they are greater or equal,
 #' \code{stri_cmp_lt} if less,
 #' and \code{stri_cmp_gt} if greater,
-#' see also e.g. \code{\link{\%<\%}}.
+#' see also e.g. \code{\link{\%s<\%}}.
 #'
 #' Finally, \code{stri_compare} is an alias to \code{stri_cmp}. They both
 #' perform exactly the same locale-dependent operation.
@@ -99,38 +99,31 @@
 #' in \code{e1} and \code{e2}.
 #'
 #' @examples
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' # in Polish ch < h:
 #' stri_cmp_lt("hladny", "chladny", stri_opts_collator(locale="pl_PL"))
-#'     
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' # in Slovak ch > h:
 #' stri_cmp_lt("hladny", "chladny", stri_opts_collator(locale="sk_SK"))
-#'    
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' # < or > (depends on locale):
 #' stri_cmp("hladny", "chladny")
-#'    
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' # ignore case differences:
 #' stri_cmp_equiv("hladny", "HLADNY", stri_opts_collator(strength=2))
-#'    
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' # alse ignore diacritical differences:
 #' stri_cmp_equiv("hladn\u00FD", "hladny", stri_opts_collator(strength=1, locale="sk_SK"))
-#'    
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' # non-normalized vs normalized string:
 #' stri_cmp_equiv(stri_trans_nfkd('\u0105'), '\u105')
-#'    
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' # note the difference:
 #' stri_cmp_eq(stri_trans_nfkd('\u0105'), '\u105')
-#'    
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' # ligatures:
 #' stri_cmp_equiv("\ufb00", "ff", stri_opts_collator(strength=2))
-#'
+#' }
 #'
 #' @family locale_sensitive
 #' @export
@@ -225,82 +218,81 @@ stri_cmp_ge <- function(e1, e2, opts_collator=NULL) {
 #'
 #'
 #' @examples
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' "a" %stri<% "b"
-#' 
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' c("a", "b", "c") %stri>=% "b"
+#' }
 #'
 #' @usage
-#' e1 \%<\% e2
+#' e1 \%s<\% e2
 #'
 #' @family locale_sensitive
 #' @rdname oper_comparison
 #' @export
-"%<%" <- function(e1, e2) {
+"%s<%" <- function(e1, e2) {
    stri_cmp_lt(e1, e2)
 }
 
 
 #' @usage
-#' e1 \%<=\% e2
+#' e1 \%s<=\% e2
 #' @rdname oper_comparison
 #' @export
-"%<=%" <- function(e1, e2) {
+"%s<=%" <- function(e1, e2) {
    stri_cmp_le(e1, e2)
 }
 
 
 #' @usage
-#' e1 \%>\% e2
+#' e1 \%s>\% e2
 #' @rdname oper_comparison
 #' @export
-"%>%" <- function(e1, e2) {
+"%s>%" <- function(e1, e2) {
    stri_cmp_gt(e1, e2)
 }
 
 
 #' @usage
-#' e1 \%>=\% e2
+#' e1 \%s>=\% e2
 #' @rdname oper_comparison
 #' @export
-"%>=%" <- function(e1, e2) {
+"%s>=%" <- function(e1, e2) {
    stri_cmp_ge(e1, e2)
 }
 
 
 #' @usage
-#' e1 \%==\% e2
+#' e1 \%s==\% e2
 #' @rdname oper_comparison
 #' @export
-"%==%" <- function(e1, e2) {
+"%s==%" <- function(e1, e2) {
    stri_cmp_equiv(e1, e2)
 }
 
 
 #' @usage
-#' e1 \%!=\% e2
+#' e1 \%s!=\% e2
 #' @rdname oper_comparison
 #' @export
-"%!=%" <- function(e1, e2) {
+"%s!=%" <- function(e1, e2) {
    stri_cmp_nequiv(e1, e2)
 }
 
 
 #' @usage
-#' e1 \%===\% e2
+#' e1 \%s===\% e2
 #' @rdname oper_comparison
 #' @export
-"%===%" <- function(e1, e2) {
+"%s===%" <- function(e1, e2) {
    stri_cmp_eq(e1, e2)
 }
 
 
 #' @usage
-#' e1 \%!==\% e2
+#' e1 \%s!==\% e2
 #' @rdname oper_comparison
 #' @export
-"%!==%" <- function(e1, e2) {
+"%s!==%" <- function(e1, e2) {
    stri_cmp_neq(e1, e2)
 }
 
@@ -421,11 +413,11 @@ stri_cmp_ge <- function(e1, e2, opts_collator=NULL) {
 #' @rdname stri_order
 #'
 #' @examples
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' stri_sort(c("hladny", "chladny"), opts_collator=stri_opts_collator(locale="pl_PL"))
-#' 
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#'
 #' stri_sort(c("hladny", "chladny"), opts_collator=stri_opts_collator(locale="sk_SK"))
+#' }
 stri_order <- function(str, decreasing=FALSE, na_last=TRUE, opts_collator=NULL) {
    .Call("stri_order_or_sort", str, decreasing, na_last, opts_collator, 1L, PACKAGE="stringi")
 }
@@ -447,8 +439,13 @@ stri_sort <-  function(str, decreasing=FALSE, na_last=NA, opts_collator=NULL) {
 #' @details
 #' As usual in \pkg{stringi}, no attributes are copied.
 #' Unlike \code{\link{unique}}, this function
-#' tests for canonical equivalence of strings. Such an operation
-#' is locale-dependent.
+#' tests for canonical equivalence of strings (and not
+#' whether the strings are just bytewise equal). Such an operation
+#' is locale-dependent. Hence, \code{stri_unique} is significantly
+#' slower (but much better suited for natural language processing)
+#' than its base R counterpart.
+#'
+#' See also \code{\link{stri_duplicated}} for indicating non-unique elements.
 #'
 #' @param str character vector
 #' @param opts_collator a named list with \pkg{ICU} Collator's options
@@ -458,9 +455,14 @@ stri_sort <-  function(str, decreasing=FALSE, na_last=NA, opts_collator=NULL) {
 #' @return Returns a character vector.
 #'
 #' @examples
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' # normalized and non-unicode-normalized version of the same code point:
 #' stri_unique(c("\u0105", stri_trans_nfkd("\u0105")))
+#' unique(c("\u0105", stri_trans_nfkd("\u0105")))
+#'
+#' stri_unique(c("gro\\u00df", "GROSS", "Gro\\u00df", "Gross"),
+#'    stri_opts_collator(strength=1))
+#' }
 #'
 #' @family locale_sensitive
 #' @export
@@ -482,8 +484,15 @@ stri_unique <-  function(str, opts_collator=NULL) {
 #' @details
 #' Missing values are regarded as equal.
 #'
-#' These functions test for canonical equivalence of strings.
-#' Such an operation is locale-dependent.
+#' Unlike \code{\link{duplicated}} and \code{\link{anyDuplicated}},
+#' these functions test for canonical equivalence of strings
+#' (and not whether the strings are just bytewise equal)
+#' Such operations is locale-dependent.
+#' Hence, \code{stri_duplicated} and \code{stri_duplicated_any}
+#' are significantly slower (but much better suited for natural language
+#' processing) than their base R counterpart.
+#'
+#' See also \code{\link{stri_unique}} for extracting unique elements.
 #'
 #' @param str character vector
 #' @param fromLast single logical value;
@@ -501,6 +510,23 @@ stri_unique <-  function(str, opts_collator=NULL) {
 #' \code{stri_duplicated_any()} returns a single non-negative integer.
 #' Value of 0 indicates that all the elements in \code{str} are unique.
 #' Otherwise, it gives the index of the first non-unique element.
+#'
+#' @examples
+#' \donttest{
+#' # In the following examples, we have 3 duplicated values,
+#' # "a" - 2 times, NA - 1 time
+#' stri_duplicated(c("a", "b", "a", NA, "a", NA))
+#' stri_duplicated(c("a", "b", "a", NA, "a", NA), fromLast=TRUE)
+#' stri_duplicated_any(c("a", "b", "a", NA, "a", NA))
+#'
+#' # compare the results:
+#' stri_duplicated(c("\u0105", stri_trans_nfkd("\u0105")))
+#' duplicated(c("\u0105", stri_trans_nfkd("\u0105")))
+#'
+#' stri_duplicated(c("gro\\u00df", "GROSS", "Gro\\u00df", "Gross"),
+#'    opts_collator=stri_opts_collator(strength=1))
+#' duplicated(c("gro\\u00df", "GROSS", "Gro\\u00df", "Gross"))
+#' }
 #'
 #' @rdname stri_duplicated
 #' @family locale_sensitive

@@ -55,8 +55,6 @@
 #'
 #' The strings are Unicode-normalized before the comparison.
 #'
-#'
-#'
 #' @param locale single string, \code{NULL} or
 #' \code{""} for default locale
 #' @param strength single integer in \{1,2,3,4\}, which defines collation strength;
@@ -100,15 +98,12 @@
 #' \url{http://www.icu-project.org/apiref/icu4c/classicu_1_1Collator.html}
 #'
 #' @examples
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
-#' stri_cmp("zupa100", "zupa2") != stri_cmp("zupa100", "zupa2", stri_opts_collator(numeric=TRUE))
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
+#' stri_cmp("number100", "number2")
+#' stri_cmp("number100", "number2", stri_opts_collator(numeric=TRUE))
 #' stri_cmp("above mentioned", "above-mentioned")
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_cmp("above mentioned", "above-mentioned", stri_opts_collator(alternate_shifted=TRUE))
+#' }
 stri_opts_collator <- function(locale=NULL, strength=3L,
    alternate_shifted=FALSE, french=FALSE,
    uppercase_first=NA, case_level=FALSE,
@@ -135,37 +130,37 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 #' e.g. in \code{\link{stri_count_regex}}
 #' and other \link{stringi-search-regex} functions.
 #'
+#' @details
+#' Note that some regex settings may be changed using ICU regex flags
+#' inside regexes. For example, \code{"(?i)pattern"} does
+#' a case-insensitive match of a given pattern,
+#' see the \pkg{ICU} User Guide entry on Regular Expressions
+#' in the References section or \link{stringi-search-regex}.
 #'
-#' @param case_insensitive logical; enable case insensitive matching
-#' @param comments logical; allow white space and comments within patterns
+#' @param case_insensitive logical; enable case insensitive matching [regex flag \code{(?i)}]
+#' @param comments logical; allow white space and comments within patterns [regex flag \code{(?x)}]
 #' @param dotall logical;  if set, `\code{.}` matches line terminators,
-#'  otherwise matching of `\code{.}`  stops at a line end
+#'  otherwise matching of `\code{.}`  stops at a line end [regex flag \code{(?s)}]
 #' @param literal logical; if set, treat the entire pattern as a literal string:
 #' metacharacters or escape sequences in the input sequence will be given no special meaning;
 #' note that in most cases you would rather use the \link{stringi-search-fixed}
 #' facilities in this case (with \code{opts_collator=NA}).
 #' @param multiline logical; controls the behavior of `\code{$}` and `\code{^}`.
 #' If set, recognize line terminators within a string, otherwise,
-#'  match only at start and end of input string
+#'  match only at start and end of input string [regex flag \code{(?m)}]
 #' @param unix_lines logical; Unix-only line endings.
 #' When this mode is enabled, only \code{U+000a} is recognized as a
 #' line ending by `\code{.}`, `\code{$}`, and `\code{^}`.
 #' @param uword logical; Unicode word boundaries.
 #' If set, uses the Unicode TR 29 definition of word boundaries;
 #' warning: Unicode word boundaries are quite different from traditional
-#' regex word boundaries.
+#' regex word boundaries. [regex flag \code{(?w)}]
 #' See \url{http://unicode.org/reports/tr29/#Word_Boundaries}
 #' @param error_on_unknown_escapes logical;
 #' whether to generate an error on unrecognized backslash escapes;
 #' if set, fail with an error on patterns that contain backslash-escaped ASCII
 #' letters without a known special meaning;
 #' otherwise, these escaped letters represent themselves.
-#'
-#' Note that some regex settings may be changed using ICU regex flags
-#' inside regexes. For example, \code{"(?i)pattern"} does
-#' a case-insensitive match of a given pattern,
-#' see the \pkg{ICU} User Guide entry on Regular Expressions
-#' in the References section.
 #'
 #' @return
 #' Returns a named list object; missing settings are left with default values.
@@ -182,15 +177,11 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 #' \url{http://userguide.icu-project.org/strings/regexp}
 #'
 #' @examples
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' stri_detect_regex("ala", "ALA") # case-sensitive by default
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_detect_regex("ala", "ALA", stri_opts_regex(case_insensitive=TRUE))
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
-#' stri_detect_regex("ala", "(?i:)ALA") # equivalent
+#' stri_detect_regex("ala", "(?i)ALA") # equivalent
+#' }
 stri_opts_regex <- function(case_insensitive, comments, dotall, literal,
                             multiline, unix_lines, uword, error_on_unknown_escapes)
 {
@@ -203,5 +194,81 @@ stri_opts_regex <- function(case_insensitive, comments, dotall, literal,
    if (!missing(unix_lines))               opts["unix_lines"]               <- unix_lines
    if (!missing(uword))                    opts["uword"]                    <- uword
    if (!missing(error_on_unknown_escapes)) opts["error_on_unknown_escapes"] <- error_on_unknown_escapes
+   opts
+}
+
+
+#' @title
+#' Generate a List with BreakIterator Settings
+#'
+#' @description
+#' A convenience function to tune the \pkg{ICU} \code{BreakIterator}'s behavior
+#' in some text boundary analysis functions, see
+#' \link{stringi-search-boundaries}.
+#'
+#' @details
+#' The \code{skip_*} family of settings may be used to prevent performing
+#' any special actions on particular types of text boundaries, e.g.
+#' in case of the \code{\link{stri_locate_boundaries}} and
+#' \code{\link{stri_split_boundaries}} functions.
+#'
+#' @param type single string; break iterator type, one of \code{character},
+#' \code{line_break}, \code{sentence}, or \code{word};
+#' see \link{stringi-search-boundaries}
+#' @param locale single string, \code{NULL} or \code{""} for default locale
+#' @param skip_word_none logical; perform no action for "words" that
+#' do not fit into any other categories
+#' @param skip_word_number logical; perform no action for words that
+#' appear to be numbers
+#' @param skip_word_letter logical; perform no action for words that
+#' contain letters, excluding hiragana, katakana, or ideographic characters
+#' @param skip_word_kana logical; perform no action for words
+#' containing kana characters
+#' @param skip_word_ideo logical; perform no action for words
+#' containing ideographic characters
+#' @param skip_line_soft logical; perform no action for soft line breaks,
+#' i.e. positions at which a line break is acceptable but not required
+#' @param skip_line_hard logical; perform no action for hard,
+#' or mandatory line breaks
+#' @param skip_sentence_term logical; perform no action for sentences
+#' ending with a sentence terminator ("\code{.}", "\code{,}", "\code{?}",
+#' "\code{!}"), possibly followed by a hard separator
+#' (\code{CR}, \code{LF}, \code{PS}, etc.)
+#' @param skip_sentence_sep logical; perform no action for sentences
+#' that do not contain an ending sentence terminator, but are ended
+#' by a hard separator or end of input
+#'
+#' @return
+#' Returns a named list object.
+#' Omitted \code{skip_*} values act as they have been set to \code{FALSE}.
+#'
+#' @export
+#' @family text_boundaries
+#'
+#' @references
+#' \emph{\code{ubrk.h} File Reference} -- ICU4C API Documentation,
+#' \url{http://icu-project.org/apiref/icu4c/ubrk_8h.html}
+#'
+#' \emph{Boundary Analysis} -- ICU User Guide,
+#' \url{http://userguide.icu-project.org/boundaryanalysis}
+stri_opts_brkiter <- function(type, locale, skip_word_none,
+      skip_word_number, skip_word_letter,
+      skip_word_kana, skip_word_ideo,
+      skip_line_soft, skip_line_hard,
+      skip_sentence_term, skip_sentence_sep
+   )
+{
+   opts <- list()
+   if (!missing(type))                opts["type"]                <- type
+   if (!missing(locale))              opts["locale"]              <- locale
+   if (!missing(skip_word_none))      opts["skip_word_none"]      <- skip_word_none
+   if (!missing(skip_word_number))    opts["skip_word_number"]    <- skip_word_number
+   if (!missing(skip_word_letter))    opts["skip_word_letter"]    <- skip_word_letter
+   if (!missing(skip_word_kana))      opts["skip_word_kana"]      <- skip_word_kana
+   if (!missing(skip_word_ideo))      opts["skip_word_ideo"]      <- skip_word_ideo
+   if (!missing(skip_line_soft))      opts["skip_line_soft"]      <- skip_line_soft
+   if (!missing(skip_line_hard))      opts["skip_line_hard"]      <- skip_line_hard
+   if (!missing(skip_sentence_term))  opts["skip_sentence_term"]  <- skip_sentence_term
+   if (!missing(skip_sentence_sep))   opts["skip_sentence_sep"]   <- skip_sentence_sep
    opts
 }

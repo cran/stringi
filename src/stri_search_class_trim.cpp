@@ -57,15 +57,18 @@
  *
  * @version 0.2-1 (Marek Gagolewski, 2014-04-05)
  *          StriContainerCharClass now relies on UnicodeSet
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
+ *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
 */
 SEXP stri__trim_leftright(SEXP str, SEXP pattern, bool left, bool right)
 {
-   str = stri_prepare_arg_string(str, "str");
-   pattern = stri_prepare_arg_string(pattern, "pattern");
+   PROTECT(str = stri_prepare_arg_string(str, "str"));
+   PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
    R_len_t vectorize_length =
       stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
 
-   STRI__ERROR_HANDLER_BEGIN
+   STRI__ERROR_HANDLER_BEGIN(2)
    StriContainerUTF8 str_cont(str, vectorize_length);
    StriContainerCharClass pattern_cont(pattern, vectorize_length);
 
@@ -94,7 +97,7 @@ SEXP stri__trim_leftright(SEXP str, SEXP pattern, bool left, bool right)
             if (chr < 0) // invalid utf-8 sequence
                throw StriException(MSG__INVALID_UTF8);
             if (pattern_cur->contains(chr)) {
-               break; // break at first occurence
+               break; // break at first occurrence
             }
             jlast1 = j;
          }
@@ -107,7 +110,7 @@ SEXP stri__trim_leftright(SEXP str, SEXP pattern, bool left, bool right)
             if (chr < 0) // invalid utf-8 sequence
                throw StriException(MSG__INVALID_UTF8);
             if (pattern_cur->contains(chr)) {
-               break; // break at first occurence
+               break; // break at first occurrence
             }
             jlast2 = j;
          }

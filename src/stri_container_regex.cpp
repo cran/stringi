@@ -41,6 +41,7 @@
 StriContainerRegexPattern::StriContainerRegexPattern()
    : StriContainerUTF16()
 {
+   this->lastMatcherIndex = -1;
    this->lastMatcher = NULL;
 }
 
@@ -54,6 +55,7 @@ StriContainerRegexPattern::StriContainerRegexPattern()
 StriContainerRegexPattern::StriContainerRegexPattern(SEXP rstr, R_len_t _nrecycle, uint32_t _flags)
    : StriContainerUTF16(rstr, _nrecycle, true)
 {
+   this->lastMatcherIndex = -1;
    this->lastMatcher = NULL;
    this->flags = _flags;
 }
@@ -65,6 +67,7 @@ StriContainerRegexPattern::StriContainerRegexPattern(SEXP rstr, R_len_t _nrecycl
 StriContainerRegexPattern::StriContainerRegexPattern(StriContainerRegexPattern& container)
    :    StriContainerUTF16((StriContainerUTF16&)container)
 {
+   this->lastMatcherIndex = -1;
    this->lastMatcher = NULL;
    this->flags = container.flags;
 }
@@ -74,6 +77,7 @@ StriContainerRegexPattern& StriContainerRegexPattern::operator=(StriContainerReg
 {
    this->~StriContainerRegexPattern();
    (StriContainerUTF16&) (*this) = (StriContainerUTF16&)container;
+   this->lastMatcherIndex = -1;
    this->lastMatcher = NULL;
    this->flags = container.flags;
    return *this;
@@ -102,16 +106,11 @@ StriContainerRegexPattern::~StriContainerRegexPattern()
 RegexMatcher* StriContainerRegexPattern::getMatcher(R_len_t i)
 {
    if (lastMatcher) {
-      if (i >= n) {
-#ifndef NDEBUG
-      if ((debugMatcherIndex % n) != (i % n)) {
-         throw StriException("DEBUG: vectorize_getMatcher - matcher reuse failed!");
-      }
-#endif
+      if (this->lastMatcherIndex == (i % n)) {
          return lastMatcher; // reuse
       }
       else {
-         delete lastMatcher;
+         delete lastMatcher; // invalidate
          lastMatcher = NULL;
       }
    }
@@ -123,9 +122,7 @@ RegexMatcher* StriContainerRegexPattern::getMatcher(R_len_t i)
       lastMatcher = NULL;
       throw StriException(status);
    }
-#ifndef NDEBUG
-   debugMatcherIndex = (i % n);
-#endif
+   this->lastMatcherIndex = (i % n);
 
    return lastMatcher;
 }
@@ -142,6 +139,9 @@ RegexMatcher* StriContainerRegexPattern::getMatcher(R_len_t i)
  *
  * @version 0.2-3 (Marek Gagolewski, 2014-05-09)
  *          allow NULL for opts_regex
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
+ *    Disallow NA options
  */
 uint32_t StriContainerRegexPattern::getRegexFlags(SEXP opts_regex)
 {
@@ -164,29 +164,29 @@ uint32_t StriContainerRegexPattern::getRegexFlags(SEXP opts_regex)
          const char* curname = CHAR(STRING_ELT(names, i));
 
          if  (!strcmp(curname, "case_insensitive")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "case_insensitive");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_CASE_INSENSITIVE;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "case_insensitive");
+            if (val) flags |= UREGEX_CASE_INSENSITIVE;
          } else if  (!strcmp(curname, "comments")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "comments");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_COMMENTS;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "comments");
+            if (val) flags |= UREGEX_COMMENTS;
          } else if  (!strcmp(curname, "dotall")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "dotall");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_DOTALL;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "dotall");
+            if (val) flags |= UREGEX_DOTALL;
          } else if  (!strcmp(curname, "literal")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "literal");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_LITERAL;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "literal");
+            if (val) flags |= UREGEX_LITERAL;
          } else if  (!strcmp(curname, "multiline")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "multiline");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_MULTILINE;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "multiline");
+            if (val) flags |= UREGEX_MULTILINE;
          } else if  (!strcmp(curname, "unix_lines")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "unix_lines");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_UNIX_LINES;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "unix_lines");
+            if (val) flags |= UREGEX_UNIX_LINES;
          } else if  (!strcmp(curname, "uword")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "uword");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_UWORD;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "uword");
+            if (val) flags |= UREGEX_UWORD;
          } else if  (!strcmp(curname, "error_on_unknown_escapes")) {
-            SEXP val = stri_prepare_arg_logical_1(VECTOR_ELT(opts_regex, i), "error_on_unknown_escapes");
-            if (LOGICAL(val)[0]==TRUE) flags |= UREGEX_ERROR_ON_UNKNOWN_ESCAPES;
+            bool val = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_regex, i), "error_on_unknown_escapes");
+            if (val) flags |= UREGEX_ERROR_ON_UNKNOWN_ESCAPES;
          } else {
             Rf_warning(MSG__INCORRECT_REGEX_OPTION, curname);
          }

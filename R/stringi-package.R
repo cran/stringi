@@ -82,17 +82,15 @@
 #' \item \link{stringi-search-coll} -- locale-aware pattern matching
 #'    for natural language processing tasks;
 #' \item \link{stringi-search-charclass} -- for finding elements of
-#' particular character classes, like ``all whitespaces'' or ``all digits''.
-#' \item Moreover, \code{\link{stri_split_boundaries}} and
-#' \code{\link{stri_locate_boundaries}} apply
-#' text boundary analysis to split or just locate specific substrings.
+#' particular character classes, like ``all whitespaces'' or ``all digits'';
+#' \item \link{stringi-search-boundaries} -- text boundary analysis.
 #' }
 #'
 #'
 #' \item \code{\link{stri_stats_general}} and \code{\link{stri_stats_latex}}
 #' for gathering some fancy statistics on a character vector's contents.
 #'
-#' \item \code{\link{stri_join}}, \code{\link{stri_dup}}, \code{\link{\%+\%}},
+#' \item \code{\link{stri_join}}, \code{\link{stri_dup}}, \code{\link{\%s+\%}},
 #' and \code{\link{stri_flatten}} for concatenation-based operations.
 #'
 #' \item \code{\link{stri_sub}} for extracting and replacing substrings,
@@ -107,7 +105,8 @@
 #' Additionally, \code{\link{stri_wrap}} wraps text into lines.
 #'
 #' \item \code{\link{stri_length}} (among others) for determining the number
-#' of code points in a string.
+#' of code points in a string. See also \code{\link{stri_count_boundaries}}
+#' for counting the number of \code{Unicode characters}.
 #'
 #' \item \code{\link{stri_trans_tolower}} (among others) for case mapping,
 #' i.e. conversion to lower, UPPER, or Title Case,
@@ -115,7 +114,7 @@
 #' and \code{\link{stri_trans_general}} for other very general yet powerful
 #' text transforms, including transliteration.
 #'
-#' \item \code{\link{stri_cmp}}, \code{\link{\%<\%}}, \code{\link{stri_order}},
+#' \item \code{\link{stri_cmp}}, \code{\link{\%s<\%}}, \code{\link{stri_order}},
 #' \code{\link{stri_sort}}, \code{\link{stri_unique}} and
 #' \code{\link{stri_duplicated}} for collation-based,
 #' locale-aware operations, see also \link{stringi-locale}.
@@ -126,8 +125,8 @@
 #' \item \code{\link{stri_escape_unicode}} (among others) for escaping
 #' certain code points.
 #'
-#' \item \code{\link{stri_rand_strings}} and \code{\link{stri_rand_shuffle}}
-#' for generating (pseudo)random strings.
+#' \item \code{\link{stri_rand_strings}}, \code{\link{stri_rand_shuffle}},
+#' and \code{\link{stri_rand_lipsum}} for generating (pseudo)random strings.
 #'
 #' \item DRAFT API: \code{\link{stri_read_raw}},
 #' \code{\link{stri_read_lines}}, and  \code{\link{stri_write_lines}}
@@ -137,7 +136,7 @@
 #' of \pkg{stringi}]: HTML entities,
 #' MIME Base 64 encode/decode,
 #' number and data/time formatting,
-#' and many more.
+#' number spellout, and many more.
 #' }
 #'
 #' Note that each man page has many links to other interesting facilities.
@@ -201,7 +200,7 @@ invisible(NULL)
 #   # whether ICU has guessed the locale used correctly. Leave it as is :)
 #   # BTW, We know about Good Practices in Writing R Extensions.
 #   # This information, however, is very important to the user.
-#   packageStartupMessage("stringi.rexamine.com (" %+% stri_info(short=TRUE) %+% ")")
+#   packageStartupMessage("stringi.rexamine.com (" %s+% stri_info(short=TRUE) %s+% ")")
 #}
 
 # no longer needed as ICU4C is statically linked since 2013-11-15 :)

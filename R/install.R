@@ -71,8 +71,8 @@
 #' \url{http://userguide.icu-project.org/icudata}
 #'
 #' @examples
-#' \dontrun{stri_install_check()}
-#' 
+#' \donttest{stri_install_check()}
+#'
 #' @rdname
 #' stri_install
 #' @export

@@ -98,7 +98,7 @@ stri_locale_set <- function(locale) {
 
    # We call stri_info, because it generates some warnings,
    # in case any problems are found:
-   message('You are now working with ' %+% stri_info(short=TRUE))
+   message(stri_paste('You are now working with ', stri_info(short=TRUE)))
    invisible(previous)
 }
 
@@ -140,12 +140,10 @@ stri_locale_get <- function() {
 #' \code{Name}, being their underscore separated combination.
 #'
 #' @examples
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' stri_locale_info("pl_PL")
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_locale_info("Pl_pL") # the same result
+#' }
 #'
 #' @family locale_management
 #' @export

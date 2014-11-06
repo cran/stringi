@@ -39,7 +39,7 @@ using namespace std;
 
 
 /**
- * Locate first or last occurences of pattern in a string [with collation]
+ * Locate first or last occurrences of pattern in a string [with collation]
  *
  * @param str character vector
  * @param pattern character vector
@@ -58,16 +58,19 @@ using namespace std;
  *
  * @version 0.2-3 (Marek Gagolewski, 2014-05-08)
  *          new fun: stri_locate_firstlast_coll (opts_collator == NA not allowed)
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
+ *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
  */
 SEXP stri__locate_firstlast_coll(SEXP str, SEXP pattern, SEXP opts_collator, bool first)
 {
-   str = stri_prepare_arg_string(str, "str");
-   pattern = stri_prepare_arg_string(pattern, "pattern");
+   PROTECT(str = stri_prepare_arg_string(str, "str"));
+   PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
 
    UCollator* collator = NULL;
    collator = stri__ucol_open(opts_collator);
 
-   STRI__ERROR_HANDLER_BEGIN
+   STRI__ERROR_HANDLER_BEGIN(2)
    R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
    StriContainerUTF16 str_cont(str, vectorize_length);
    StriContainerUStringSearch pattern_cont(pattern, vectorize_length, collator);  // collator is not owned by pattern_cont
@@ -122,7 +125,7 @@ SEXP stri__locate_firstlast_coll(SEXP str, SEXP pattern, SEXP opts_collator, boo
 
 
 /**
- * Locate first occurences of pattern in a string [with collation]
+ * Locate first occurrences of pattern in a string [with collation]
  *
  * @param str character vector
  * @param pattern character vector
@@ -147,7 +150,7 @@ SEXP stri_locate_first_coll(SEXP str, SEXP pattern, SEXP opts_collator)
 
 
 /**
- * Locate last occurences of pattern in a string [with collation]
+ * Locate last occurrences of pattern in a string [with collation]
  *
  * @param str character vector
  * @param pattern character vector
@@ -172,7 +175,7 @@ SEXP stri_locate_last_coll(SEXP str, SEXP pattern, SEXP opts_collator)
 
 
 /**
- * Locate all pattern occurences in a string [with collation]
+ * Locate all pattern occurrences in a string [with collation]
  *
  * @param str character vector
  * @param pattern character vector
@@ -191,16 +194,19 @@ SEXP stri_locate_last_coll(SEXP str, SEXP pattern, SEXP opts_collator)
  *
  * @version 0.2-3 (Marek Gagolewski, 2014-05-08)
  *          new fun: stri_locate_all_coll (opts_collator == NA not allowed)
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
+ *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
  */
 SEXP stri_locate_all_coll(SEXP str, SEXP pattern, SEXP opts_collator)
 {
-   str = stri_prepare_arg_string(str, "str");
-   pattern = stri_prepare_arg_string(pattern, "pattern");
+   PROTECT(str = stri_prepare_arg_string(str, "str"));
+   PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
 
    UCollator* collator = NULL;
    collator = stri__ucol_open(opts_collator);
 
-   STRI__ERROR_HANDLER_BEGIN
+   STRI__ERROR_HANDLER_BEGIN(2)
    R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
    StriContainerUTF16 str_cont(str, vectorize_length);
    StriContainerUStringSearch pattern_cont(pattern, vectorize_length, collator);  // collator is not owned by pattern_cont
@@ -228,27 +234,27 @@ SEXP stri_locate_all_coll(SEXP str, SEXP pattern, SEXP opts_collator)
          continue;
       }
 
-      deque< pair<R_len_t, R_len_t> > occurences;
+      deque< pair<R_len_t, R_len_t> > occurrences;
       while (start != USEARCH_DONE) {
-         occurences.push_back(pair<R_len_t, R_len_t>(start, start+usearch_getMatchedLength(matcher)));
+         occurrences.push_back(pair<R_len_t, R_len_t>(start, start+usearch_getMatchedLength(matcher)));
          start = usearch_next(matcher, &status);
          if (U_FAILURE(status)) throw StriException(status);
       }
 
-      R_len_t noccurences = (R_len_t)occurences.size();
+      R_len_t noccurrences = (R_len_t)occurrences.size();
       SEXP ans;
-      STRI__PROTECT(ans = Rf_allocMatrix(INTSXP, noccurences, 2));
+      STRI__PROTECT(ans = Rf_allocMatrix(INTSXP, noccurrences, 2));
       int* ans_tab = INTEGER(ans);
-      deque< pair<R_len_t, R_len_t> >::iterator iter = occurences.begin();
-      for (R_len_t j = 0; iter != occurences.end(); ++iter, ++j) {
+      deque< pair<R_len_t, R_len_t> >::iterator iter = occurrences.begin();
+      for (R_len_t j = 0; iter != occurrences.end(); ++iter, ++j) {
          pair<R_len_t, R_len_t> match = *iter;
          ans_tab[j]             = match.first;
-         ans_tab[j+noccurences] = match.second;
+         ans_tab[j+noccurrences] = match.second;
       }
 
       // Adjust UChar index -> UChar32 index (1-2 byte UTF16 to 1 byte UTF32-code points)
       str_cont.UChar16_to_UChar32_index(i, ans_tab,
-            ans_tab+noccurences, noccurences,
+            ans_tab+noccurrences, noccurrences,
             1, // 0-based index -> 1-based
             0  // end returns position of next character after match
       );

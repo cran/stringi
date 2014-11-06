@@ -38,15 +38,14 @@
 #include "stri_macros.h"
 #include "stri_exception.h"
 #include "stri_string8.h"
+#include "stri_container_utf8.h"
+#include "stri_container_utf16.h"
 
 
 // ------------------------------------------------------------------------
 
-// @TODO: stri_multisub                                   // ...TODO... [version >0.1]
-// @TODO: stri_multisub_replacement                       // ...TODO... [version >0.1]
-// @TODO: SEXP stri_enc_fromutf16(SEXP str);              // ...TODO... be careful: BOMs! [version >0.1]
-// @TODO: SEXP stri_enc_toutf16(SEXP str);                // ...TODO... -> list with elems of type raw [version >0.1]
-// @TODO: stri_enc_detect()                               // ...TODO... [version >0.1]
+// @TODO: SEXP stri_enc_fromutf16(SEXP str);              // ...TODO... be careful: BOMs! [version >=0.3]
+// @TODO: SEXP stri_enc_toutf16(SEXP str);                // ...TODO... -> list with elems of type raw [version >=0.3]
 
 // ------------------------------------------------------------------------
 
@@ -102,7 +101,7 @@ R_len_t stri__numbytes_max(SEXP str);
 SEXP    stri_numbytes(SEXP str);
 SEXP    stri_length(SEXP str);
 SEXP    stri_isempty(SEXP str);
-// SEXP stri_width(SEXP str);                               // ...TODO... [version >= 0.2]
+// SEXP stri_width(SEXP str);                               // ...TODO... [version >= 0.3]
 
 
 // prepare_arg.cpp:
@@ -116,7 +115,7 @@ SEXP        stri_prepare_arg_logical(SEXP x,          const char* argname);
 SEXP        stri_prepare_arg_raw(SEXP x,              const char* argname);
 SEXP        stri_prepare_arg_string_1(SEXP x,         const char* argname);
 SEXP        stri_prepare_arg_double_1(SEXP x,         const char* argname);
-double      stri__prepare_arg_double_1_notNA(SEXP x, const char* argname);
+double      stri__prepare_arg_double_1_notNA(SEXP x,  const char* argname);
 SEXP        stri_prepare_arg_integer_1(SEXP x,        const char* argname);
 int         stri__prepare_arg_integer_1_notNA(SEXP x, const char* argname);
 SEXP        stri_prepare_arg_logical_1(SEXP x,        const char* argname);
@@ -135,8 +134,8 @@ SEXP stri_reverse(SEXP s);
 SEXP stri_sub(SEXP str, SEXP from, SEXP to, SEXP length);
 SEXP stri_sub_replacement(SEXP str, SEXP from, SEXP to,
                           SEXP length, SEXP value);
-// SEXP stri_split_pos(SEXP str, SEXP from, SEXP to);                        // ...TO DO... [version >= 0.2]
-// SEXP stri__split_pos(const char* s, int* from, int* to, int ns, int n);   // ...TO DO... [version >= 0.2]
+// SEXP stri_split_pos(SEXP str, SEXP from, SEXP to);                        // ...TO DO... [version >= 0.3]
+// SEXP stri__split_pos(const char* s, int* from, int* to, int ns, int n);   // ...TO DO... [version >= 0.3]
 
 // encoding_management.cpp:
 SEXP stri_enc_list();
@@ -169,15 +168,17 @@ SEXP stri_locale_set(SEXP loc);
 SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent, SEXP locale);
 
 // justify.cpp
-// SEXP stri_justify(SEXP str, SEXP width);                                    // TODO [version >= 0.2]
+// SEXP stri_justify(SEXP str, SEXP width);                                    // TODO [version >= 0.3]
 
 
 // ----------- SEARCH --------------------------------------------
 
-
 void stri__locate_set_dimnames_list(SEXP list);
 void stri__locate_set_dimnames_matrix(SEXP matrix);
-
+SEXP stri__subset_by_logical(const StriContainerUTF8& str_cont,
+   const std::vector<int>& which, int result_counter);
+SEXP stri__subset_by_logical(const StriContainerUTF16& str_cont,
+   const std::vector<int>& which, int result_counter);
 
 SEXP stri_detect_coll(SEXP str, SEXP pattern, SEXP opts_collator);
 SEXP stri_count_coll(SEXP str, SEXP pattern, SEXP opts_collator);
@@ -186,15 +187,18 @@ SEXP stri_locate_first_coll(SEXP str, SEXP pattern, SEXP opts_collator);
 SEXP stri_locate_last_coll(SEXP str, SEXP pattern, SEXP opts_collator);
 SEXP stri_extract_first_coll(SEXP str, SEXP pattern, SEXP opts_collator);
 SEXP stri_extract_last_coll(SEXP str, SEXP pattern, SEXP opts_collator);
-SEXP stri_extract_all_coll(SEXP str, SEXP pattern, SEXP opts_collator);
+SEXP stri_extract_all_coll(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_collator);
 SEXP stri_replace_all_coll(SEXP str, SEXP pattern, SEXP replacement,
-                            SEXP opts_collator);
+                            SEXP vectorize_all, SEXP opts_collator);
 SEXP stri_replace_first_coll(SEXP str, SEXP pattern, SEXP replacement,
                               SEXP opts_collator);
 SEXP stri_replace_last_coll(SEXP str, SEXP pattern, SEXP replacement,
                              SEXP opts_collator);
 SEXP stri_split_coll(SEXP str, SEXP split, SEXP n_max, SEXP omit_empty,
-                      SEXP opts_collator);
+                      SEXP tokens_only, SEXP simplify, SEXP opts_collator);
+SEXP stri_endswith_coll(SEXP str, SEXP pattern, SEXP to, SEXP opts_collator);
+SEXP stri_startswith_coll(SEXP str, SEXP pattern, SEXP from, SEXP opts_collator);
+SEXP stri_subset_coll(SEXP str, SEXP pattern, SEXP opts_collator);
 
 
 SEXP stri_detect_fixed(SEXP str, SEXP pattern);
@@ -202,10 +206,14 @@ SEXP stri_count_fixed(SEXP str, SEXP pattern);
 SEXP stri_locate_all_fixed(SEXP str, SEXP pattern);
 SEXP stri_locate_first_fixed(SEXP str, SEXP pattern);
 SEXP stri_locate_last_fixed(SEXP str, SEXP pattern);
-SEXP stri_replace_all_fixed(SEXP str, SEXP pattern, SEXP replacement);
+SEXP stri_replace_all_fixed(SEXP str, SEXP pattern, SEXP replacement, SEXP vectorize_all);
 SEXP stri_replace_first_fixed(SEXP str, SEXP pattern, SEXP replacement);
 SEXP stri_replace_last_fixed(SEXP str, SEXP pattern, SEXP replacement);
-SEXP stri_split_fixed(SEXP str, SEXP split, SEXP n_max, SEXP omit_empty);
+SEXP stri_split_fixed(SEXP str, SEXP split, SEXP n_max,
+            SEXP omit_empty, SEXP tokens_only, SEXP simplify);
+SEXP stri_subset_fixed(SEXP str, SEXP pattern);
+SEXP stri_endswith_fixed(SEXP str, SEXP pattern, SEXP to);
+SEXP stri_startswith_fixed(SEXP str, SEXP pattern, SEXP from);
 
 
 SEXP stri_detect_regex(SEXP str, SEXP pattern, SEXP opts_regex);
@@ -214,16 +222,17 @@ SEXP stri_locate_all_regex(SEXP str, SEXP pattern, SEXP opts_regex);
 SEXP stri_locate_first_regex(SEXP str, SEXP pattern, SEXP opts_regex);
 SEXP stri_locate_last_regex(SEXP str, SEXP pattern, SEXP opts_regex);
 SEXP stri_replace_all_regex(SEXP str, SEXP pattern, SEXP replacement,
-                           SEXP opts_regex);
+                           SEXP vectorize_all, SEXP opts_regex);
 SEXP stri_replace_first_regex(SEXP str, SEXP pattern, SEXP replacement,
                               SEXP opts_regex);
 SEXP stri_replace_last_regex(SEXP str, SEXP pattern, SEXP replacement,
                              SEXP opts_regex);
 SEXP stri_split_regex(SEXP str, SEXP pattern, SEXP n_max, SEXP omit_empty,
-                      SEXP opts_regex);
+                      SEXP tokens_only, SEXP simplify, SEXP opts_regex);
+SEXP stri_subset_regex(SEXP str, SEXP pattern, SEXP opts_regex);
 SEXP stri_extract_first_regex(SEXP str, SEXP pattern, SEXP opts_regex);
 SEXP stri_extract_last_regex(SEXP str, SEXP pattern, SEXP opts_regex);
-SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP opts_regex);
+SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_regex);
 SEXP stri_match_first_regex(SEXP str, SEXP pattern, SEXP opts_regex);
 SEXP stri_match_last_regex(SEXP str, SEXP pattern, SEXP opts_regex);
 SEXP stri_match_all_regex(SEXP str, SEXP pattern, SEXP opts_regex);
@@ -233,30 +242,37 @@ SEXP stri_count_charclass(SEXP str, SEXP pattern);
 SEXP stri_detect_charclass(SEXP str, SEXP pattern);
 SEXP stri_extract_first_charclass(SEXP str, SEXP pattern);
 SEXP stri_extract_last_charclass(SEXP str, SEXP pattern);
-SEXP stri_extract_all_charclass(SEXP str, SEXP pattern, SEXP merge);
+SEXP stri_extract_all_charclass(SEXP str, SEXP pattern, SEXP merge, SEXP simplify);
 SEXP stri_locate_first_charclass(SEXP str, SEXP pattern);
 SEXP stri_locate_last_charclass(SEXP str, SEXP pattern);
 SEXP stri_locate_all_charclass(SEXP str, SEXP pattern, SEXP merge);
 SEXP stri_replace_last_charclass(SEXP str, SEXP pattern, SEXP replacement);
 SEXP stri_replace_first_charclass(SEXP str, SEXP pattern, SEXP replacement);
-SEXP stri_replace_all_charclass(SEXP str, SEXP pattern, SEXP replacement, SEXP merge);
-SEXP stri_split_charclass(SEXP str, SEXP pattern, SEXP n_max, SEXP omit_empty);
+SEXP stri_replace_all_charclass(SEXP str, SEXP pattern, SEXP replacement,
+                                SEXP merge, SEXP vectorize_all);
+SEXP stri_split_charclass(SEXP str, SEXP pattern, SEXP n_max,
+                          SEXP omit_empty, SEXP tokens_only, SEXP simplify);
+SEXP stri_endswith_charclass(SEXP str, SEXP pattern, SEXP to);
+SEXP stri_startswith_charclass(SEXP str, SEXP pattern, SEXP from);
+SEXP stri_subset_charclass(SEXP str, SEXP pattern);
 
-SEXP stri_split_lines(SEXP str, SEXP n_max, SEXP omit_empty);
+int stri__opts_brkiter_select_iterator(SEXP opts_brkiter, const char* _default);
+RuleBasedBreakIterator* stri__opts_brkiter_get_iterator(int brkiter_cur, const char* qloc);
+UBreakIterator* stri__opts_brkiter_get_uiterator(int brkiter_cur, const char* qloc);
+const char* stri__opts_brkiter_get_locale(SEXP opts_brkiter);
+vector<int32_t> stri__opts_brkiter_get_skip_rule_status(SEXP opts_brkiter);
+SEXP stri_locate_boundaries(SEXP str, SEXP opts_brkiter);
+SEXP stri_split_boundaries(SEXP str, SEXP opts_brkiter);
+SEXP stri_count_boundaries(SEXP str, SEXP opts_brkiter);
+SEXP stri_split_lines(SEXP str, SEXP omit_empty);
 SEXP stri_split_lines1(SEXP str);
-
-SEXP stri_locate_boundaries(SEXP str, SEXP boundary, SEXP locale);
-SEXP stri_split_boundaries(SEXP str, SEXP boundary, SEXP locale);
-
-SEXP stri_locate_words(SEXP str, SEXP locale);
-SEXP stri_extract_words(SEXP str, SEXP locale);
 
 SEXP stri_replace_na(SEXP str, SEXP replacement);
 
 
 // uchar.cpp:
-// SEXP stri_charcategories();        // ...TO DO... [version >= 0.2]
-// SEXP stri_chartype(SEXP str);      // ...TO DO... [version >= 0.2]
+// SEXP stri_charcategories();        // ...TO DO... [version >= 0.3]
+// SEXP stri_chartype(SEXP str);      // ...TO DO... [version >= 0.3]
 
 
 // trim.cpp:
@@ -280,7 +296,7 @@ SEXP stri_stats_latex(SEXP str);
 
 
 // trans_casemap.cpp:
-SEXP stri_trans_casemap(SEXP str, SEXP type, SEXP locale);
+SEXP stri_trans_casemap(SEXP str, SEXP type, SEXP opts);
 
 
 // trans_normalization.cpp:
@@ -299,7 +315,10 @@ SEXP stri_test_UnicodeContainer16(SEXP str);
 SEXP stri_test_UnicodeContainer8(SEXP str);
 SEXP stri_test_returnasis(SEXP x);
 
-// ------------------------------------------------------------------------
 
+// utils.cpp
+SEXP stri_list2matrix(SEXP x, SEXP byrow, SEXP fill);
+
+// ------------------------------------------------------------------------
 
 #endif

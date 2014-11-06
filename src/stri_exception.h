@@ -40,9 +40,9 @@ using namespace std;
 #define StriException_BUFSIZE 1024
 
 
-#define STRI__ERROR_HANDLER_BEGIN                           \
-   int __stri_protected_sexp_num = 0;                       \
-   char* __stri_error_msg;                                  \
+#define STRI__ERROR_HANDLER_BEGIN(nprotect)                 \
+   int __stri_protected_sexp_num = nprotect;                \
+   char* __stri_error_msg = (char*)NULL;                    \
    try {
 
 #define STRI__ERROR_HANDLER_END(cleanup)                    \

@@ -59,13 +59,10 @@
 #' @return Returns an integer vector of the same length as \code{str}.
 #'
 #' @examples
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' stri_numbytes(letters)
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_numbytes(c('abc', '123', '\u0105\u0104'))
-#' \dontrun{
+#'
 #' # this used to fail on Windows, as there was no native support for 4-bytes
 #' # Unicode characters; see, however, stri_escape_unicode():
 #' stri_numbytes('\U7fffffff') # compare stri_length('\U7fffffff')
@@ -92,7 +89,8 @@ stri_numbytes <- function(str) {
 #'
 #' If a given string is in UTF-8 and  has not been properly normalized
 #' (e.g. by \code{\link{stri_trans_nfc}}), the returned counts may sometimes be
-#' misleading. Moreover, if an incorrect UTF-8 byte sequence is detected,
+#' misleading. See \code{\link{stri_count_boundaries}} for a method to count
+#' \emph{Unicode characters}. Moreover, if an incorrect UTF-8 byte sequence is detected,
 #' then a warning is generated and the corresponding output element
 #' is set to \code{NA}, see also \code{\link{stri_enc_toutf8}} for a method
 #' to deal with such cases.
@@ -105,21 +103,16 @@ stri_numbytes <- function(str) {
 #' @return Returns an integer vector of the same length as \code{str}.
 #'
 #' @examples
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' stri_length(LETTERS)
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_length(c('abc', '123', '\u0105\u0104'))
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_length('\u0105') # length is one, but...
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_numbytes('\u0105') # 2 bytes are used
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' stri_numbytes(stri_trans_nfkd('\u0105')) # 3 bytes here but...
 #' stri_length(stri_trans_nfkd('\u0105')) # ...two code points (!)
+#' stri_count_boundaries(stri_trans_nfkd('\u0105'),
+#'    stri_opts_brkiter(type="character")) # ...and one Unicode character
+#' }
 #'
 #' @export
 #' @family length
@@ -143,36 +136,14 @@ stri_length <- function(str) {
 #' @return Returns a logical vector of the same length as \code{str}.
 #'
 #' @examples
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' stri_isempty(letters[1:3])
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_isempty(c(',', '', 'abc', '123', '\u0105\u0104'))
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_isempty(character(1))
+#' }
 #'
 #' @export
 #' @family length
 stri_isempty <- function(str) {
    .Call("stri_isempty", str, PACKAGE="stringi")
 }
-
-
-# #' Count the Width of Characters [version >0.1]
-# #'
-# #' Missing values are handled properly.
-# #' This is equivalent to the number of columns the cat() function will use
-# #' to print the string in a monospaced font.
-# #'
-# #' @param str character vector, or a vector to be coerced to a character vector
-# #' @return an integer vector giving the sizes of each element
-# #' @examples
-# #' stri_width(LETTERS[1:5])
-# #' stri_width(c('abc','123','\u0105\u0104'))
-# #' @export
-# #' @family length
-# stri_width <- function(str) {
-#    .Call("stri_width", str, PACKAGE="stringi")
-# }

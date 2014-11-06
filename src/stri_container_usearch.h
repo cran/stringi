@@ -46,6 +46,12 @@
  *
  * @version 0.2-1 (Marek Gagolewski, 2014-04-18)
  *          BUGFIX: memleaks on StriException
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-05-27)
+ *          BUGFIX: invalid matcher reuse on empty search string
+ *
+ * @version 0.3-1 (Marek Gagolewski, 2014-11-01)
+ *          getMatcher() now also accepts UChar*
  */
 class StriContainerUStringSearch : public StriContainerUTF16 {
 
@@ -53,9 +59,7 @@ class StriContainerUStringSearch : public StriContainerUTF16 {
 
       UCollator* col; ///< collator, owned by creator
       UStringSearch* lastMatcher; ///< recently used \code{UStringSearch}
-#ifndef NDEBUG
-      R_len_t debugMatcherIndex;  ///< used by vectorize_getMatcher (internally - check)
-#endif
+      R_len_t lastMatcherIndex;  ///< used by vectorize_getMatcher
 
 
    public:
@@ -66,6 +70,7 @@ class StriContainerUStringSearch : public StriContainerUTF16 {
       ~StriContainerUStringSearch();
       StriContainerUStringSearch& operator=(StriContainerUStringSearch& container);
       UStringSearch* getMatcher(R_len_t i, const UnicodeString& searchStr);
+      UStringSearch* getMatcher(R_len_t i, const UChar* searchStr, int32_t searchStr_len);
 };
 
 #endif

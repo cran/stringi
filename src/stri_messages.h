@@ -46,6 +46,8 @@
 #define MSG__INCORRECT_COLLATOR_OPTION_SPEC \
    "incorrect collator option specifier. see ?stri_opts_collator"
 
+#define MSG__INCORRECT_BRKITER_OPTION_SPEC \
+   "incorrect break iterator option specifier. see ?stri_opts_brkiter"
 
 #define MSG__INCORRECT_REGEX_OPTION \
    "incorrect regex option: `%s`. ignoring"
@@ -105,6 +107,8 @@
 #define MSG__EXPECTED_POSITIVE \
    "argument `%s`: expected a positive numeric value"
 
+#define MSG__EXPECTED_SMALLER \
+   "argument `%s`: value too large"
 
 #define MSG__EXPECTED_ASCII \
    "incorrect argument: the string contains non-ASCII characters"
@@ -248,5 +252,8 @@
 
 #define MSG__EMPTY_SEARCH_PATTERN_UNSUPPORTED \
    "empty search patterns are not supported"
+
+#define MSG__OVERLAPPING_PATTERN_UNSUPPORTED \
+   "overlapping pattern matches are not supported"
 
 #endif

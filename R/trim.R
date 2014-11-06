@@ -48,7 +48,8 @@
 #' our trimming functions are quite general. A character class,
 #' given by \code{pattern},
 #' may be adjusted to suit your needs (most often you will use the default
-#' value).
+#' value). On the other hand, for replacing pattern matches with
+#' arbitrary replacement string, see \code{\link{stri_replace}}.
 #'
 #' Interestingly, with these functions you may sometimes extract data, which
 #' in some cases require using regular expressions. E.g. you may get
@@ -68,21 +69,15 @@
 #' @return All these functions return a character vector.
 #'
 #' @examples
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
+#' \donttest{
 #' stri_trim_left("               aaa")
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_trim_right("rexamine.com/", "\\p{P}")
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_trim_both(" Total of 23.5 bitcoins. ", "\\p{N}")
-#'
-#' \dontshow{if (stri_install_check(silent=TRUE))}
 #' stri_trim_both(" Total of 23.5 bitcoins. ", "\\p{L}")
+#' }
 #'
 #' @aliases stri_trim
-#' @family search_trim
+#' @family search_replace
 #' @family search_charclass
 #' @rdname stri_trim
 #' @export
