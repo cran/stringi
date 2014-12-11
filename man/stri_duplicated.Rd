@@ -4,9 +4,9 @@
 \alias{stri_duplicated_any}
 \title{Determine Duplicated Elements}
 \usage{
-stri_duplicated(str, fromLast = FALSE, opts_collator = NULL)
+stri_duplicated(str, fromLast = FALSE, ..., opts_collator = NULL)
 
-stri_duplicated_any(str, fromLast = FALSE, opts_collator = NULL)
+stri_duplicated_any(str, fromLast = FALSE, ..., opts_collator = NULL)
 }
 \arguments{
 \item{str}{character vector}
@@ -15,14 +15,16 @@ stri_duplicated_any(str, fromLast = FALSE, opts_collator = NULL)
 indicating whether duplication should be considered from the
 reverse side}
 
+\item{...}{additional settings for \code{opts_collator}}
+
 \item{opts_collator}{a named list with \pkg{ICU} Collator's options
 as generated with \code{\link{stri_opts_collator}}, \code{NULL}
 for default collation options}
 }
 \value{
 \code{stri_duplicated()} returns a logical vector of the same length
-as \code{str}. Each of its elements indicates if an equivalent string
-already appeared in \code{str}.
+as \code{str}. Each of its elements indicates whether a canonically
+equivalent string was already found in \code{str}.
 
 \code{stri_duplicated_any()} returns a single non-negative integer.
 Value of 0 indicates that all the elements in \code{str} are unique.
@@ -41,7 +43,7 @@ Missing values are regarded as equal.
 Unlike \code{\link{duplicated}} and \code{\link{anyDuplicated}},
 these functions test for canonical equivalence of strings
 (and not whether the strings are just bytewise equal)
-Such operations is locale-dependent.
+Such operations are locale-dependent.
 Hence, \code{stri_duplicated} and \code{stri_duplicated_any}
 are significantly slower (but much better suited for natural language
 processing) than their base R counterpart.
@@ -49,7 +51,6 @@ processing) than their base R counterpart.
 See also \code{\link{stri_unique}} for extracting unique elements.
 }
 \examples{
-\donttest{
 # In the following examples, we have 3 duplicated values,
 # "a" - 2 times, NA - 1 time
 stri_duplicated(c("a", "b", "a", NA, "a", NA))
@@ -60,10 +61,8 @@ stri_duplicated_any(c("a", "b", "a", NA, "a", NA))
 stri_duplicated(c("\\u0105", stri_trans_nfkd("\\u0105")))
 duplicated(c("\\u0105", stri_trans_nfkd("\\u0105")))
 
-stri_duplicated(c("gro\\\\u00df", "GROSS", "Gro\\\\u00df", "Gross"),
-   opts_collator=stri_opts_collator(strength=1))
-duplicated(c("gro\\\\u00df", "GROSS", "Gro\\\\u00df", "Gross"))
-}
+stri_duplicated(c("gro\\u00df", "GROSS", "Gro\\u00df", "Gross"), strength=1)
+duplicated(c("gro\\u00df", "GROSS", "Gro\\u00df", "Gross"))
 }
 \seealso{
 Other locale_sensitive: \code{\link{\%s!==\%}},
@@ -84,9 +83,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stri_count_boundaries}},
   \code{\link{stri_count_words}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_collator}};
   \code{\link{stri_order}}, \code{\link{stri_sort}};
   \code{\link{stri_split_boundaries}};
@@ -116,9 +121,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stri_count_boundaries}},
   \code{\link{stri_count_words}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_collator}};
   \code{\link{stri_order}}, \code{\link{stri_sort}};
   \code{\link{stri_split_boundaries}};

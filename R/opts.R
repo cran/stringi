@@ -78,14 +78,16 @@
 #' normalization is performed
 #' @param numeric single logical value;
 #' when turned on, this attribute generates a collation key for
-#'  the numeric value of substrings of digits;
-#'  This is a way to get '100' to sort AFTER '2'.
+#' the numeric value of substrings of digits;
+#' this is a way to get '100' to sort AFTER '2'
+#' @param ... any other arguments to this function are purposely ignored
 #'
 #' @return
 #' Returns a named list object; missing settings are left with default values.
 #'
 #' @export
 #' @family locale_sensitive
+#' @family search_coll
 #'
 #' @references
 #' \emph{Collation} -- ICU User Guide,
@@ -98,16 +100,15 @@
 #' \url{http://www.icu-project.org/apiref/icu4c/classicu_1_1Collator.html}
 #'
 #' @examples
-#' \donttest{
 #' stri_cmp("number100", "number2")
-#' stri_cmp("number100", "number2", stri_opts_collator(numeric=TRUE))
+#' stri_cmp("number100", "number2", opts_collator=stri_opts_collator(numeric=TRUE))
+#' stri_cmp("number100", "number2", numeric=TRUE) # equivalent
 #' stri_cmp("above mentioned", "above-mentioned")
-#' stri_cmp("above mentioned", "above-mentioned", stri_opts_collator(alternate_shifted=TRUE))
-#' }
+#' stri_cmp("above mentioned", "above-mentioned", alternate_shifted=TRUE)
 stri_opts_collator <- function(locale=NULL, strength=3L,
    alternate_shifted=FALSE, french=FALSE,
    uppercase_first=NA, case_level=FALSE,
-   normalization=FALSE, numeric=FALSE)
+   normalization=FALSE, numeric=FALSE, ...)
 {
    opts <- list()
    if (!missing(locale))            opts["locale"]            <- locale
@@ -144,7 +145,7 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 #' @param literal logical; if set, treat the entire pattern as a literal string:
 #' metacharacters or escape sequences in the input sequence will be given no special meaning;
 #' note that in most cases you would rather use the \link{stringi-search-fixed}
-#' facilities in this case (with \code{opts_collator=NA}).
+#' facilities in this case
 #' @param multiline logical; controls the behavior of `\code{$}` and `\code{^}`.
 #' If set, recognize line terminators within a string, otherwise,
 #'  match only at start and end of input string [regex flag \code{(?m)}]
@@ -160,7 +161,8 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 #' whether to generate an error on unrecognized backslash escapes;
 #' if set, fail with an error on patterns that contain backslash-escaped ASCII
 #' letters without a known special meaning;
-#' otherwise, these escaped letters represent themselves.
+#' otherwise, these escaped letters represent themselves
+#' @param ... any other arguments to this function are purposely ignored
 #'
 #' @return
 #' Returns a named list object; missing settings are left with default values.
@@ -177,13 +179,12 @@ stri_opts_collator <- function(locale=NULL, strength=3L,
 #' \url{http://userguide.icu-project.org/strings/regexp}
 #'
 #' @examples
-#' \donttest{
 #' stri_detect_regex("ala", "ALA") # case-sensitive by default
-#' stri_detect_regex("ala", "ALA", stri_opts_regex(case_insensitive=TRUE))
+#' stri_detect_regex("ala", "ALA", opts_regex=stri_opts_regex(case_insensitive=TRUE))
+#' stri_detect_regex("ala", "ALA", case_insensitive=TRUE) # equivalent
 #' stri_detect_regex("ala", "(?i)ALA") # equivalent
-#' }
 stri_opts_regex <- function(case_insensitive, comments, dotall, literal,
-                            multiline, unix_lines, uword, error_on_unknown_escapes)
+                            multiline, unix_lines, uword, error_on_unknown_escapes, ...)
 {
    opts <- list()
    if (!missing(case_insensitive))         opts["case_insensitive"]         <- case_insensitive
@@ -209,7 +210,7 @@ stri_opts_regex <- function(case_insensitive, comments, dotall, literal,
 #' @details
 #' The \code{skip_*} family of settings may be used to prevent performing
 #' any special actions on particular types of text boundaries, e.g.
-#' in case of the \code{\link{stri_locate_boundaries}} and
+#' in case of the \code{\link{stri_locate_all_boundaries}} and
 #' \code{\link{stri_split_boundaries}} functions.
 #'
 #' @param type single string; break iterator type, one of \code{character},
@@ -237,6 +238,7 @@ stri_opts_regex <- function(case_insensitive, comments, dotall, literal,
 #' @param skip_sentence_sep logical; perform no action for sentences
 #' that do not contain an ending sentence terminator, but are ended
 #' by a hard separator or end of input
+#' @param ... any other arguments to this function are purposely ignored
 #'
 #' @return
 #' Returns a named list object.
@@ -255,7 +257,7 @@ stri_opts_brkiter <- function(type, locale, skip_word_none,
       skip_word_number, skip_word_letter,
       skip_word_kana, skip_word_ideo,
       skip_line_soft, skip_line_hard,
-      skip_sentence_term, skip_sentence_sep
+      skip_sentence_term, skip_sentence_sep, ...
    )
 {
    opts <- list()
@@ -270,5 +272,51 @@ stri_opts_brkiter <- function(type, locale, skip_word_none,
    if (!missing(skip_line_hard))      opts["skip_line_hard"]      <- skip_line_hard
    if (!missing(skip_sentence_term))  opts["skip_sentence_term"]  <- skip_sentence_term
    if (!missing(skip_sentence_sep))   opts["skip_sentence_sep"]   <- skip_sentence_sep
+   opts
+}
+
+
+#' @title
+#' Generate a List with Fixed Pattern Search Engine's Settings
+#'
+#' @description
+#' A convenience function used to tune up the \code{stri_*_fixed} functions'
+#' behavior, see \link{stringi-search-fixed}.
+#'
+#' @details
+#' Case-insensitive matching uses a simple, single-code point case mapping
+#' (via ICU's \code{u_toupper()} function).
+#' Full case mappings should be used whenever possible because they produce
+#' better results by working on whole strings. They take into account
+#' the string context and the language and can map to a result string with
+#' a different length as appropriate, see \link{stringi-search-coll}.
+#'
+#' Searching for overlapping pattern matches works in case of the
+#' \code{\link{stri_extract_all_fixed}}, \code{\link{stri_locate_all_fixed}},
+#' and \code{\link{stri_count_fixed}} functions.
+#'
+#' @param case_insensitive logical; enable simple case insensitive matching
+#' @param overlap logical; enable overlapping matches detection in certain functions
+#' @param ... any other arguments to this function are purposely ignored
+#'
+#' @return
+#' Returns a named list object.
+#'
+#' @export
+#' @family search_fixed
+#'
+#' @references
+#' \emph{C/POSIX Migration} -- ICU User Guide,
+#' \url{http://userguide.icu-project.org/posix#case_mappings}
+#'
+#' @examples
+#' stri_detect_fixed("ala", "ALA") # case-sensitive by default
+#' stri_detect_fixed("ala", "ALA", opts_fixed=stri_opts_fixed(case_insensitive=TRUE))
+#' stri_detect_fixed("ala", "ALA", case_insensitive=TRUE) # equivalent
+stri_opts_fixed <- function(case_insensitive=FALSE, overlap=FALSE, ...)
+{
+   opts <- list()
+   if (!missing(case_insensitive))    opts["case_insensitive"] <- case_insensitive
+   if (!missing(overlap))             opts["overlap"]          <- overlap
    opts
 }

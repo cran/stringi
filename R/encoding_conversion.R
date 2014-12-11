@@ -111,7 +111,7 @@
 #' @rdname stri_encode
 #' @export
 stri_encode <- function(str, from=NULL, to=NULL, to_raw=FALSE) {
-   .Call("stri_encode", str, from, to, to_raw, PACKAGE="stringi")
+   .Call(C_stri_encode, str, from, to, to_raw)
 }
 
 
@@ -150,7 +150,7 @@ stri_conv <- stri_encode
 #' @family encoding_conversion
 #' @export
 stri_enc_toutf32 <- function(str) {
-   .Call("stri_enc_toutf32", str, PACKAGE="stringi")
+   .Call(C_stri_enc_toutf32, str)
 }
 
 
@@ -189,7 +189,7 @@ stri_enc_toutf32 <- function(str) {
 #' @family encoding_conversion
 #' @export
 stri_enc_fromutf32 <- function(vec) {
-   .Call("stri_enc_fromutf32", vec, PACKAGE="stringi")
+   .Call(C_stri_enc_fromutf32, vec)
 }
 
 
@@ -213,7 +213,7 @@ stri_enc_fromutf32 <- function(vec) {
 #' returned as-is, i.e. with unchanged markings.
 #' A similar behavior is observed when calling \code{\link{enc2utf8}}.
 #'
-#' For \code{is_unknown_8bit == TRUE}, if a string is declared to be neither in ASCII
+#' For \code{is_unknown_8bit=TRUE}, if a string is declared to be neither in ASCII
 #' nor in UTF-8, then all byte codes > 127 are replaced with
 #' the Unicode REPLACEMENT CHARACTER (\\Ufffd).
 #' Note that the REPLACEMENT CHARACTER may be interpreted as Unicode
@@ -223,7 +223,7 @@ stri_enc_fromutf32 <- function(vec) {
 #'
 #' What is more, in both cases setting \code{validate} to \code{TRUE}
 #' or \code{NA} validates the resulting UTF-8 byte stream.
-#' If \code{validate == TRUE}, then
+#' If \code{validate=TRUE}, then
 #' in case of any incorrect byte sequences, they will be
 #' replaced with REPLACEMENT CHARACTER.
 #' This option may be used in a (very rare in practice) case
@@ -238,7 +238,7 @@ stri_enc_fromutf32 <- function(vec) {
 #' @family encoding_conversion
 #' @export
 stri_enc_toutf8 <- function(str, is_unknown_8bit=FALSE, validate=FALSE) {
-   .Call("stri_enc_toutf8", str, is_unknown_8bit, validate, PACKAGE="stringi")
+   .Call(C_stri_enc_toutf8, str, is_unknown_8bit, validate)
 }
 
 
@@ -296,5 +296,5 @@ stri_enc_tonative <- function(str) {
 #' @family encoding_conversion
 #' @export
 stri_enc_toascii <- function(str) {
-   .Call("stri_enc_toascii", str, PACKAGE="stringi")
+   .Call(C_stri_enc_toascii, str)
 }

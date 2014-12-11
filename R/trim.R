@@ -69,12 +69,10 @@
 #' @return All these functions return a character vector.
 #'
 #' @examples
-#' \donttest{
 #' stri_trim_left("               aaa")
 #' stri_trim_right("rexamine.com/", "\\p{P}")
 #' stri_trim_both(" Total of 23.5 bitcoins. ", "\\p{N}")
 #' stri_trim_both(" Total of 23.5 bitcoins. ", "\\p{L}")
-#' }
 #'
 #' @aliases stri_trim
 #' @family search_replace
@@ -82,21 +80,21 @@
 #' @rdname stri_trim
 #' @export
 stri_trim_both <- function(str, pattern="\\P{Wspace}") {
-   .Call("stri_trim_both", str, pattern, PACKAGE="stringi")
+   .Call(C_stri_trim_both, str, pattern)
 }
 
 
 #' @rdname stri_trim
 #' @export
 stri_trim_left <- function(str, pattern="\\P{Wspace}") {
-  .Call("stri_trim_left", str, pattern, PACKAGE="stringi")
+  .Call(C_stri_trim_left, str, pattern)
 }
 
 
 #' @rdname stri_trim
 #' @export
 stri_trim_right <- function(str, pattern="\\P{Wspace}") {
-  .Call("stri_trim_right", str, pattern, PACKAGE="stringi")
+  .Call(C_stri_trim_right, str, pattern)
 }
 
 

@@ -32,7 +32,7 @@
 
 #include "stri_stringi.h"
 #include <unicode/ucol.h>
-
+#include <unicode/usearch.h>
 
 /**
  * Create & set up an ICU Collator
@@ -58,6 +58,9 @@
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-06)
  *    Fetch opts vals first to avoid memleaks (missing ucol_close calls on Rf_error)
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-08)
+ *    #23: add `overlap` option
  */
 UCollator* stri__ucol_open(SEXP opts_collator)
 {
@@ -67,11 +70,9 @@ UCollator* stri__ucol_open(SEXP opts_collator)
    R_len_t narg = isNull(opts_collator)?0:LENGTH(opts_collator);
 
    if (narg <= 0) { // no custom settings - use default Collator
-      UErrorCode err = U_ZERO_ERROR;
-      UCollator* col = ucol_open(NULL, &err);
-      if (U_FAILURE(err)) {
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      UErrorCode status = U_ZERO_ERROR;
+      UCollator* col = ucol_open(NULL, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, {/* do nothing special on err */}) // error() allowed here
       return col;
    }
 
@@ -86,8 +87,9 @@ UCollator* stri__ucol_open(SEXP opts_collator)
    UColAttributeValue  opt_CASE_FIRST = UCOL_DEFAULT;
    UColAttributeValue  opt_CASE_LEVEL = UCOL_DEFAULT;
    UColAttributeValue  opt_NORMALIZATION_MODE = UCOL_DEFAULT;
-   UColAttributeValue  opt_STRENGTH = UCOL_DEFAULT;
+   UColAttributeValue  opt_STRENGTH =  UCOL_DEFAULT_STRENGTH;
    UColAttributeValue  opt_NUMERIC_COLLATION = UCOL_DEFAULT;
+//   USearchAttributeValue  opt_OVERLAP = USEARCH_OFF;
    const char*         opt_LOCALE = NULL;
 
    for (R_len_t i=0; i<narg; ++i) {
@@ -99,7 +101,12 @@ UCollator* stri__ucol_open(SEXP opts_collator)
          opt_LOCALE = stri__prepare_arg_locale(VECTOR_ELT(opts_collator, i), "locale", true); /* this is R_alloc'ed */
       } else if  (!strcmp(curname, "strength")) {
          int val = stri__prepare_arg_integer_1_notNA(VECTOR_ELT(opts_collator, i), "strength");
+         if (val < (int)UCOL_PRIMARY + 1) val = (int)UCOL_PRIMARY + 1;
+         else if (val > (int)UCOL_STRENGTH_LIMIT + 1) val = (int)UCOL_STRENGTH_LIMIT + 1;
          opt_STRENGTH = (UColAttributeValue)(val-1);
+//      } else if  (!strcmp(curname, "overlap") && allow_overlap) {
+//         bool val_bool = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_collator, i), "overlap");
+//         opt_OVERLAP = (val_bool?USEARCH_ON:USEARCH_OFF);
       } else if  (!strcmp(curname, "alternate_shifted")) {
          bool val_bool = stri__prepare_arg_logical_1_notNA(VECTOR_ELT(opts_collator, i), "alternate_shifted");
          opt_ALTERNATE_HANDLING = (val_bool?UCOL_SHIFTED:UCOL_NON_IGNORABLE);
@@ -127,74 +134,57 @@ UCollator* stri__ucol_open(SEXP opts_collator)
    }
 
    // create collator
-   UErrorCode err = U_ZERO_ERROR;
-   UCollator* col = ucol_open(opt_LOCALE, &err);
-   if (U_FAILURE(err)) {
-      Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-   }
+   UErrorCode status = U_ZERO_ERROR;
+   UCollator* col = ucol_open(opt_LOCALE, &status);
+   STRI__CHECKICUSTATUS_RFERROR(status, { /* nothing special on err */ }) // error() allowed here
 
    // set other opts
+//   if (opt_OVERLAP != UCOL_OFF) {
+//      status = U_ZERO_ERROR;
+//      ucol_setAttribute(col, UCOL_OVERLAP, opt_OVERLAP, &status);
+//      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
+//   }
+
    if (opt_STRENGTH != UCOL_DEFAULT) {
-      err = U_ZERO_ERROR;
-      ucol_setAttribute(col, UCOL_STRENGTH, opt_STRENGTH, &err);
-      if (U_FAILURE(err)) {
-         ucol_close(col);
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      status = U_ZERO_ERROR;
+      ucol_setAttribute(col, UCOL_STRENGTH, opt_STRENGTH, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
    }
 
    if (opt_FRENCH_COLLATION != UCOL_DEFAULT) {
-      err = U_ZERO_ERROR;
-      ucol_setAttribute(col, UCOL_FRENCH_COLLATION, opt_FRENCH_COLLATION, &err);
-      if (U_FAILURE(err)) {
-         ucol_close(col);
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      status = U_ZERO_ERROR;
+      ucol_setAttribute(col, UCOL_FRENCH_COLLATION, opt_FRENCH_COLLATION, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
    }
 
    if (opt_ALTERNATE_HANDLING != UCOL_DEFAULT) {
-      err = U_ZERO_ERROR;
-      ucol_setAttribute(col, UCOL_ALTERNATE_HANDLING, opt_ALTERNATE_HANDLING, &err);
-      if (U_FAILURE(err)) {
-         ucol_close(col);
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      status = U_ZERO_ERROR;
+      ucol_setAttribute(col, UCOL_ALTERNATE_HANDLING, opt_ALTERNATE_HANDLING, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
    }
 
    if (opt_CASE_FIRST != UCOL_DEFAULT) {
-      err = U_ZERO_ERROR;
-      ucol_setAttribute(col, UCOL_CASE_FIRST, opt_CASE_FIRST, &err);
-      if (U_FAILURE(err)) {
-         ucol_close(col);
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      status = U_ZERO_ERROR;
+      ucol_setAttribute(col, UCOL_CASE_FIRST, opt_CASE_FIRST, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
    }
 
    if (opt_CASE_LEVEL != UCOL_DEFAULT) {
-      err = U_ZERO_ERROR;
-      ucol_setAttribute(col, UCOL_CASE_LEVEL, opt_CASE_LEVEL, &err);
-      if (U_FAILURE(err)) {
-         ucol_close(col);
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      status = U_ZERO_ERROR;
+      ucol_setAttribute(col, UCOL_CASE_LEVEL, opt_CASE_LEVEL, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
    }
 
    if (opt_NORMALIZATION_MODE != UCOL_DEFAULT) {
-      err = U_ZERO_ERROR;
-      ucol_setAttribute(col, UCOL_NORMALIZATION_MODE, opt_NORMALIZATION_MODE, &err);
-      if (U_FAILURE(err)) {
-         ucol_close(col);
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      status = U_ZERO_ERROR;
+      ucol_setAttribute(col, UCOL_NORMALIZATION_MODE, opt_NORMALIZATION_MODE, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
    }
 
    if (opt_NUMERIC_COLLATION != UCOL_DEFAULT) {
-      err = U_ZERO_ERROR;
-      ucol_setAttribute(col, UCOL_NUMERIC_COLLATION, opt_NUMERIC_COLLATION, &err);
-      if (U_FAILURE(err)) {
-         ucol_close(col);
-         Rf_error(MSG__RESOURCE_ERROR_GET); // error() allowed here
-      }
+      status = U_ZERO_ERROR;
+      ucol_setAttribute(col, UCOL_NUMERIC_COLLATION, opt_NUMERIC_COLLATION, &status);
+      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
    }
 
    return col;

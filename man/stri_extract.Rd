@@ -4,84 +4,102 @@
 \alias{stri_extract_all}
 \alias{stri_extract_all_charclass}
 \alias{stri_extract_all_coll}
+\alias{stri_extract_all_fixed}
 \alias{stri_extract_all_regex}
 \alias{stri_extract_first}
 \alias{stri_extract_first_charclass}
 \alias{stri_extract_first_coll}
+\alias{stri_extract_first_fixed}
 \alias{stri_extract_first_regex}
 \alias{stri_extract_last}
 \alias{stri_extract_last_charclass}
 \alias{stri_extract_last_coll}
+\alias{stri_extract_last_fixed}
 \alias{stri_extract_last_regex}
 \title{Extract Occurrences of a Pattern}
 \usage{
-stri_extract_all(str, ..., regex, coll, charclass)
+stri_extract_all(str, ..., regex, fixed, coll, charclass)
 
-stri_extract_first(str, ..., regex, coll, charclass)
+stri_extract_first(str, ..., regex, fixed, coll, charclass)
 
-stri_extract_last(str, ..., regex, coll, charclass)
+stri_extract_last(str, ..., regex, fixed, coll, charclass)
 
-stri_extract(str, ..., regex, coll, charclass, mode = c("first", "all",
+stri_extract(str, ..., regex, fixed, coll, charclass, mode = c("first", "all",
   "last"))
 
-stri_extract_all_charclass(str, pattern, merge = TRUE, simplify = FALSE)
+stri_extract_all_charclass(str, pattern, merge = TRUE, simplify = FALSE,
+  omit_no_match = FALSE)
 
 stri_extract_first_charclass(str, pattern)
 
 stri_extract_last_charclass(str, pattern)
 
-stri_extract_all_coll(str, pattern, simplify = FALSE, opts_collator = NULL)
+stri_extract_all_coll(str, pattern, simplify = FALSE, omit_no_match = FALSE,
+  ..., opts_collator = NULL)
 
-stri_extract_first_coll(str, pattern, opts_collator = NULL)
+stri_extract_first_coll(str, pattern, ..., opts_collator = NULL)
 
-stri_extract_last_coll(str, pattern, opts_collator = NULL)
+stri_extract_last_coll(str, pattern, ..., opts_collator = NULL)
 
-stri_extract_all_regex(str, pattern, simplify = FALSE, opts_regex = NULL)
+stri_extract_all_regex(str, pattern, simplify = FALSE,
+  omit_no_match = FALSE, ..., opts_regex = NULL)
 
-stri_extract_first_regex(str, pattern, opts_regex = NULL)
+stri_extract_first_regex(str, pattern, ..., opts_regex = NULL)
 
-stri_extract_last_regex(str, pattern, opts_regex = NULL)
+stri_extract_last_regex(str, pattern, ..., opts_regex = NULL)
+
+stri_extract_all_fixed(str, pattern, simplify = FALSE,
+  omit_no_match = FALSE, ..., opts_fixed = NULL)
+
+stri_extract_first_fixed(str, pattern, ..., opts_fixed = NULL)
+
+stri_extract_last_fixed(str, pattern, ..., opts_fixed = NULL)
 }
 \arguments{
 \item{str}{character vector with strings to search in}
 
-\item{...}{additional arguments passed to the underlying functions}
+\item{...}{supplementary arguments passed to the underlying functions,
+including additional settings for \code{opts_collator}, \code{opts_regex},
+and so on}
 
 \item{mode}{single string;
 one of: \code{"first"} (the default), \code{"all"}, \code{"last"}}
 
-\item{pattern,regex,coll,charclass}{character vector defining search patterns;
+\item{pattern,regex,fixed,coll,charclass}{character vector defining search patterns;
 for more details refer to \link{stringi-search}}
 
 \item{merge}{single logical value;
 should consecutive matches be merged into one string;  \code{stri_extract_all_charclass} only}
 
 \item{simplify}{single logical value;
-if \code{TRUE}, then a character matrix is returned;
+if \code{TRUE} or \code{NA}, then a character matrix is returned;
 otherwise (the default), a list of character vectors is given, see Value;
 \code{stri_extract_all_*} only}
 
-\item{opts_collator}{a named list with \pkg{ICU} Collator's settings
-as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-for default settings; \code{stri_extract_*_coll} only}
+\item{omit_no_match}{single logical value; if \code{FALSE},
+then a missing value will indicate that there was no match;
+\code{stri_extract_all_*} only}
 
-\item{opts_regex}{a named list with \pkg{ICU} Regex settings
-as generated with \code{\link{stri_opts_regex}}; \code{NULL}
-for default settings;
-\code{stri_extract_*_regex} only}
+\item{opts_collator,opts_fixed,opts_regex}{a named list used to tune up
+a search engine's settings; see \code{\link{stri_opts_collator}},
+\code{\link{stri_opts_fixed}}, and \code{\link{stri_opts_regex}},
+respectively; \code{NULL} for default settings;}
 }
 \value{
-For \code{stri_extract_all*}, if \code{simplify == FALSE} (the default), then
+For \code{stri_extract_all*}, if \code{simplify=FALSE} (the default), then
 a list of character vectors is returned. Each list element
 represents the results of a separate search scenario.
-If a pattern is not found, then a character vector of length 1,
+If a pattern is not found and \code{omit_no_match=FALSE},
+then a character vector of length 1,
 with single \code{NA} value will be generated.
-Otherwise, i.e. if \code{simplify == TRUE},
+Otherwise, i.e. if \code{simplify} is not \code{FALSE},
 then \code{\link{stri_list2matrix}} with \code{byrow=TRUE} argument
 is called on the resulting object.
 In such a case, a character matrix with an appropriate number of rows
 (according to the length of \code{str}, \code{pattern}, etc.)
-is returned.
+is returned. Note that \code{\link{stri_list2matrix}}'s \code{fill} argument is set
+to an empty string and \code{NA},
+for \code{simplify} equal to \code{TRUE} and \code{NA}, respectively.
 
 \code{stri_extract_first*} and \code{stri_extract_last*},
 on the other hand, return a character vector.
@@ -97,9 +115,6 @@ provide the first or the last matches, respectively.
 \details{
 Vectorized over \code{str} and \code{pattern}.
 
-Note that a \code{stri_extract_*_fixed} family of functions does not
-make sense. Thus, it has not been implemented in \pkg{stringi}.
-
 If you would like to extract regex capture groups individually,
 check out \code{\link{stri_match}}.
 
@@ -110,7 +125,6 @@ Unless you are a very lazy person, please call the underlying functions
 directly for better performance.
 }
 \examples{
-\donttest{
 stri_extract_all('XaaaaX', regex=c('\\\\p{Ll}', '\\\\p{Ll}+', '\\\\p{Ll}{2,3}', '\\\\p{Ll}{2,3}?'))
 stri_extract_all('Bartolini', coll='i')
 stri_extract_all('stringi is so good!', charclass='\\\\p{Zs}') # all whitespaces
@@ -121,10 +135,8 @@ stri_extract_first_charclass('AaBbCc', '\\\\p{Ll}')
 stri_extract_last_charclass('AaBbCc', '\\\\p{Ll}')
 
 stri_extract_all_coll(c('AaaaaaaA', 'AAAA'), 'a')
-stri_extract_first_coll(c('Yy\\u00FD', 'AAA'), 'y',
-   stri_opts_collator(strength=2, locale="sk_SK"))
-stri_extract_last_coll(c('Yy\\u00FD', 'AAA'), 'y',
-   stri_opts_collator(strength=1, locale="sk_SK"))
+stri_extract_first_coll(c('Yy\\u00FD', 'AAA'), 'y', strength=2, locale="sk_SK")
+stri_extract_last_coll(c('Yy\\u00FD', 'AAA'), 'y',  strength=1, locale="sk_SK")
 
 stri_extract_all_regex('XaaaaX', c('\\\\p{Ll}', '\\\\p{Ll}+', '\\\\p{Ll}{2,3}', '\\\\p{Ll}{2,3}?'))
 stri_extract_first_regex('XaaaaX', c('\\\\p{Ll}', '\\\\p{Ll}+', '\\\\p{Ll}{2,3}', '\\\\p{Ll}{2,3}?'))
@@ -132,10 +144,15 @@ stri_extract_last_regex('XaaaaX', c('\\\\p{Ll}', '\\\\p{Ll}+', '\\\\p{Ll}{2,3}',
 
 stri_list2matrix(stri_extract_all_regex('XaaaaX', c('\\\\p{Ll}', '\\\\p{Ll}+')))
 stri_extract_all_regex('XaaaaX', c('\\\\p{Ll}', '\\\\p{Ll}+'), simplify=TRUE)
-}
+stri_extract_all_regex('XaaaaX', c('\\\\p{Ll}', '\\\\p{Ll}+'), simplify=NA)
+
+stri_extract_all_fixed("abaBAba", "Aba", case_insensitive=TRUE)
+stri_extract_all_fixed("abaBAba", "Aba", case_insensitive=TRUE, overlap=TRUE)
 }
 \seealso{
-Other search_extract: \code{\link{stri_extract_words}};
+Other search_extract: \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
   \code{\link{stri_match}}, \code{\link{stri_match_all}},
   \code{\link{stri_match_all_regex}},
   \code{\link{stri_match_first}},

@@ -40,6 +40,71 @@
 using namespace std;
 
 
+/**
+ * Prepare list argument -- ignore empty vectors if needed, used by stri_paste
+ *
+ * @param x a list of strings
+ * @param ignore_null FALSE to do nothing
+ * @return a list vector
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ */
+SEXP stri__prepare_arg_list_ignore_null(SEXP x, bool ignore_null)
+{
+   if (!ignore_null)
+      return x;
+
+   PROTECT(x);
+
+#ifndef NDEBUG
+   if (!Rf_isVectorList(x))
+      Rf_error("stri_prepare_arg_list_ignore_null:: !NDEBUG: not a list"); // error() allowed here
+#endif
+
+   R_len_t narg = LENGTH(x);
+   if (narg <= 0) {
+      UNPROTECT(1);
+      return x;
+   }
+//   else if (narg == 1 && LENGTH(VECTOR_ELT(x, 0)) == 0) {
+//      UNPROTECT(1);
+//      return Rf_allocVector(VECSXP, 0);
+//   }
+
+   SEXP ret;
+//   if (ignore_null != NA_INTEGER && ignore_null < 0) { // remove NULL elements
+   R_len_t nret = 0;
+   for (R_len_t i=0; i<narg; ++i) {
+#ifndef NDEBUG
+   if (!Rf_isVector(VECTOR_ELT(x, i)))
+      Rf_error("stri_prepare_arg_list_ignore_null:: !NDEBUG: not a vector element"); // error() allowed here
+#endif
+      if (LENGTH(VECTOR_ELT(x, i)) > 0)
+         ++nret;
+   }
+
+   PROTECT(ret = Rf_allocVector(VECSXP, nret));
+   for (R_len_t i=0, j=0; i<narg; ++i) {
+      if (LENGTH(VECTOR_ELT(x, i)) > 0)
+         SET_VECTOR_ELT(ret, j++, VECTOR_ELT(x, i));
+   }
+//   }
+//   else { // insert one empty string
+//      PROTECT(ret = Rf_allocVector(VECSXP, narg));
+//      for (R_len_t i=0; i<narg; ++i) {
+//         if (LENGTH(VECTOR_ELT(x, i)) > 0)
+//            SET_VECTOR_ELT(ret, i, VECTOR_ELT(x, i));
+//         else if (ignore_null != NA_INTEGER)
+//            SET_VECTOR_ELT(ret, i, stri__vector_empty_strings(1));
+////         else
+////            SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));
+//      }
+//   }
+   UNPROTECT(2);
+   return ret;
+}
+
+
 /** Duplicate given strings
  *
  *
@@ -173,6 +238,7 @@ SEXP stri_dup(SEXP str, SEXP times)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
 */
 SEXP stri_join2_nocollapse(SEXP e1, SEXP e2)
 {
@@ -264,6 +330,9 @@ SEXP stri_join2_nocollapse(SEXP e1, SEXP e2)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ *  @version 0.4-1 (Marek Gagolewski, 2014-11-26)
+ *    Issue #114: inconsistent behavior w.r.t. paste()
 */
 SEXP stri_join2_withcollapse(SEXP e1, SEXP e2, SEXP collapse)
 {
@@ -316,12 +385,9 @@ SEXP stri_join2_withcollapse(SEXP e1, SEXP e2, SEXP collapse)
 
    String8buf buf(nchar);
    R_len_t last_buf_idx = 0;
-   for (R_len_t i = e1_cont.vectorize_init(); // this iterator allows for...
-         i != e1_cont.vectorize_end();        // ...smart buffer reusage
-         i = e1_cont.vectorize_next(i))
+   for (R_len_t i = 0; i < vectorize_length; ++i) // don't change this order, see #114
    {
-      // not need to detect NAs - they already have been excluded
-
+      // no need to detect NAs - they already have been excluded
       if (collapse_nbytes > 0 && i > 0) { // copy collapse (separator)
          memcpy(buf.data()+last_buf_idx, collapse_s, (size_t)collapse_nbytes);
          last_buf_idx += collapse_nbytes;
@@ -353,6 +419,7 @@ SEXP stri_join2_withcollapse(SEXP e1, SEXP e2, SEXP collapse)
  * @param strlist list of character vectors
  * @param sep single string
  * @param collapse single string or NULL
+ * @param ignore_null single integer
  * @return character vector
  *
  *
@@ -367,16 +434,22 @@ SEXP stri_join2_withcollapse(SEXP e1, SEXP e2, SEXP collapse)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *    FR #116: ignore_null arg added
  */
-SEXP stri_join_withcollapse(SEXP strlist, SEXP sep, SEXP collapse)
+SEXP stri_join_withcollapse(SEXP strlist, SEXP sep, SEXP collapse, SEXP ignore_null)
 {
    // no collapse-case is handled separately:
    if (isNull(collapse))
-      return stri_join_nocollapse(strlist, sep);
+      return stri_join_nocollapse(strlist, sep, ignore_null);
 
    // *result will surely be a single string*
 
-   PROTECT(strlist = stri_prepare_arg_list_string(strlist, "..."));
+   bool ignore_null1 = stri__prepare_arg_logical_1_notNA(ignore_null, "ignore_null");
+   PROTECT(strlist = stri__prepare_arg_list_ignore_null(
+      stri_prepare_arg_list_string(strlist, "..."), ignore_null1
+   ));
    R_len_t strlist_length = LENGTH(strlist);
    if (strlist_length <= 0) {
       UNPROTECT(1);
@@ -493,6 +566,7 @@ SEXP stri_join_withcollapse(SEXP strlist, SEXP sep, SEXP collapse)
  *
  * @param strlist list of character vectors
  * @param sep single string
+ * @param ignore_null single integer
  * @return character vector
  *
  *
@@ -513,10 +587,16 @@ SEXP stri_join_withcollapse(SEXP strlist, SEXP sep, SEXP collapse)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *    FR #116: ignore_null arg added
  */
-SEXP stri_join_nocollapse(SEXP strlist, SEXP sep)
+SEXP stri_join_nocollapse(SEXP strlist, SEXP sep, SEXP ignore_null)
 {
-   PROTECT(strlist = stri_prepare_arg_list_string(strlist, "..."));
+   bool ignore_null1 = stri__prepare_arg_logical_1_notNA(ignore_null, "ignore_null");
+   PROTECT(strlist = stri__prepare_arg_list_ignore_null(
+      stri_prepare_arg_list_string(strlist, "..."), ignore_null1
+   ));
    R_len_t strlist_length = LENGTH(strlist);
    if (strlist_length <= 0) {
       UNPROTECT(1);

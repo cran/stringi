@@ -4,7 +4,7 @@
 
 ##### INIT ####################################################################
 
-AC_INIT(stringi, 0.1, gagolews@rexamine.com)
+AC_INIT(stringi, 0.4, stringi@rexamine.com)
 
 ICU_VERSION_NEEDED="50" # minimal version of ICU4C required to build stringi
 
@@ -102,7 +102,7 @@ AC_PROG_CXX
 ##### CHECK FOR CAT ############################################################
 
 # Check for 'cat' and get full path.
-AC_ARG_VAR([CAT], [the 'cat' program used for generating the list of source files to compile])
+AC_ARG_VAR([CAT], [the 'cat' command used for generating the list of source files to compile])
 AC_PATH_PROG([CAT],[cat],[])
 if test "x$CAT" = "x"; then
    AC_MSG_NOTICE([==> cat command not found!])
@@ -321,6 +321,12 @@ else
    STRINGI_LDFLAGS="${ICU_LDFLAGS} ${ICU_LIBS}"
 fi
 AC_SUBST(STRINGI_OBJECTS)
+
+AC_CHECK_HEADER([elf.h],
+       [
+            with_extra_cflags="${with_extra_cflags} -DU_HAVE_ELF_H"
+            with_extra_cxxflags="${with_extra_cxxflags} -DU_HAVE_ELF_H"
+       ])
 
 STRINGI_CFLAGS="${STRINGI_CFLAGS} ${with_extra_cflags}"
 STRINGI_CPPFLAGS="${STRINGI_CPPFLAGS} ${with_extra_cppflags}"

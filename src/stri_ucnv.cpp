@@ -37,7 +37,7 @@
  * Opens (on demand) a desired converter
  *
  * The converter is opened if necessary.
- *
+ * @param register_callbacks
  *
  * @version 0.1-?? (Marek Gagolewski)
  *
@@ -47,34 +47,36 @@
  * @version 0.2-1 (Marek Gagolewski, 2014-03-28)
  *          moved to StriUcnv;
  *          throws StriException instead of calling Rf_error
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-01)
+ *    don't register callbacks by default
  */
-void StriUcnv::openConverter() {
+void StriUcnv::openConverter(bool register_callbacks) {
    if (m_ucnv)
       return;
 
-   UErrorCode err = U_ZERO_ERROR;
+   UErrorCode status = U_ZERO_ERROR;
 
-   m_ucnv = ucnv_open(m_name, &err);
-   if (U_FAILURE(err))
-      throw StriException(MSG__ENC_ERROR_SET);
+   m_ucnv = ucnv_open(m_name, &status);
+   STRI__CHECKICUSTATUS_THROW(status, { m_ucnv = NULL; })
 
-   ucnv_setFromUCallBack((UConverter*)m_ucnv,
-      (UConverterFromUCallback)STRI__UCNV_FROM_U_CALLBACK_SUBSTITUTE_WARN,
-      (const void *)NULL, (UConverterFromUCallback *)NULL,
-      (const void **)NULL,
-      &err);
-   if (U_FAILURE(err)) {
-      throw StriException(MSG__ENC_ERROR_SET);
-   }
+   if (register_callbacks) {
+      status = U_ZERO_ERROR;
+      ucnv_setFromUCallBack((UConverter*)m_ucnv,
+         (UConverterFromUCallback)STRI__UCNV_FROM_U_CALLBACK_SUBSTITUTE_WARN,
+         (const void *)NULL, (UConverterFromUCallback *)NULL,
+         (const void **)NULL,
+         &status);
+      STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
-   ucnv_setToUCallBack  ((UConverter*)m_ucnv,
-      (UConverterToUCallback)STRI__UCNV_TO_U_CALLBACK_SUBSTITUTE_WARN,
-      (const void *)NULL,
-      (UConverterToUCallback *)NULL,
-      (const void **)NULL,
-      &err);
-   if (U_FAILURE(err)) {
-      throw StriException(MSG__ENC_ERROR_SET);
+      status = U_ZERO_ERROR;
+      ucnv_setToUCallBack  ((UConverter*)m_ucnv,
+         (UConverterToUCallback)STRI__UCNV_TO_U_CALLBACK_SUBSTITUTE_WARN,
+         (const void *)NULL,
+         (UConverterToUCallback *)NULL,
+         (const void **)NULL,
+         &status);
+      STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
    }
 }
 
@@ -82,12 +84,19 @@ void StriUcnv::openConverter() {
 /** Returns a desired converted
  *
  * @return UConverter
+ * @param register_callbacks
  *
  * @version 0.2-1 (Marek Gagolewski)
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-01)
+ *    don't register callbacks by default
  */
-UConverter* StriUcnv::getConverter()
+UConverter* StriUcnv::getConverter(bool register_callbacks)
 {
-   openConverter();
+   openConverter(register_callbacks);
+#ifndef NDEBUG
+   if (!m_ucnv) throw StriException("!NDEBUG: StriUcnv::getConverter()");
+#endif
    return m_ucnv;
 }
 
@@ -206,7 +215,7 @@ vector<const char*> StriUcnv::getStandards()
       standards[i] = ucnv_getStandard(i, &status);
       if (U_FAILURE(status)) {
 #ifndef NDEBUG
-         Rf_warning("could not get standard name (stri_list)");
+         Rf_warning("could not get standard name (StriUcnv::getStandards())");
 #endif
          standards[i] = NULL;
       }
@@ -263,7 +272,7 @@ const char* StriUcnv::getFriendlyName(const char* canname)
  */
 bool StriUcnv::hasASCIIsubset()
 {
-   openConverter();
+   openConverter(false);
 
    // minCharSize, not maxCharSize, as we want to include UTF-8
    if (ucnv_getMinCharSize(m_ucnv) != 1) return false;
@@ -327,7 +336,7 @@ bool StriUcnv::hasASCIIsubset()
  */
 bool StriUcnv::is1to1Unicode()
 {
-   openConverter();
+   openConverter(false);
    if (ucnv_getMinCharSize(m_ucnv) != 1) return false;
 
    const int ascii_from = 32;
@@ -349,6 +358,7 @@ bool StriUcnv::is1to1Unicode()
    ucnv_reset(m_ucnv);
 
    while (ascii1 < ascii2) {
+      status = U_ZERO_ERROR;
       c = ucnv_getNextUChar(m_ucnv, &ascii1, ascii2, &status);
       if (U_FAILURE(status)) {
 #ifndef NDEBUG
@@ -376,6 +386,7 @@ bool StriUcnv::is1to1Unicode()
       }
 
       // character not convertable => ignore
+      status = U_ZERO_ERROR;
       if (c != UCHAR_REPLACEMENT) {
          ucnv_fromUChars(m_ucnv, buf, buflen, (UChar*)&c, 1, &status);
          if (U_FAILURE(status)) {

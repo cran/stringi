@@ -95,77 +95,75 @@
 #' \url{http://en.wikipedia.org/wiki/Unicode_equivalence}
 #'
 #' @examples
-#' \donttest{
 #' stri_trans_nfd("\u0105") # Polish a with ogonek -> a, ogonek
 #' stri_trans_nfkc("\ufdfa") # 1 codepoint -> 18 codepoints
-#' }
 #'
 #' @export
 #' @rdname stri_trans_nf
 #' @family transform
 stri_trans_nfc <- function(str) {
-   .Call("stri_trans_nf", str, 10L, PACKAGE="stringi")
+   .Call(C_stri_trans_nf, str, 10L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_nfd <- function(str) {
-   .Call("stri_trans_nf", str, 20L, PACKAGE="stringi")
+   .Call(C_stri_trans_nf, str, 20L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_nfkd <- function(str) {
-   .Call("stri_trans_nf", str, 21L, PACKAGE="stringi")
+   .Call(C_stri_trans_nf, str, 21L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_nfkc <- function(str) {
-   .Call("stri_trans_nf", str, 11L, PACKAGE="stringi")
+   .Call(C_stri_trans_nf, str, 11L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_nfkc_casefold <- function(str) {
-   .Call("stri_trans_nf", str, 12L, PACKAGE="stringi")
+   .Call(C_stri_trans_nf, str, 12L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_isnfc <- function(str) {
-   .Call("stri_trans_isnf", str, 10L, PACKAGE="stringi")
+   .Call(C_stri_trans_isnf, str, 10L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_isnfd <- function(str) {
-   .Call("stri_trans_isnf", str, 20L, PACKAGE="stringi")
+   .Call(C_stri_trans_isnf, str, 20L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_isnfkd <- function(str) {
-   .Call("stri_trans_isnf", str, 21L, PACKAGE="stringi")
+   .Call(C_stri_trans_isnf, str, 21L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_isnfkc <- function(str) {
-   .Call("stri_trans_isnf", str, 11L, PACKAGE="stringi")
+   .Call(C_stri_trans_isnf, str, 11L)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
 stri_trans_isnfkc_casefold <- function(str) {
-   .Call("stri_trans_isnf", str, 12L, PACKAGE="stringi")
+   .Call(C_stri_trans_isnf, str, 12L)
 }

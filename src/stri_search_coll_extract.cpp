@@ -87,11 +87,11 @@ SEXP stri__extract_firstlast_coll(SEXP str, SEXP pattern, SEXP opts_collator, bo
       if (first) {
          UErrorCode status = U_ZERO_ERROR;
          start = (int)usearch_first(matcher, &status);
-         if (U_FAILURE(status)) throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       } else {
          UErrorCode status = U_ZERO_ERROR;
          start = (int)usearch_last(matcher, &status);
-         if (U_FAILURE(status)) throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
 
       if (start == USEARCH_DONE) {
@@ -174,19 +174,26 @@ SEXP stri_extract_last_coll(SEXP str, SEXP pattern, SEXP opts_collator)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *    FR #117: omit_no_match arg added
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-04)
+ *    allow `simplify=NA`
  */
-SEXP stri_extract_all_coll(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_collator)
+SEXP stri_extract_all_coll(SEXP str, SEXP pattern, SEXP simplify, SEXP omit_no_match, SEXP opts_collator)
 {
+   bool omit_no_match1 = stri__prepare_arg_logical_1_notNA(omit_no_match, "omit_no_match");
+   PROTECT(simplify = stri_prepare_arg_logical_1(simplify, "simplify"));
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
-   bool simplify1 = stri__prepare_arg_logical_1_notNA(simplify, "simplify");
 
    // call stri__ucol_open after prepare_arg:
    // if prepare_arg had failed, we would have a mem leak
    UCollator* collator = NULL;
    collator = stri__ucol_open(opts_collator);
 
-   STRI__ERROR_HANDLER_BEGIN(2)
+   STRI__ERROR_HANDLER_BEGIN(3)
    R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
    StriContainerUTF16 str_cont(str, vectorize_length);
    StriContainerUStringSearch pattern_cont(pattern, vectorize_length, collator);  // collator is not owned by pattern_cont
@@ -200,17 +207,17 @@ SEXP stri_extract_all_coll(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_coll
    {
       STRI__CONTINUE_ON_EMPTY_OR_NA_STR_PATTERN(str_cont, pattern_cont,
          SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));,
-         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));)
+         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(omit_no_match1?0:1));)
 
       UStringSearch *matcher = pattern_cont.getMatcher(i, str_cont.get(i));
       usearch_reset(matcher);
 
       UErrorCode status = U_ZERO_ERROR;
       int start = (int)usearch_first(matcher, &status);
-      if (U_FAILURE(status)) throw StriException(status);
+      STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
       if (start == USEARCH_DONE) {
-         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));
+         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(omit_no_match1?0:1));
          continue;
       }
 
@@ -218,7 +225,7 @@ SEXP stri_extract_all_coll(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_coll
       while (start != USEARCH_DONE) {
          occurrences.push_back(pair<R_len_t, R_len_t>(start, usearch_getMatchedLength(matcher)));
          start = usearch_next(matcher, &status);
-         if (U_FAILURE(status)) throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
 
       R_len_t noccurrences = (R_len_t)occurrences.size();
@@ -234,9 +241,13 @@ SEXP stri_extract_all_coll(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_coll
 
    if (collator) { ucol_close(collator); collator=NULL; }
 
-   if (simplify1) {
-      ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
-         stri__vector_NA_strings(1));
+   if (LOGICAL(simplify)[0] == NA_LOGICAL) {
+      STRI__PROTECT(ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
+         stri__vector_NA_strings(1), Rf_ScalarInteger(0)))
+   }
+   else if (LOGICAL(simplify)[0]) {
+      STRI__PROTECT(ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
+         stri__vector_empty_strings(1), Rf_ScalarInteger(0)))
    }
 
    STRI__UNPROTECT_ALL

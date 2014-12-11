@@ -4,9 +4,11 @@
 \alias{stri_sort}
 \title{Ordering Permutation and Sorting}
 \usage{
-stri_order(str, decreasing = FALSE, na_last = TRUE, opts_collator = NULL)
+stri_order(str, decreasing = FALSE, na_last = TRUE, ...,
+  opts_collator = NULL)
 
-stri_sort(str, decreasing = FALSE, na_last = NA, opts_collator = NULL)
+stri_sort(str, decreasing = FALSE, na_last = NA, ...,
+  opts_collator = NULL)
 }
 \arguments{
 \item{str}{character vector}
@@ -15,10 +17,12 @@ stri_sort(str, decreasing = FALSE, na_last = NA, opts_collator = NULL)
 be nondecreasing (\code{FALSE}, default)
 or nonincreasing (\code{TRUE})?}
 
-\item{na_last}{single logical value controlling the treatment of \code{NA}s
+\item{na_last}{single logical value; controls the treatment of \code{NA}s
 in \code{str}. If \code{TRUE}, then missing values in \code{str} are put
-at the end; if \code{FALSE}, they are put first;
+at the end; if \code{FALSE}, they are put at the beginning;
 if \code{NA}, then they are removed from the output.}
+
+\item{...}{additional settings for \code{opts_collator}}
 
 \item{opts_collator}{a named list with \pkg{ICU} Collator's options
 as generated with \code{\link{stri_opts_collator}}, \code{NULL}
@@ -33,7 +37,7 @@ i.e. a character vector.
 }
 \description{
 \link{stri_order} determines a permutation which rearranges
-strings into ascending or descending order.
+strings into an ascending or descending order.
 \link{stri_sort} sorts the vector according to a lexicographic order.
 }
 \details{
@@ -48,11 +52,9 @@ Interestingly, our benchmarks indicate that \code{stri_order}
 is most often faster that \R's \code{order}.
 }
 \examples{
-\donttest{
-stri_sort(c("hladny", "chladny"), opts_collator=stri_opts_collator(locale="pl_PL"))
+stri_sort(c("hladny", "chladny"), locale="pl_PL")
 
-stri_sort(c("hladny", "chladny"), opts_collator=stri_opts_collator(locale="sk_SK"))
-}
+stri_sort(c("hladny", "chladny"), locale="sk_SK")
 }
 \seealso{
 Other locale_sensitive: \code{\link{\%s!==\%}},
@@ -75,9 +77,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stri_duplicated}},
   \code{\link{stri_duplicated_any}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_collator}};
   \code{\link{stri_split_boundaries}};
   \code{\link{stri_trans_tolower}},

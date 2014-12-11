@@ -6,19 +6,22 @@
 \usage{
 stri_install_check(silent = FALSE)
 
-stri_install_icudt(check = TRUE, path = NULL)
+stri_install_icudt(check = TRUE, outpath = NULL, inpath = NULL)
 }
 \arguments{
 \item{silent}{suppress diagnostic messages}
 
 \item{check}{enable \code{stri_install_check()} tests}
 
-\item{path}{path to install icudt to. If \code{NULL}, then
-\code{file.path(find.package('stringi'), 'libs')} will be used.
+\item{outpath}{path to install icudt to. If \code{NULL}, then
+\code{file.path(path.package("stringi"), "libs")} will be used.}
+
+\item{inpath}{path to search icudt archive in (must end with a slash).
+If \code{NULL}, then only stringi mirror servers will be used as possible sources
 Custom, non-default paths should not be used normally by \pkg{stringi} users.}
 }
 \value{
-The functions return a logical value, invisibly.
+These functions return a logical value, invisibly.
 \code{TRUE} denotes that the requested operation has been completed
 successfully.
 }
@@ -47,7 +50,7 @@ installed, see \code{\link{find.package}}, so make sure
 you have sufficient write permissions.
 }
 \examples{
-\donttest{stri_install_check()}
+stri_install_check()
 }
 \references{
 \emph{ICU Data} -- ICU User Guide,

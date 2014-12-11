@@ -48,16 +48,14 @@
 #' @return Returns a character vector.
 #'
 #' @examples
-#' \donttest{
 #' stri_rand_shuffle(c("abcdefghi", "0123456789"))
 #' # you can do better than this with stri_rand_strings:
 #' stri_rand_shuffle(rep(stri_paste(letters, collapse=''), 10))
-#' }
 #'
 #' @family random
 #' @export
 stri_rand_shuffle <- function(str) {
-   .Call("stri_rand_shuffle", str, PACKAGE="stringi")
+   .Call(C_stri_rand_shuffle, str)
 }
 
 
@@ -88,7 +86,6 @@ stri_rand_shuffle <- function(str) {
 #' @return Returns a character vector.
 #'
 #' @examples
-#' \donttest{
 #' stri_rand_strings(5, 10) # 5 strings of length 10
 #' stri_rand_strings(5, sample(1:10, 5, replace=TRUE)) # 5 strings of random lengths
 #' stri_rand_strings(10, 5, "[\\p{script=latin}&\\p{Ll}]") # small letters from the Latin script
@@ -102,12 +99,11 @@ stri_rand_shuffle <- function(str) {
 #'    stri_rand_strings(n, 1, '[A-Z]'),
 #'    stri_rand_strings(n, sample(5:11, 5, replace=TRUE), '[a-zA-Z0-9]')
 #' ))
-#' }
 #'
 #' @family random
 #' @export
 stri_rand_strings <- function(n, length, pattern="[A-Za-z0-9]") {
-   .Call("stri_rand_strings", n, length, pattern, PACKAGE="stringi")
+   .Call(C_stri_rand_strings, n, length, pattern)
 }
 
 
@@ -136,12 +132,10 @@ stri_rand_strings <- function(n, length, pattern="[A-Za-z0-9]") {
 #' @return Returns a character vector of length \code{nparagraphs}.
 #'
 #' @examples
-#' \donttest{
 #' cat(sapply(
 #'    stri_wrap(stri_rand_lipsum(10), 80, simplify=FALSE),
 #'    stri_flatten, collapse="\n"), sep="\n\n")
 #' cat(stri_rand_lipsum(10), sep="\n\n")
-#' }
 #'
 #' @family random
 #' @export
@@ -208,7 +202,7 @@ stri_rand_lipsum <- function(nparagraphs, start_lipsum=TRUE) {
    words <- rwords(totwords)
    seps <- sample(c(" ", ", "), replace=TRUE, size=totwords, prob=c(0.9, 0.1))
    seps[cumsum(unlist(word_sent))] <- sample(c(". ", "? ", "! "),
-      size=length(unlist(word_sent)), replace=TRUE, prob=c(0.9, 0.05, 0.05)) # end of sentence
+      size=length(unlist(word_sent)), replace=TRUE, prob=c(0.95, 0.025, 0.025)) # end of sentence
    seps[cumsum(sapply(word_sent, sum))] <- ".\n" # end of para
    seps[totwords] <- "." # very last sentence in very last para
 

@@ -9,30 +9,29 @@
 \usage{
 stri_detect(str, ..., regex, fixed, coll, charclass)
 
-stri_detect_fixed(str, pattern)
+stri_detect_fixed(str, pattern, ..., opts_fixed = NULL)
 
 stri_detect_charclass(str, pattern)
 
-stri_detect_coll(str, pattern, opts_collator = NULL)
+stri_detect_coll(str, pattern, ..., opts_collator = NULL)
 
-stri_detect_regex(str, pattern, opts_regex = NULL)
+stri_detect_regex(str, pattern, ..., opts_regex = NULL)
 }
 \arguments{
 \item{str}{character vector with strings to search in}
 
-\item{...}{additional arguments passed to the underlying functions;
-\code{stri_detect} only}
+\item{...}{supplementary arguments passed to the underlying functions,
+including additional settings for \code{opts_collator}, \code{opts_regex},
+\code{opts_fixed}, and so on}
 
 \item{pattern,regex,fixed,coll,charclass}{character vector defining search patterns;
 for more details refer to \link{stringi-search}}
 
-\item{opts_collator}{a named list with \pkg{ICU} Collator's settings
-as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-for default settings; \code{stri_detect_coll} only}
-
-\item{opts_regex}{a named list with \pkg{ICU} Regex settings
-as generated with \code{\link{stri_opts_regex}}; \code{NULL}
-for default settings; \code{stri_detect_regex} only}
+\item{opts_collator,opts_fixed,opts_regex}{a named list used to tune up
+a search engine's settings; see
+\code{\link{stri_opts_collator}}, \code{\link{stri_opts_fixed}},
+and \code{\link{stri_opts_regex}}, respectively; \code{NULL}
+for default settings;}
 }
 \value{
 All the functions return a logical vector.
@@ -59,7 +58,6 @@ for testing whether a string starts or ends with a given pattern
 match, respectively.
 }
 \examples{
-\donttest{
 stri_detect_fixed(c("stringi R", "REXAMINE", "123"), c('i', 'R', '0'))
 stri_detect_fixed(c("stringi R", "REXAMINE", "123"), 'R')
 
@@ -70,8 +68,7 @@ stri_detect_regex(c("stringi R", "REXAMINE", "123"), 'R.')
 stri_detect_regex(c("stringi R", "REXAMINE", "123"), '[[:alpha:]]*?')
 stri_detect_regex(c("stringi R", "REXAMINE", "123"), '[a-zC1]')
 stri_detect_regex(c("stringi R", "REXAMINE", "123"), '( R|RE)')
-stri_detect_regex("stringi", "STRING.", opts_regex=stri_opts_regex(case_insensitive=TRUE))
-}
+stri_detect_regex("stringi", "STRING.", case_insensitive=TRUE)
 }
 \seealso{
 Other search_detect: \code{\link{stri_endswith}},

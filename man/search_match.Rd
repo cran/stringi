@@ -17,22 +17,33 @@ stri_match_last(str, ..., regex)
 
 stri_match(str, ..., regex, mode = c("first", "all", "last"))
 
-stri_match_all_regex(str, pattern, opts_regex = NULL)
+stri_match_all_regex(str, pattern, omit_no_match = FALSE,
+  cg_missing = NA_character_, ..., opts_regex = NULL)
 
-stri_match_first_regex(str, pattern, opts_regex = NULL)
+stri_match_first_regex(str, pattern, cg_missing = NA_character_, ...,
+  opts_regex = NULL)
 
-stri_match_last_regex(str, pattern, opts_regex = NULL)
+stri_match_last_regex(str, pattern, cg_missing = NA_character_, ...,
+  opts_regex = NULL)
 }
 \arguments{
 \item{str}{character vector with strings to search in}
 
-\item{...}{additional arguments passed to the underlying functions}
+\item{...}{supplementary arguments passed to the underlying functions,
+including additional settings for \code{opts_regex}}
 
 \item{mode}{single string;
 one of: \code{"first"} (the default), \code{"all"}, \code{"last"}}
 
 \item{pattern,regex}{character vector defining regex patterns to search for;
 for more details refer to \link{stringi-search-regex}}
+
+\item{omit_no_match}{single logical value; if \code{FALSE},
+then a row with missing values will indicate that there was no match;
+\code{stri_match_all_*} only}
+
+\item{cg_missing}{single string to be used if a capture group match
+is unavailable}
 
 \item{opts_regex}{a named list with \pkg{ICU} Regex settings
 as generated with \code{\link{stri_opts_regex}}; \code{NULL}
@@ -59,7 +70,7 @@ in round parentheses.
 \details{
 Vectorized over \code{str} and \code{pattern}.
 
-If no pattern match is detected or if a capture group match is unavailable,
+If no pattern match is detected and \code{omit_no_match=FALSE},
 then \code{NA}s are included in the resulting matrix (matrices), see Examples.
 
 By the way, \pkg{ICU} regex engine currently does not support named capture groups.
@@ -71,7 +82,6 @@ provided for consistency with other string searching functions' wrappers,
 cf. e.g. \code{\link{stri_extract}}.
 }
 \examples{
-\donttest{
 stri_match_all_regex("breakfast=eggs, lunch=pizza, dessert=icecream",
    "(\\\\w+)=(\\\\w+)")
 stri_match_all_regex(c("breakfast=eggs", "lunch=pizza", "no food here"),
@@ -86,26 +96,33 @@ stri_match_last_regex(c("breakfast=eggs;lunch=pizza",
    "breakfast=bacon;lunch=spaghetti", "no food here"),
    "(\\\\w+)=(\\\\w+)")
 
+stri_match_first_regex(c("abcd", ":abcd", ":abcd:"), "^(:)?([^:]*)(:)?$")
+stri_match_first_regex(c("abcd", ":abcd", ":abcd:"), "^(:)?([^:]*)(:)?$", cg_missing="")
+
 # Match all the pattern of the form XYX, including overlapping matches:
 stri_match_all_regex("ACAGAGACTTTAGATAGAGAAGA", "(?=(([ACGT])[ACGT]\\\\2))")[[1]][,2]
 # Compare the above to:
 stri_extract_all_regex("ACAGAGACTTTAGATAGAGAAGA", "([ACGT])[ACGT]\\\\1")
 }
-}
 \seealso{
-Other search_extract: \code{\link{stri_extract_words}};
+Other search_extract: \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
   \code{\link{stri_extract}},
   \code{\link{stri_extract_all}},
   \code{\link{stri_extract_all_charclass}},
   \code{\link{stri_extract_all_coll}},
+  \code{\link{stri_extract_all_fixed}},
   \code{\link{stri_extract_all_regex}},
   \code{\link{stri_extract_first}},
   \code{\link{stri_extract_first_charclass}},
   \code{\link{stri_extract_first_coll}},
+  \code{\link{stri_extract_first_fixed}},
   \code{\link{stri_extract_first_regex}},
   \code{\link{stri_extract_last}},
   \code{\link{stri_extract_last_charclass}},
   \code{\link{stri_extract_last_coll}},
+  \code{\link{stri_extract_last_fixed}},
   \code{\link{stri_extract_last_regex}};
   \code{\link{stringi-search}}
 }

@@ -5,7 +5,7 @@
 \usage{
 stri_opts_brkiter(type, locale, skip_word_none, skip_word_number,
   skip_word_letter, skip_word_kana, skip_word_ideo, skip_line_soft,
-  skip_line_hard, skip_sentence_term, skip_sentence_sep)
+  skip_line_hard, skip_sentence_term, skip_sentence_sep, ...)
 }
 \arguments{
 \item{type}{single string; break iterator type, one of \code{character},
@@ -43,6 +43,8 @@ ending with a sentence terminator ("\code{.}", "\code{,}", "\code{?}",
 \item{skip_sentence_sep}{logical; perform no action for sentences
 that do not contain an ending sentence terminator, but are ended
 by a hard separator or end of input}
+
+\item{...}{any other arguments to this function are purposely ignored}
 }
 \value{
 Returns a named list object.
@@ -56,7 +58,7 @@ in some text boundary analysis functions, see
 \details{
 The \code{skip_*} family of settings may be used to prevent performing
 any special actions on particular types of text boundaries, e.g.
-in case of the \code{\link{stri_locate_boundaries}} and
+in case of the \code{\link{stri_locate_all_boundaries}} and
 \code{\link{stri_split_boundaries}} functions.
 }
 \references{
@@ -69,9 +71,15 @@ in case of the \code{\link{stri_locate_boundaries}} and
 \seealso{
 Other text_boundaries: \code{\link{stri_count_boundaries}},
   \code{\link{stri_count_words}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_split_boundaries}};
   \code{\link{stri_split_lines}},
   \code{\link{stri_split_lines1}},

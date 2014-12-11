@@ -52,19 +52,18 @@
 #' @param str character vector with strings to search in
 #' @param pattern,regex,fixed,coll,charclass character vector defining search patterns;
 #' for more details refer to \link{stringi-search}
-#' @param opts_regex a named list with \pkg{ICU} Regex settings
-#' as generated with \code{\link{stri_opts_regex}}; \code{NULL}
-#' for default settings; \code{stri_count_regex} only
-#' @param opts_collator a named list with \pkg{ICU} Collator's settings
-#' as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-#' for default settings; \code{stri_count_coll} only
-#' @param ... additional arguments passed to the underlying functions;
-#' \code{stri_count} only
+#' @param opts_collator,opts_fixed,opts_regex a named list used to tune up
+#' a search engine's settings; see
+#' \code{\link{stri_opts_collator}}, \code{\link{stri_opts_fixed}},
+#' and \code{\link{stri_opts_regex}}, respectively; \code{NULL}
+#' for default settings;
+#' @param ... supplementary arguments passed to the underlying functions,
+#' including additional settings for \code{opts_collator}, \code{opts_regex},
+#' \code{opts_fixed}, and so on
 #'
 #' @return All the functions return an integer vector.
 #'
 #' @examples
-#' \donttest{
 #' s <- "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 #' stri_count(s, fixed="dolor")
 #' stri_count(s, regex="\\p{L}+")
@@ -86,7 +85,6 @@
 #' stri_count_regex(s, ".it")
 #' stri_count_regex("bab baab baaab", c("b.*?b", "b.b"))
 #' stri_count_regex(c("stringi", "123"), "^(s|1)")
-#' }
 #'
 #' @family search_count
 #' @export
@@ -112,26 +110,32 @@ stri_count <- function(str, ..., regex, fixed, coll, charclass) {
 #' @export
 #' @rdname stri_count
 stri_count_charclass <- function(str, pattern) {
-   .Call("stri_count_charclass", str, pattern, PACKAGE="stringi")
+   .Call(C_stri_count_charclass, str, pattern)
 }
 
 
 #' @export
 #' @rdname stri_count
-stri_count_coll <- function(str, pattern, opts_collator=NULL) {
-   .Call("stri_count_coll", str, pattern, opts_collator, PACKAGE="stringi")
+stri_count_coll <- function(str, pattern, ..., opts_collator=NULL) {
+   if (!missing(...))
+       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+   .Call(C_stri_count_coll, str, pattern, opts_collator)
 }
 
 
 #' @export
 #' @rdname stri_count
-stri_count_fixed <- function(str, pattern) {
-   .Call("stri_count_fixed", str, pattern, PACKAGE="stringi")
+stri_count_fixed <- function(str, pattern, ..., opts_fixed=NULL) {
+   if (!missing(...))
+       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+   .Call(C_stri_count_fixed, str, pattern, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_count
-stri_count_regex <- function(str, pattern, opts_regex=NULL) {
-   .Call("stri_count_regex", str, pattern, opts_regex, PACKAGE="stringi")
+stri_count_regex <- function(str, pattern, ..., opts_regex=NULL) {
+   if (!missing(...))
+       opts_regex <- do.call(stri_opts_regex, as.list(c(opts_regex, ...)))
+   .Call(C_stri_count_regex, str, pattern, opts_regex)
 }

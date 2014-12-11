@@ -5,7 +5,7 @@
 \usage{
 stri_opts_collator(locale = NULL, strength = 3L,
   alternate_shifted = FALSE, french = FALSE, uppercase_first = NA,
-  case_level = FALSE, normalization = FALSE, numeric = FALSE)
+  case_level = FALSE, normalization = FALSE, numeric = FALSE, ...)
 }
 \arguments{
 \item{locale}{single string, \code{NULL} or
@@ -38,8 +38,10 @@ normalization is performed}
 
 \item{numeric}{single logical value;
 when turned on, this attribute generates a collation key for
- the numeric value of substrings of digits;
- This is a way to get '100' to sort AFTER '2'.}
+the numeric value of substrings of digits;
+this is a way to get '100' to sort AFTER '2'}
+
+\item{...}{any other arguments to this function are purposely ignored}
 }
 \value{
 Returns a named list object; missing settings are left with default values.
@@ -67,12 +69,11 @@ Set to 1 to also ignore diacritical differences.
 The strings are Unicode-normalized before the comparison.
 }
 \examples{
-\donttest{
 stri_cmp("number100", "number2")
-stri_cmp("number100", "number2", stri_opts_collator(numeric=TRUE))
+stri_cmp("number100", "number2", opts_collator=stri_opts_collator(numeric=TRUE))
+stri_cmp("number100", "number2", numeric=TRUE) # equivalent
 stri_cmp("above mentioned", "above-mentioned")
-stri_cmp("above mentioned", "above-mentioned", stri_opts_collator(alternate_shifted=TRUE))
-}
+stri_cmp("above mentioned", "above-mentioned", alternate_shifted=TRUE)
 }
 \references{
 \emph{Collation} -- ICU User Guide,
@@ -105,9 +106,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stri_duplicated}},
   \code{\link{stri_duplicated_any}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_order}}, \code{\link{stri_sort}};
   \code{\link{stri_split_boundaries}};
   \code{\link{stri_trans_tolower}},
@@ -117,5 +124,8 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stringi-locale}};
   \code{\link{stringi-search-boundaries}};
   \code{\link{stringi-search-coll}}
+
+Other search_coll: \code{\link{stringi-search-coll}};
+  \code{\link{stringi-search}}
 }
 

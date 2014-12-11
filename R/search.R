@@ -112,9 +112,9 @@ invisible(NULL)
 #'
 #' @details
 #' All \code{stri_*_regex} functions in \pkg{stringi} use
-#' the \pkg{ICU} regex engine, which settings may be tuned up (for example
-#' to perform case-insensitive search) with the
-#' \code{\link{stri_opts_regex}} function.
+#' the \pkg{ICU} regex engine. Its settings may be tuned up (for example
+#' to perform case-insensitive search), see the
+#' \code{\link{stri_opts_regex}} function for more details.
 #'
 #'
 #' Regular expression patterns in \pkg{ICU} are quite similar in form and
@@ -209,7 +209,7 @@ invisible(NULL)
 #' \code{\\b} \tab Match if the current position is a word boundary.
 #' Boundaries occur at the transitions between word (\code{\\w}) and non-word
 #' (\code{\\W}) characters, with combining marks ignored. For better word
-#' boundaries, see ICU Boundary Analysis, e.g. \code{\link{stri_extract_words}} . \cr
+#' boundaries, see ICU Boundary Analysis, e.g. \code{\link{stri_extract_all_words}} . \cr
 #' \code{\\B} \tab Match if the current position is not a word boundary. \cr
 #' \code{\\cX} \tab Match a control-\code{X} character. \cr
 #' \code{\\d} \tab Match any character with the Unicode General Category of
@@ -305,8 +305,10 @@ invisible(NULL)
 #'
 #' @description
 #' String searching facilities described in this very man page
-#' provide a way to locate an exact specific piece of
-#' text.
+#' provide a way to locate a specific sequence of bytes in a string.
+#' Fixed pattern search engine's settings may be tuned up (for example
+#' to perform case-insensitive search), see the
+#' \code{\link{stri_opts_fixed}} function for more details.
 #'
 #'
 #' @section Byte Compare:
@@ -325,7 +327,7 @@ invisible(NULL)
 #' }
 #' see also \link{stringi-search-coll}.
 #'
-#' Note that, the conversion of input data
+#' Note that the conversion of input data
 #' to Unicode is done as usual.
 #'
 #' @name stringi-search-fixed
@@ -676,12 +678,12 @@ invisible(NULL)
 #' \item Counting characters, words, sentences, or paragraphs,
 #' see \code{\link{stri_count_boundaries}}.
 #' \item Making a list of the unique words in a document,
-#' cf. \code{\link{stri_extract_words}} and then \code{\link{stri_unique}}.
+#' cf. \code{\link{stri_extract_all_words}} and then \code{\link{stri_unique}}.
 #' \item Capitalizing the first letter of each word
 #' or sentence, see also \code{\link{stri_trans_totitle}}.
 #' \item Locating a particular unit of the text (for example,
 #' finding the third word in the document),
-#' see \code{\link{stri_locate_boundaries}}.
+#' see \code{\link{stri_locate_all_boundaries}}.
 #' }
 #'
 #' Generally, text boundary analysis is a locale-dependent operation.

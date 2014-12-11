@@ -134,18 +134,18 @@ SEXP stri_enc_toutf32(SEXP str)
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    R_len_t n = LENGTH(str);
 
-   UChar32* buf = NULL;
    STRI__ERROR_HANDLER_BEGIN(1)
    StriContainerUTF8 str_cont(str, n);
 
-   R_len_t bufsize = 0;
+   R_len_t bufsize = 1; // to avoid allocating an empty buffer
    for (R_len_t i=0; i<n; ++i) {
       if (str_cont.isNA(i)) continue;
       R_len_t ni = str_cont.get(i).length();
       if (ni > bufsize) bufsize = ni;
    }
 
-   buf = new UChar32[bufsize]; // at most bufsize UChars32 (bufsize/4 min.)
+   UChar32* buf = (UChar32*)R_alloc((size_t)bufsize, (int)sizeof(UChar32)); // at most bufsize UChars32 (bufsize/4 min.)
+   if (!buf) throw StriException(MSG__MEM_ALLOC_ERROR);
    // deque<UChar32> was slower than using a common, over-sized buf
 
    SEXP ret;
@@ -182,12 +182,9 @@ SEXP stri_enc_toutf32(SEXP str)
       }
    }
 
-   if (buf) { delete [] buf; buf = NULL; }
    STRI__UNPROTECT_ALL
    return ret;
-   STRI__ERROR_HANDLER_END(
-      if (buf) { delete [] buf; buf = NULL; }
-   )
+   STRI__ERROR_HANDLER_END({ /* do nothing on error */ })
 }
 
 
@@ -467,7 +464,7 @@ SEXP stri_encode_from_marked(SEXP str, SEXP to, SEXP to_raw)
 
    // Open converters
    StriUcnv ucnv(selected_to);
-   UConverter* uconv_to = ucnv.getConverter();
+   UConverter* uconv_to = ucnv.getConverter(true /*register_callbacks*/);
 
    // Get target encoding mark
    cetype_t encmark_to = to_raw_logical?CE_BYTES:ucnv.getCE();
@@ -503,16 +500,14 @@ SEXP stri_encode_from_marked(SEXP str, SEXP to, SEXP to_raw)
       R_len_t bufneed = ucnv_fromUChars(uconv_to, buf.data(), buf.size(),
             curs_tmp, curn_tmp, &status);
       if (bufneed <= buf.size()) {
-         if (U_FAILURE(status))
-            throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
       else {// larger buffer needed [this shouldn't happen?]
          buf.resize(bufneed, false/*destroy contents*/);
          status = U_ZERO_ERROR;
          bufneed = ucnv_fromUChars(uconv_to, buf.data(), buf.size(),
                curs_tmp, curn_tmp, &status);
-         if (U_FAILURE(status))
-            throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
 
       if (to_raw_logical) {
@@ -592,8 +587,8 @@ SEXP stri_encode(SEXP str, SEXP from, SEXP to, SEXP to_raw)
    // Open converters
    StriUcnv ucnv1(selected_from);
    StriUcnv ucnv2(selected_to);
-   UConverter* uconv_from = ucnv1.getConverter();
-   UConverter* uconv_to   = ucnv2.getConverter();
+   UConverter* uconv_from = ucnv1.getConverter(true /*register_callbacks*/);
+   UConverter* uconv_to   = ucnv2.getConverter(true /*register_callbacks*/);
 
    // Get target encoding mark
    cetype_t encmark_to = to_raw_logical?CE_BYTES:ucnv2.getCE();
@@ -623,8 +618,7 @@ SEXP stri_encode(SEXP str, SEXP from, SEXP to, SEXP to_raw)
 
       UErrorCode status = U_ZERO_ERROR;
       UnicodeString encs(curs, curn, uconv_from, status); // FROM -> UTF-16 [this is the slow part]
-      if (U_FAILURE(status))
-         throw StriException(status);
+      STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
       R_len_t curn_tmp = encs.length();
       const UChar* curs_tmp = encs.getBuffer(); // The buffer contents is (probably) not NUL-terminated.
@@ -642,9 +636,7 @@ SEXP stri_encode(SEXP str, SEXP from, SEXP to, SEXP to_raw)
       bufneed = ucnv_fromUChars(uconv_to, buf.data(), buf.size(), curs_tmp,
          curn_tmp, &status);
       if (bufneed <= buf.size()) {
-         if (U_FAILURE(status)) {
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
       else {// larger buffer needed [this shouldn't happen?]
 //         warning("buf extending");
@@ -652,9 +644,7 @@ SEXP stri_encode(SEXP str, SEXP from, SEXP to, SEXP to_raw)
          status = U_ZERO_ERROR;
          bufneed = ucnv_fromUChars(uconv_to, buf.data(), buf.size(), curs_tmp,
             curn_tmp, &status);
-         if (U_FAILURE(status)) {
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
 
       if (to_raw_logical) {

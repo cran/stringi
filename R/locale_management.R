@@ -49,7 +49,7 @@
 #' @family locale_management
 #' @export
 stri_locale_list <- function() {
-   .Call("stri_locale_list", PACKAGE="stringi")
+   .Call(C_stri_locale_list)
 }
 
 
@@ -94,7 +94,7 @@ stri_locale_list <- function() {
 #' @export
 stri_locale_set <- function(locale) {
    previous <- stri_locale_get()
-   .Call("stri_locale_set", locale, PACKAGE="stringi")
+   .Call(C_stri_locale_set, locale)
 
    # We call stri_info, because it generates some warnings,
    # in case any problems are found:
@@ -125,7 +125,7 @@ stri_locale_get <- function() {
 #'
 #' This function does nothing complicated. In many
 #' cases it is similar to a call to
-#' \code{\link{as.list}(\link{stri_split_fixed}(locale, "_", 3L, opts_collator=NA)[[1]])},
+#' \code{\link{as.list}(\link{stri_split_fixed}(locale, "_", 3L)[[1]])},
 #' with \code{locale} case mapped.
 #' It may be used, however, to get insight on how ICU understands a provided
 #' locale identifier.
@@ -140,13 +140,11 @@ stri_locale_get <- function() {
 #' \code{Name}, being their underscore separated combination.
 #'
 #' @examples
-#' \donttest{
 #' stri_locale_info("pl_PL")
 #' stri_locale_info("Pl_pL") # the same result
-#' }
 #'
 #' @family locale_management
 #' @export
 stri_locale_info <- function(locale=NULL) {
-   .Call("stri_locale_info", locale, PACKAGE="stringi")
+   .Call(C_stri_locale_info, locale)
 }

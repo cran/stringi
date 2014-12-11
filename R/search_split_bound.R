@@ -33,13 +33,12 @@
 #' Split a String Into Text Lines
 #'
 #' @description
-#' These functions split each character string
-#' into text lines.
+#' These functions split each character string into text lines.
 #'
 #' @details
 #' Vectorized over \code{str} and \code{omit_empty}.
 #'
-#' \code{omit_empty} is applied during splitting: if set to \code{TRUE},
+#' \code{omit_empty} is applied during splitting. If it is set to \code{TRUE},
 #' then empty strings will never appear in the resulting vector.
 #'
 #' Newlines are represented on different platforms e.g. by carriage return
@@ -50,16 +49,15 @@
 #' are used. These functions follow UTR#18 rules, where a newline sequence
 #' corresponds to the following regular expression:
 #' \code{(?:\\u\{D A\}|(?!\\u\{D A\})[\\u\{A\}-\\u\{D\}\\u\{85\}\\u\{2028\}\\u\{2029\}]}.
-#' Each match is used to split a text line.
-#' For efficiency reasons, the search is not performed via regexes here,
-#' however.
+#' Each match is used to split a text line. For efficiency reasons, the search
+#' here is not performed by the regex engine, however.
 #'
 #'
 #' @param str character vector (\code{stri_split_lines})
 #'        or a single string (\code{stri_split_lines1})
 #' @param omit_empty logical vector; determines whether empty
 #' strings should be removed from the result
-#'    [\code{stri_split_lines}  only]
+#'    [\code{stri_split_lines} only]
 #'
 #' @return \code{stri_split_lines} returns a list of character vectors.
 #' If any input string is \code{NA}, then the corresponding list element
@@ -69,8 +67,8 @@
 #' \code{stri_split_lines(str[1])[[1]]} (with default parameters),
 #' thus it returns a character vector. Moreover, if the input string ends at
 #' a newline sequence, the last empty string is omitted from the result.
-#' Therefore, this function is convenient for splitting a loaded text file
-#' into text lines.
+#' Therefore, this function may be handy if you wish to split a loaded text
+#' file into text lines.
 #'
 #' @references
 #' \emph{Unicode Newline Guidelines} -- Unicode Technical Report #13,
@@ -85,14 +83,14 @@
 #' @rdname stri_split_lines
 #' @aliases stri_split_lines stri_split_lines1
 stri_split_lines <- function(str, omit_empty=FALSE) {
-   .Call("stri_split_lines", str, omit_empty, PACKAGE="stringi")
+   .Call(C_stri_split_lines, str, omit_empty)
 }
 
 
 #' @rdname stri_split_lines
 #' @export
 stri_split_lines1 <- function(str) {
-   .Call("stri_split_lines1", str, PACKAGE="stringi")
+   .Call(C_stri_split_lines1, str)
 }
 
 
@@ -105,40 +103,61 @@ stri_split_lines1 <- function(str) {
 #' and splits strings at the indicated positions.
 #'
 #' @details
-#' Vectorized over \code{str}.
+#' Vectorized over \code{str} and \code{n}.
+#'
+#' If \code{n} is negative (default), then all pieces are extracted.
+#' Otherwise, if \code{tokens_only} is \code{FALSE} (this is the default,
+#' for compatibility with the \pkg{stringr} package), then \code{n-1}
+#' tokes are extracted (if possible) and the \code{n}-th string
+#' gives the (non-split) remainder (see Examples).
+#' On the other hand, if \code{tokens_only} is \code{TRUE},
+#' then only full tokens (up to \code{n} pieces) are extracted.
 #'
 #' For more information on the text boundary analysis
 #' performed by \pkg{ICU}'s \code{BreakIterator}, see
 #' \link{stringi-search-boundaries}.
 #'
 #' @param str character vector or an object coercible to
+#' @param n integer vector, maximal number of strings to return
+#' @param tokens_only single logical value; may affect the result if \code{n}
+#' is positive, see Details
+#' @param simplify single logical value; if \code{TRUE} or \code{NA},
+#' then a character matrix is returned; otherwise (the default), a list of
+#' character vectors is given, see Value
 #' @param opts_brkiter a named list with \pkg{ICU} BreakIterator's settings
-#' as generated with \code{\link{stri_opts_brkiter}};
-#' \code{NULL} for default break iterator, i.e. \code{line_break}
+#' as generated with \code{\link{stri_opts_brkiter}}; \code{NULL} for the
+#' default break iterator, i.e. \code{line_break}
+#' @param ... additional settings for \code{opts_brkiter}
 #'
-#' @return
-#' Returns a list of character vectors.
+#' @return If \code{simplify=FALSE} (the default),
+#' then the functions return a list of character vectors.
+#'
+#' Otherwise, \code{\link{stri_list2matrix}} with \code{byrow=TRUE}
+#' and \code{n_min=n} arguments is called on the resulting object.
+#' In such a case, a character matrix with \code{length(str)} rows
+#' is returned. Note that \code{\link{stri_list2matrix}}'s \code{fill}
+#' argument is set to an empty string and \code{NA},
+#' for \code{simplify} equal to \code{TRUE} and \code{NA}, respectively.
 #'
 #' @examples
-#' \donttest{
 #' test <- "The\u00a0above-mentioned    features are very useful. " %s+%
 #'    "Warm thanks to their developers. 123 456 789"
-#' stri_split_boundaries(test, stri_opts_brkiter(type="line"))
-#' stri_split_boundaries(test, stri_opts_brkiter(type="word"))
-#' stri_split_boundaries(test, stri_opts_brkiter(type="word", skip_word_none=TRUE))
-#' stri_split_boundaries(test, stri_opts_brkiter(type="word",
-#'    skip_word_none=TRUE, skip_word_letter=TRUE))
-#' stri_split_boundaries(test, stri_opts_brkiter(type="word",
-#'    skip_word_none=TRUE, skip_word_number=TRUE))
-#' stri_split_boundaries(test, stri_opts_brkiter(type="sentence"))
-#' stri_split_boundaries(test, stri_opts_brkiter(type="sentence", skip_sentence_sep=TRUE))
-#' stri_split_boundaries(test, stri_opts_brkiter(type="character"))
-#' }
+#' stri_split_boundaries(test, type="line")
+#' stri_split_boundaries(test, type="word")
+#' stri_split_boundaries(test, type="word", skip_word_none=TRUE)
+#' stri_split_boundaries(test, type="word", skip_word_none=TRUE, skip_word_letter=TRUE)
+#' stri_split_boundaries(test, type="word", skip_word_none=TRUE, skip_word_number=TRUE)
+#' stri_split_boundaries(test, type="sentence")
+#' stri_split_boundaries(test, type="sentence", skip_sentence_sep=TRUE)
+#' stri_split_boundaries(test, type="character")
 #'
 #' @export
 #' @family search_split
 #' @family locale_sensitive
 #' @family text_boundaries
-stri_split_boundaries <- function(str, opts_brkiter=NULL) {
-   .Call("stri_split_boundaries", str, opts_brkiter, PACKAGE="stringi")
+stri_split_boundaries <- function(str, n=-1L,
+      tokens_only=FALSE, simplify=FALSE, ..., opts_brkiter=NULL) {
+   if (!missing(...))
+       opts_brkiter <- do.call(stri_opts_brkiter, as.list(c(opts_brkiter, ...)))
+   .Call(C_stri_split_boundaries, str, n, tokens_only, simplify, opts_brkiter)
 }

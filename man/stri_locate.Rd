@@ -27,34 +27,39 @@ stri_locate_last(str, ..., regex, fixed, coll, charclass)
 stri_locate(str, ..., regex, fixed, coll, charclass, mode = c("first", "all",
   "last"))
 
-stri_locate_all_charclass(str, pattern, merge = TRUE)
+stri_locate_all_charclass(str, pattern, merge = TRUE, omit_no_match = FALSE)
 
 stri_locate_first_charclass(str, pattern)
 
 stri_locate_last_charclass(str, pattern)
 
-stri_locate_all_coll(str, pattern, opts_collator = NULL)
+stri_locate_all_coll(str, pattern, omit_no_match = FALSE, ...,
+  opts_collator = NULL)
 
-stri_locate_first_coll(str, pattern, opts_collator = NULL)
+stri_locate_first_coll(str, pattern, ..., opts_collator = NULL)
 
-stri_locate_last_coll(str, pattern, opts_collator = NULL)
+stri_locate_last_coll(str, pattern, ..., opts_collator = NULL)
 
-stri_locate_all_regex(str, pattern, opts_regex = NULL)
+stri_locate_all_regex(str, pattern, omit_no_match = FALSE, ...,
+  opts_regex = NULL)
 
-stri_locate_first_regex(str, pattern, opts_regex = NULL)
+stri_locate_first_regex(str, pattern, ..., opts_regex = NULL)
 
-stri_locate_last_regex(str, pattern, opts_regex = NULL)
+stri_locate_last_regex(str, pattern, ..., opts_regex = NULL)
 
-stri_locate_all_fixed(str, pattern)
+stri_locate_all_fixed(str, pattern, omit_no_match = FALSE, ...,
+  opts_fixed = NULL)
 
-stri_locate_first_fixed(str, pattern)
+stri_locate_first_fixed(str, pattern, ..., opts_fixed = NULL)
 
-stri_locate_last_fixed(str, pattern)
+stri_locate_last_fixed(str, pattern, ..., opts_fixed = NULL)
 }
 \arguments{
 \item{str}{character vector with strings to search in}
 
-\item{...}{additional arguments passed to the underlying functions}
+\item{...}{supplementary arguments passed to the underlying functions,
+including additional settings for \code{opts_collator}, \code{opts_regex},
+\code{opts_fixed}, and so on}
 
 \item{mode}{single string;
 one of: \code{"first"} (the default), \code{"all"}, \code{"last"}}
@@ -66,25 +71,27 @@ for more details refer to \link{stringi-search}}
 indicates whether consecutive sequences of indices in the resulting
 matrix shall be merged;  \code{stri_locate_all_charclass} only}
 
-\item{opts_collator}{a named list with \pkg{ICU} Collator's settings
-as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-for default settings; \code{stri_locate_*_coll} only}
+\item{omit_no_match}{single logical value; if \code{FALSE},
+then 2 missing values will indicate that there was no match;
+\code{stri_locate_all_*} only}
 
-\item{opts_regex}{a named list with \pkg{ICU} Regex settings
-as generated with \code{\link{stri_opts_regex}}; \code{NULL}
-for default settings;
-\code{stri_locate_*_regex} only}
+\item{opts_collator,opts_fixed,opts_regex}{a named list used to tune up
+a search engine's settings; see
+\code{\link{stri_opts_collator}}, \code{\link{stri_opts_fixed}},
+and \code{\link{stri_opts_regex}}, respectively; \code{NULL}
+for default settings;}
 }
 \value{
-For \code{stri_locate_all*},
+For \code{stri_locate_all_*},
 a list of integer matrices is returned. Each list element
 represents the results of a separate search scenario.
 The first column gives the start positions
 of matches, and the second column gives the end positions.
 Moreover, you may get two \code{NA}s in one row
-for no match or \code{NA} arguments.
+for no match (if \code{omit_no_match} is \code{FALSE})
+or \code{NA} arguments.
 
-\code{stri_locate_first*} and \code{stri_locate_last*},
+\code{stri_locate_first_*} and \code{stri_locate_last_*},
 on the other hand, return an integer matrix with
 two columns, giving the start and end positions of the first
 or the last matches, respectively, and two \code{NA}s if and
@@ -93,7 +100,7 @@ only if they are not found.
 \description{
 These functions may be used e.g. to find the indices (positions), at which
 a given pattern is matched.
-\code{stri_locate_all_*} locates all the matches.
+\code{stri_locate_all_*} locate all the matches.
 On the other hand, \code{stri_locate_first_*} and \code{stri_locate_last_*}
 give the first or the last matches, respectively.
 }
@@ -111,7 +118,6 @@ Unless you are a very lazy person, please call the underlying functions
 directly for better performance.
 }
 \examples{
-\donttest{
 stri_locate_all('XaaaaX',
    regex=c('\\\\p{Ll}', '\\\\p{Ll}+', '\\\\p{Ll}{2,3}', '\\\\p{Ll}{2,3}?'))
 stri_locate_all('Bartolini', fixed='i')
@@ -123,17 +129,15 @@ stri_locate_first_charclass('AaBbCc', '\\\\p{Ll}')
 stri_locate_last_charclass('AaBbCc', '\\\\p{Ll}')
 
 stri_locate_all_coll(c('AaaaaaaA', 'AAAA'), 'a')
-stri_locate_first_coll(c('Yy\\u00FD', 'AAA'), 'y',
-   stri_opts_collator(strength=2, locale="sk_SK"))
-stri_locate_last_coll(c('Yy\\u00FD', 'AAA'), 'y',
-   stri_opts_collator(strength=1, locale="sk_SK"))
+stri_locate_first_coll(c('Yy\\u00FD', 'AAA'), 'y', strength=2, locale="sk_SK")
+stri_locate_last_coll(c('Yy\\u00FD', 'AAA'), 'y', strength=1, locale="sk_SK")
 
 pat <- stri_paste("\\u0635\\u0644\\u0649 \\u0627\\u0644\\u0644\\u0647 ",
                   "\\u0639\\u0644\\u064a\\u0647 \\u0648\\u0633\\u0644\\u0645XYZ")
-stri_locate_last_coll("\\ufdfa\\ufdfa\\ufdfaXYZ", pat,
-   stri_opts_collator(strength = 1))
+stri_locate_last_coll("\\ufdfa\\ufdfa\\ufdfaXYZ", pat, strength = 1)
 
 stri_locate_all_fixed(c('AaaaaaaA', 'AAAA'), 'a')
+stri_locate_all_fixed(c('AaaaaaaA', 'AAAA'), 'a', case_insensitive=TRUE, overlap=TRUE)
 stri_locate_first_fixed(c('AaaaaaaA', 'aaa', 'AAA'), 'a')
 stri_locate_last_fixed(c('AaaaaaaA', 'aaa', 'AAA'), 'a')
 
@@ -156,14 +160,21 @@ stri_locate_last_regex('XaaaaX',
 stri_locate_all_regex("ACAGAGACTTTAGATAGAGAAGA", "(?=AGA)")
 # note that start > end here (match of 0 length)
 }
-}
 \seealso{
-Other indexing: \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}}; \code{\link{stri_sub}},
-  \code{\link{stri_sub<-}}
+Other indexing: \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
+  \code{\link{stri_sub}}, \code{\link{stri_sub<-}}
 
-Other search_locate: \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+Other search_locate: \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stringi-search}}
 }
 

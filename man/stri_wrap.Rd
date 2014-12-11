@@ -4,7 +4,8 @@
 \title{Word Wrap Text to Format Paragraphs}
 \usage{
 stri_wrap(str, width = floor(0.9 * getOption("width")), cost_exponent = 2,
-  simplify = TRUE, normalize = FALSE, locale = NULL)
+  simplify = TRUE, normalize = TRUE, indent = 0, exdent = 0,
+  prefix = "", initial = prefix, locale = NULL)
 }
 \arguments{
 \item{str}{character vector of strings to reformat}
@@ -22,6 +23,15 @@ of a (more aesthetic) dynamic programming-based algorithm
 
 \item{normalize}{single logical value, see Details}
 
+\item{indent}{single non-negative integer; gives the indentation of the
+first line in each paragraph}
+
+\item{exdent}{single non-negative integer; specifies the indentation
+of subsequent lines in paragraphs}
+
+\item{prefix,initial}{single strings; \code{prefix} is used as prefix for each
+line except the first, for which \code{initial} is utilized}
+
 \item{locale}{\code{NULL} or \code{""} for text boundary analysis following
 the conventions of the default locale, or a single string with
 locale identifier, see \link{stringi-locale}}
@@ -32,7 +42,7 @@ Otherwise, you will get a list of \code{length(str)} character vectors.
 }
 \description{
 This function breaks text paragraphs into lines,
-each consisting of at most \code{width} code points.
+each consisting - if it is possible - of at most \code{width} code points.
 }
 \details{
 Vectorized over \code{str}.
@@ -45,9 +55,9 @@ printed on screen. This function acts like each code point
 is of width 1. This function should rather be used with
 text in Latin script.
 
-If \code{normalize} is \code{FALSE} (the default),
+If \code{normalize} is \code{FALSE},
 then multiple white spaces between the word boundaries are
-preserved withing each wrapped line.
+preserved within each wrapped line.
 In such a case, none of the strings can contain \code{\\r}, \code{\\n},
 or other new line characters, otherwise you will get at error.
 You should split the input text into lines
@@ -70,9 +80,9 @@ is more complex, but it returns text wrapped
 in a more aesthetic way. This method minimizes the squared
 (by default, see \code{cost_exponent}) number of spaces  (raggedness)
 at the end of each line, so the text is mode arranged evenly.
+Note that the cost of printing the last line is always zero.
 }
 \examples{
-\donttest{
 s <- stri_paste(
    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Proin ",
    "nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel ",
@@ -80,7 +90,6 @@ s <- stri_paste(
 cat(stri_wrap(s, 20, 0.0), sep="\\n") # greedy
 cat(stri_wrap(s, 20, 2.0), sep="\\n") # dynamic
 cat(stri_pad(stri_wrap(s), side='both'), sep="\\n")
-}
 }
 \references{
 D.E. Knuth, M.F. Plass,
@@ -108,9 +117,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stri_duplicated}},
   \code{\link{stri_duplicated_any}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_collator}};
   \code{\link{stri_order}}, \code{\link{stri_sort}};
   \code{\link{stri_split_boundaries}};
@@ -123,9 +138,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
 
 Other text_boundaries: \code{\link{stri_count_boundaries}},
   \code{\link{stri_count_words}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_brkiter}};
   \code{\link{stri_split_boundaries}};
   \code{\link{stri_split_lines}},

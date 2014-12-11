@@ -61,16 +61,20 @@
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+ *    FR #110, #23: opts_fixed arg added
  */
-SEXP stri_count_fixed(SEXP str, SEXP pattern)
+SEXP stri_count_fixed(SEXP str, SEXP pattern, SEXP opts_fixed)
 {
+   uint32_t pattern_flags = StriContainerByteSearch::getByteSearchFlags(opts_fixed, /*allow_overlap*/true);
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
 
    STRI__ERROR_HANDLER_BEGIN(2)
    R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
    StriContainerUTF8 str_cont(str, vectorize_length);
-   StriContainerByteSearch pattern_cont(pattern, vectorize_length);
+   StriContainerByteSearch pattern_cont(pattern, vectorize_length, pattern_flags);
 
    SEXP ret;
    STRI__PROTECT(ret = Rf_allocVector(INTSXP, vectorize_length));

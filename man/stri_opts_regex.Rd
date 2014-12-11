@@ -4,7 +4,7 @@
 \title{Generate a List with Regex Matcher Settings}
 \usage{
 stri_opts_regex(case_insensitive, comments, dotall, literal, multiline,
-  unix_lines, uword, error_on_unknown_escapes)
+  unix_lines, uword, error_on_unknown_escapes, ...)
 }
 \arguments{
 \item{case_insensitive}{logical; enable case insensitive matching [regex flag \code{(?i)}]}
@@ -17,7 +17,7 @@ otherwise matching of `\code{.}`  stops at a line end [regex flag \code{(?s)}]}
 \item{literal}{logical; if set, treat the entire pattern as a literal string:
 metacharacters or escape sequences in the input sequence will be given no special meaning;
 note that in most cases you would rather use the \link{stringi-search-fixed}
-facilities in this case (with \code{opts_collator=NA}).}
+facilities in this case}
 
 \item{multiline}{logical; controls the behavior of `\code{$}` and `\code{^}`.
 If set, recognize line terminators within a string, otherwise,
@@ -37,7 +37,9 @@ See \url{http://unicode.org/reports/tr29/#Word_Boundaries}}
 whether to generate an error on unrecognized backslash escapes;
 if set, fail with an error on patterns that contain backslash-escaped ASCII
 letters without a known special meaning;
-otherwise, these escaped letters represent themselves.}
+otherwise, these escaped letters represent themselves}
+
+\item{...}{any other arguments to this function are purposely ignored}
 }
 \value{
 Returns a named list object; missing settings are left with default values.
@@ -55,11 +57,10 @@ see the \pkg{ICU} User Guide entry on Regular Expressions
 in the References section or \link{stringi-search-regex}.
 }
 \examples{
-\donttest{
 stri_detect_regex("ala", "ALA") # case-sensitive by default
-stri_detect_regex("ala", "ALA", stri_opts_regex(case_insensitive=TRUE))
+stri_detect_regex("ala", "ALA", opts_regex=stri_opts_regex(case_insensitive=TRUE))
+stri_detect_regex("ala", "ALA", case_insensitive=TRUE) # equivalent
 stri_detect_regex("ala", "(?i)ALA") # equivalent
-}
 }
 \references{
 \emph{\code{enum URegexpFlag}: Constants for Regular Expression Match Modes}

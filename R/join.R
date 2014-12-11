@@ -47,13 +47,11 @@
 #' @export
 #' @family join
 #' @examples
-#' \donttest{
 #' stri_dup("a", 1:5)
 #' stri_dup(c("a", NA, "ba"), 4)
 #' stri_dup(c("abc", "pqrst"), c(4, 2))
-#' }
 stri_dup <- function(str, times) {
-   .Call("stri_dup", str, times, PACKAGE="stringi")
+   .Call(C_stri_dup, str, times)
 }
 
 
@@ -81,10 +79,8 @@ stri_dup <- function(str, times) {
 #'
 #'
 #' @examples
-#' \donttest{
 #' c('abc', '123', '\u0105\u0104') %stri+% letters[1:6]
 #' 'ID_' %stri+% 1:5
-#' }
 #'
 #' @rdname oper_plus
 #'
@@ -93,7 +89,7 @@ stri_dup <- function(str, times) {
 #'
 #' @export
 "%s+%" <- function(e1, e2) {
-   .Call("stri_join2_nocollapse", e1, e2, PACKAGE="stringi")
+   .Call(C_stri_join2_nocollapse, e1, e2)
 }
 
 #' @usage
@@ -101,7 +97,7 @@ stri_dup <- function(str, times) {
 #' @rdname oper_plus
 #' @export
 "%stri+%" <- function(e1, e2) {
-   .Call("stri_join2_nocollapse", e1, e2, PACKAGE="stringi")
+   .Call(C_stri_join2_nocollapse, e1, e2)
 }
 
 
@@ -122,7 +118,8 @@ stri_dup <- function(str, times) {
 #' to the length of the longest argument.
 #'
 #' If any of the arguments in `\code{...}` is a vector of length 0
-#' (not to be confused with vectors of empty strings), then
+#' (not to be confused with vectors of empty strings)
+#' and \code{ignore_null=FALSE}, then
 #' you will get a 0-length character vector in result.
 #'
 #' If \code{collapse} or \code{sep} has length > 1, then only first string
@@ -136,16 +133,17 @@ stri_dup <- function(str, times) {
 #' always in UTF-8.
 #'
 #' @param ... character vectors (or objects coercible to character vectors)
-#' which corresponding elements are to be concatenated.
-#' @param sep single string; separates terms.
+#' which corresponding elements are to be concatenated
+#' @param sep single string; separates terms
 #' @param collapse single string or \code{NULL}; an optional
-#' results separator.
+#' results separator
+#' @param ignore_null single logical value; if \code{TRUE}, then empty
+#' vectors on input are silently ignored
 #'
 #' @return Returns a character vector.
 #'
 #' @export
 #' @examples
-#' \donttest{
 #' stri_join(1:13, letters)
 #' stri_join(1:13, letters, sep='!')
 #' stri_join(1:13, letters, collapse='?')
@@ -155,12 +153,11 @@ stri_dup <- function(str, times) {
 #'
 #' do.call(stri_c, list(c("a", "b", "c"), c("1", "2"), sep='!'))
 #' do.call(stri_c, list(c("a", "b", "c"), c("1", "2"), sep='!', collapse='$'))
-#' }
 #'
 #' @family join
 #' @rdname stri_join
-stri_join <- function(..., sep="", collapse=NULL) {
-   .Call("stri_join_withcollapse", list(...), sep, collapse, PACKAGE="stringi")
+stri_join <- function(..., sep="", collapse=NULL, ignore_null=FALSE) {
+   .Call(C_stri_join_withcollapse, list(...), sep, collapse, ignore_null)
 }
 
 
@@ -199,15 +196,13 @@ stri_paste <- stri_join
 #' vector of length 1.
 #'
 #' @examples
-#' \donttest{
 #' stri_flatten(LETTERS)
 #' stri_flatten(LETTERS, collapse=",")
 #' stri_flatten(c('abc', '123', '\u0105\u0104'))
 #' stri_flatten(stri_dup(letters[1:6],1:3))
-#' }
 #'
 #' @export
 #' @family join
 stri_flatten <- function(str, collapse="") {
-   .Call("stri_flatten_withressep", str, collapse, PACKAGE="stringi")
+   .Call(C_stri_flatten_withressep, str, collapse)
 }

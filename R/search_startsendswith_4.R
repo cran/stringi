@@ -74,29 +74,27 @@
 #' for more details refer to \link{stringi-search}
 #' @param from integer vector
 #' @param to integer vector
-#' @param opts_collator a named list with \pkg{ICU} Collator's settings
-#' as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-#' for default settings; \code{stri_*_coll} only
-#' @param ... additional arguments passed to the underlying functions;
-#' \code{stri_startswith} and \code{stri_endswith} only
+#' @param opts_collator,opts_fixed a named list used to tune up
+#' a search engine's settings; see \code{\link{stri_opts_collator}}
+#' and \code{\link{stri_opts_fixed}}, respectively; \code{NULL}
+#' for default settings;
+#' @param ... supplementary arguments passed to the underlying functions,
+#' including additional settings for \code{opts_collator}, \code{opts_fixed},
+#' and so on.
 #'
 #' @return All the functions return a logical vector.
 #'
 #'
 #' @examples
-#' \donttest{
 #' stri_startswith_charclass(" trim me! ", "\\p{WSpace}")
 #' stri_startswith_fixed(c("a1", "a2", "b3", "a4", "c5"), "a")
 #' stri_detect_regex(c("a1", "a2", "b3", "a4", "c5"), "^a")
 #' stri_startswith_fixed("ababa", "ba")
 #' stri_startswith_fixed("ababa", "ba", from=2)
-#' stri_startswith_coll(c("a1", "A2", "b3", "A4", "C5"), "a",
-#'    opts_collator=stri_opts_collator(strength=1))
+#' stri_startswith_coll(c("a1", "A2", "b3", "A4", "C5"), "a", strength=1)
 #' pat <- stri_paste("\u0635\u0644\u0649 \u0627\u0644\u0644\u0647 ",
 #'                   "\u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645XYZ")
-#' stri_endswith_coll("\ufdfa\ufdfa\ufdfaXYZ", pat,
-#'    opts=stri_opts_collator(strength = 1))
-#' }
+#' stri_endswith_coll("\ufdfa\ufdfa\ufdfaXYZ", pat, strength=1)
 #'
 #' @family search_detect
 #' @export
@@ -139,41 +137,49 @@ stri_endswith <- function(str, ..., fixed, coll, charclass) {
 
 #' @export
 #' @rdname stri_startsendswith
-stri_startswith_fixed <- function(str, pattern, from=1L) {
-   .Call("stri_startswith_fixed", str, pattern, from, PACKAGE="stringi")
+stri_startswith_fixed <- function(str, pattern, from=1L, ..., opts_fixed=NULL) {
+   if (!missing(...))
+       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+   .Call(C_stri_startswith_fixed, str, pattern, from, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_endswith_fixed <- function(str, pattern, to=-1L) {
-   .Call("stri_endswith_fixed", str, pattern, to, PACKAGE="stringi")
+stri_endswith_fixed <- function(str, pattern, to=-1L, ..., opts_fixed=NULL) {
+   if (!missing(...))
+       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+   .Call(C_stri_endswith_fixed, str, pattern, to, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
 stri_startswith_charclass <- function(str, pattern, from=1L) {
-   .Call("stri_startswith_charclass", str, pattern, from, PACKAGE="stringi")
+   .Call(C_stri_startswith_charclass, str, pattern, from)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
 stri_endswith_charclass <- function(str, pattern, to=-1L) {
-   .Call("stri_endswith_charclass", str, pattern, to, PACKAGE="stringi")
+   .Call(C_stri_endswith_charclass, str, pattern, to)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_startswith_coll <- function(str, pattern, from=1L, opts_collator=NULL) {
-   .Call("stri_startswith_coll", str, pattern, from, opts_collator, PACKAGE="stringi")
+stri_startswith_coll <- function(str, pattern, from=1L, ..., opts_collator=NULL) {
+   if (!missing(...))
+       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+   .Call(C_stri_startswith_coll, str, pattern, from, opts_collator)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_endswith_coll <- function(str, pattern, to=-1L, opts_collator=NULL) {
-   .Call("stri_endswith_coll", str, pattern, to, opts_collator, PACKAGE="stringi")
+stri_endswith_coll <- function(str, pattern, to=-1L, ..., opts_collator=NULL) {
+   if (!missing(...))
+       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+   .Call(C_stri_endswith_coll, str, pattern, to, opts_collator)
 }

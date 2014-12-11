@@ -39,7 +39,7 @@ using namespace std;
 
 
 /**
- * Locate first or last occurrences of pattern in a string
+ * Locate first or last occurrences of a pattern in a string
  *
  * @param str character vector
  * @param pattern character vector
@@ -59,16 +59,20 @@ using namespace std;
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+ *    FR #110, #23: opts_fixed arg added
  */
-SEXP stri__locate_firstlast_fixed(SEXP str, SEXP pattern, bool first)
+SEXP stri__locate_firstlast_fixed(SEXP str, SEXP pattern, SEXP opts_fixed, bool first)
 {
+   uint32_t pattern_flags = StriContainerByteSearch::getByteSearchFlags(opts_fixed);
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
 
    STRI__ERROR_HANDLER_BEGIN(2)
    int vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
    StriContainerUTF8_indexable str_cont(str, vectorize_length);
-   StriContainerByteSearch pattern_cont(pattern, vectorize_length);
+   StriContainerByteSearch pattern_cont(pattern, vectorize_length, pattern_flags);
 
    SEXP ret;
    STRI__PROTECT(ret = Rf_allocMatrix(INTSXP, vectorize_length, 2));
@@ -113,7 +117,7 @@ SEXP stri__locate_firstlast_fixed(SEXP str, SEXP pattern, bool first)
 
 
 /**
- * Locate first occurrences of pattern in a string [with collation]
+ * Locate first occurrences of pattern in a string [fixed pattern]
  *
  * @param str character vector
  * @param pattern character vector
@@ -129,15 +133,18 @@ SEXP stri__locate_firstlast_fixed(SEXP str, SEXP pattern, bool first)
  *
  * @version 0.2-3 (Marek Gagolewski, 2014-05-08)
  *          stri_locate_fixed now uses byte search only
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+ *    FR #110, #23: opts_fixed arg added
  */
-SEXP stri_locate_first_fixed(SEXP str, SEXP pattern)
+SEXP stri_locate_first_fixed(SEXP str, SEXP pattern, SEXP opts_fixed)
 {
-   return stri__locate_firstlast_fixed(str, pattern, true);
+   return stri__locate_firstlast_fixed(str, pattern, opts_fixed, true);
 }
 
 
 /**
- * Locate last occurrences of pattern in a string [with collation]
+ * Locate last occurrences of pattern in a string [fixed pattern]
  *
  * @param str character vector
  * @param pattern character vector
@@ -153,10 +160,13 @@ SEXP stri_locate_first_fixed(SEXP str, SEXP pattern)
  *
  * @version 0.2-3 (Marek Gagolewski, 2014-05-08)
  *          stri_locate_fixed now uses byte search only
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+ *    FR #110, #23: opts_fixed arg added
  */
-SEXP stri_locate_last_fixed(SEXP str, SEXP pattern)
+SEXP stri_locate_last_fixed(SEXP str, SEXP pattern, SEXP opts_fixed)
 {
-   return stri__locate_firstlast_fixed(str, pattern, false);
+   return stri__locate_firstlast_fixed(str, pattern, opts_fixed, false);
 }
 
 
@@ -179,16 +189,24 @@ SEXP stri_locate_last_fixed(SEXP str, SEXP pattern)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *    FR #117: omit_no_match arg added
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+ *    FR #110, #23: opts_fixed arg added
  */
-SEXP stri_locate_all_fixed(SEXP str, SEXP pattern)
+SEXP stri_locate_all_fixed(SEXP str, SEXP pattern, SEXP omit_no_match, SEXP opts_fixed)
 {
+   uint32_t pattern_flags = StriContainerByteSearch::getByteSearchFlags(opts_fixed, /*allow_overlap*/true);
+   bool omit_no_match1 = stri__prepare_arg_logical_1_notNA(omit_no_match, "omit_no_match");
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
 
    STRI__ERROR_HANDLER_BEGIN(2)
    int vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
    StriContainerUTF8_indexable str_cont(str, vectorize_length);
-   StriContainerByteSearch pattern_cont(pattern, vectorize_length);
+   StriContainerByteSearch pattern_cont(pattern, vectorize_length, pattern_flags);
 
    SEXP ret;
    STRI__PROTECT(ret = Rf_allocVector(VECSXP, vectorize_length));
@@ -199,13 +217,13 @@ SEXP stri_locate_all_fixed(SEXP str, SEXP pattern)
    {
       STRI__CONTINUE_ON_EMPTY_OR_NA_STR_PATTERN(str_cont, pattern_cont,
          SET_VECTOR_ELT(ret, i, stri__matrix_NA_INTEGER(1, 2));,
-         SET_VECTOR_ELT(ret, i, stri__matrix_NA_INTEGER(1, 2));)
+         SET_VECTOR_ELT(ret, i, stri__matrix_NA_INTEGER(omit_no_match1?0:1, 2));)
 
       pattern_cont.setupMatcherFwd(i, str_cont.get(i).c_str(), str_cont.get(i).length());
 
       int start = pattern_cont.findFirst();
       if (start == USEARCH_DONE) { // no matches at all
-         SET_VECTOR_ELT(ret, i, stri__matrix_NA_INTEGER(1, 2));
+         SET_VECTOR_ELT(ret, i, stri__matrix_NA_INTEGER(omit_no_match1?0:1, 2));
          continue;
       }
 
@@ -222,7 +240,7 @@ SEXP stri_locate_all_fixed(SEXP str, SEXP pattern)
       deque< pair<R_len_t, R_len_t> >::iterator iter = occurrences.begin();
       for (R_len_t j = 0; iter != occurrences.end(); ++iter, ++j) {
          pair<R_len_t, R_len_t> match = *iter;
-         ans_tab[j]             = match.first;
+         ans_tab[j]              = match.first;
          ans_tab[j+noccurrences] = match.second;
       }
 

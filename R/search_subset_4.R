@@ -40,6 +40,8 @@
 #'
 #' @details
 #' Vectorized over \code{str} and \code{pattern}.
+#' Of course, normally you will use that function in case
+#' of \code{length(str) >= length(pattern)}.
 #'
 #' \code{stri_subset} is a convenience function.
 #' It calls either \code{stri_subset_regex},
@@ -52,27 +54,25 @@
 #' @param str character vector with strings to search in
 #' @param pattern,regex,fixed,coll,charclass character vector defining search patterns;
 #' for more details refer to \link{stringi-search}
-#' @param opts_regex a named list with \pkg{ICU} Regex settings
-#' as generated with \code{\link{stri_opts_regex}}; \code{NULL}
+#' @param omit_na single logical value; should missing values be excluded
+#' from the result?
+#' @param opts_collator,opts_fixed,opts_regex a named list used to tune up
+#' a search engine's settings; see
+#' \code{\link{stri_opts_collator}}, \code{\link{stri_opts_fixed}},
+#' and \code{\link{stri_opts_regex}}, respectively; \code{NULL}
 #' for default settings;
-#' \code{stri_subset_regex} only
-#' @param opts_collator a named list with \pkg{ICU} Collator's settings
-#' as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-#' for default settings;
-#' \code{stri_subset_coll} only
-#' @param ... additional arguments passed to the underlying functions;
-#' \code{stri_subset} only
+#' @param ... supplementary arguments passed to the underlying functions,
+#' including additional settings for \code{opts_collator}, \code{opts_regex},
+#' \code{opts_fixed}, and so on
 #'
 #' @return All the functions return a character vector.
-#' Of course, the output encoding is always UTF-8.
+#' As usual, the output encoding is always UTF-8.
 #'
 #' @examples
-#' \donttest{
 #' stri_subset_fixed(c("stringi R", "REXAMINE", "123"), c('i', 'R', '0'))
 #' stri_subset_fixed(c("stringi R", "REXAMINE", "123"), 'R')
 #' stri_subset_charclass(c("stRRRingi","REXAMINE","123"),
 #'    c("\\p{Ll}", "\\p{Lu}", "\\p{Zs}"))
-#' }
 #'
 #' @family search_subset
 #' @export
@@ -97,27 +97,33 @@ stri_subset <- function(str, ..., regex, fixed, coll, charclass) {
 
 #' @export
 #' @rdname stri_subset
-stri_subset_fixed <- function(str, pattern) {
-   .Call("stri_subset_fixed", str, pattern, PACKAGE="stringi")
+stri_subset_fixed <- function(str, pattern, omit_na=FALSE, ..., opts_fixed=NULL) {
+   if (!missing(...))
+       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+   .Call(C_stri_subset_fixed, str, pattern, omit_na, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_subset
-stri_subset_charclass <- function(str, pattern) {
-   .Call("stri_subset_charclass", str, pattern, PACKAGE="stringi")
+stri_subset_charclass <- function(str, pattern, omit_na=FALSE) {
+   .Call(C_stri_subset_charclass, str, pattern, omit_na)
 }
 
 
 #' @export
 #' @rdname stri_subset
-stri_subset_coll <- function(str, pattern, opts_collator=NULL) {
-   .Call("stri_subset_coll", str, pattern, opts_collator, PACKAGE="stringi")
+stri_subset_coll <- function(str, pattern, omit_na=FALSE, ..., opts_collator=NULL) {
+   if (!missing(...))
+       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+   .Call(C_stri_subset_coll, str, pattern, omit_na, opts_collator)
 }
 
 
 #' @export
 #' @rdname stri_subset
-stri_subset_regex <- function(str, pattern, opts_regex=NULL) {
-   .Call("stri_subset_regex", str, pattern, opts_regex, PACKAGE="stringi")
+stri_subset_regex <- function(str, pattern, omit_na=FALSE, ..., opts_regex=NULL) {
+   if (!missing(...))
+       opts_regex <- do.call(stri_opts_regex, as.list(c(opts_regex, ...)))
+   .Call(C_stri_subset_regex, str, pattern, omit_na, opts_regex)
 }

@@ -5,20 +5,23 @@
 \alias{stri_paste}
 \title{Concatenate Character Vectors}
 \usage{
-stri_join(..., sep = "", collapse = NULL)
+stri_join(..., sep = "", collapse = NULL, ignore_null = FALSE)
 
-stri_c(..., sep = "", collapse = NULL)
+stri_c(..., sep = "", collapse = NULL, ignore_null = FALSE)
 
-stri_paste(..., sep = "", collapse = NULL)
+stri_paste(..., sep = "", collapse = NULL, ignore_null = FALSE)
 }
 \arguments{
 \item{...}{character vectors (or objects coercible to character vectors)
-which corresponding elements are to be concatenated.}
+which corresponding elements are to be concatenated}
 
-\item{sep}{single string; separates terms.}
+\item{sep}{single string; separates terms}
 
 \item{collapse}{single string or \code{NULL}; an optional
-results separator.}
+results separator}
+
+\item{ignore_null}{single logical value; if \code{TRUE}, then empty
+vectors on input are silently ignored}
 }
 \value{
 Returns a character vector.
@@ -37,7 +40,8 @@ Otherwise, you will get a character vector of length equal
 to the length of the longest argument.
 
 If any of the arguments in `\code{...}` is a vector of length 0
-(not to be confused with vectors of empty strings), then
+(not to be confused with vectors of empty strings)
+and \code{ignore_null=FALSE}, then
 you will get a 0-length character vector in result.
 
 If \code{collapse} or \code{sep} has length > 1, then only first string
@@ -51,7 +55,6 @@ Moreover, as usual in \pkg{stringi}, the resulting strings are
 always in UTF-8.
 }
 \examples{
-\donttest{
 stri_join(1:13, letters)
 stri_join(1:13, letters, sep='!')
 stri_join(1:13, letters, collapse='?')
@@ -61,7 +64,6 @@ stri_join(c('abc', '123', '\\u0105\\u0104'),'###', 1:5, sep='...', collapse='?')
 
 do.call(stri_c, list(c("a", "b", "c"), c("1", "2"), sep='!'))
 do.call(stri_c, list(c("a", "b", "c"), c("1", "2"), sep='!', collapse='$'))
-}
 }
 \seealso{
 Other join: \code{\link{stri_dup}};

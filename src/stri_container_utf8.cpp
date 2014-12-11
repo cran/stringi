@@ -69,7 +69,12 @@ StriContainerUTF8::StriContainerUTF8(SEXP rstr, R_len_t _nrecycle, bool _shallow
 
 
    this->str = new String8[this->n];
+   if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
 
+   /* Important: ICU provides full internationalization functionality
+   without any conversion table data. The common library contains
+   code to handle several important encodings algorithmically: US-ASCII,
+   ISO-8859-1, UTF-7/8/16/32, SCSU, BOCU-1, CESU-8, and IMAP-mailbox-name */
    // for conversion from non-utf8/ascii native charsets:
    StriUcnv ucnvLatin1("ISO-8859-1");
    StriUcnv ucnvNative(NULL);
@@ -128,6 +133,7 @@ StriContainerUTF8::StriContainerUTF8(SEXP rstr, R_len_t _nrecycle, bool _shallow
             }
 //                  tmpbufsize = UCNV_GET_MAX_BYTES_FOR_STRING(maxlen, 4)+1;
 //                  tmpbuf = new UChar[tmpbufsize];
+//                  if (!tmpbuf) throw StriException(MSG__MEM_ALLOC_ERROR);
             // UCNV_GET_MAX_BYTES_FOR_STRING calculates the size
             // of a buffer for conversion from Unicode to a charset.
             // this may be overestimated
@@ -140,7 +146,7 @@ StriContainerUTF8::StriContainerUTF8(SEXP rstr, R_len_t _nrecycle, bool _shallow
 //               UErrorCode status = U_ZERO_ERROR;
 //               int realsize = ucnv_toAlgorithmic(UCNV_UTF8, ucnvCurrent,
 //                  outbuf, outbufsize, CHAR(curs), LENGTH(curs), &status);
-//               if (U_FAILURE(status)) {
+//               if (U_FAILURE(status)) { // STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 //                  CLEANUP_StriContainerUTF8
 //                  throw StriException(status);
 //               }
@@ -152,9 +158,7 @@ StriContainerUTF8::StriContainerUTF8(SEXP rstr, R_len_t _nrecycle, bool _shallow
          // latin1/native -> UTF16
          UErrorCode status = U_ZERO_ERROR;
          UnicodeString tmp(CHAR(curs), LENGTH(curs), ucnvCurrent, status);
-         if (U_FAILURE(status)) {
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
          // UTF-16 -> UTF-8
 // // this is not faster than u_strToUTF8
@@ -175,9 +179,7 @@ StriContainerUTF8::StriContainerUTF8(SEXP rstr, R_len_t _nrecycle, bool _shallow
          int outrealsize = 0;
          u_strToUTF8(outbuf.data(), outbuf.size(), &outrealsize,
                tmp.getBuffer(), tmp.length(), &status);
-         if (U_FAILURE(status)) {
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
          this->str[i].initialize(outbuf.data(), outrealsize, true);
 
@@ -185,7 +187,7 @@ StriContainerUTF8::StriContainerUTF8(SEXP rstr, R_len_t _nrecycle, bool _shallow
 //               UErrorCode status = U_ZERO_ERROR;
 //               int tmprealsize = ucnv_toUChars(ucnvCurrent, tmpbuf, tmpbufsize,
 //                     CHAR(curs), LENGTH(curs), &status);
-//               if (U_FAILURE(status)) {
+//               if (U_FAILURE(status)) { // STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 //                  CLEANUP_FAILURE_StriContainerUTF8
 //                  throw StriException(status);
 //               }
@@ -193,7 +195,7 @@ StriContainerUTF8::StriContainerUTF8(SEXP rstr, R_len_t _nrecycle, bool _shallow
 //               // UTF-16 -> UTF-8
 //               int outrealsize = ucnv_fromUChars(ucnvUTF8,
 //                  outbuf, outbufsize, tmpbuf, tmprealsize, &status);
-//               if (U_FAILURE(status)) {
+//               if (U_FAILURE(status)) { // STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 //                  CLEANUP_FAILURE_StriContainerUTF8
 //                  throw StriException(status);
 //               }
@@ -213,6 +215,7 @@ StriContainerUTF8::StriContainerUTF8(StriContainerUTF8& container)
 {
    if (container.str) {
       this->str = new String8[this->n];
+      if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
       for (int i=0; i<this->n; ++i) {
          this->str[i] = container.str[i];
       }
@@ -230,6 +233,7 @@ StriContainerUTF8& StriContainerUTF8::operator=(StriContainerUTF8& container)
 
    if (container.str) {
       this->str = new String8[this->n];
+      if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
       for (int i=0; i<this->n; ++i) {
          this->str[i] = container.str[i];
       }

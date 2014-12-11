@@ -55,8 +55,8 @@ e1 \%stri!==\% e2
 }
 \value{
 All the functions return a logical vector
-indicating the result of the element-by-element comparison.
-As usual, the elements of shorter vectors are recycled as necessary.
+indicating the result of a pairwise comparison.
+As usual, the elements of shorter vectors are recycled if necessary.
 }
 \description{
 Relational operators for comparing corresponding strings in
@@ -73,10 +73,8 @@ On the other hand, \code{\%stri===\%} performs a locale-independent,
 code point-based comparison.
 }
 \examples{
-\donttest{
 "a" \%stri<\% "b"
 c("a", "b", "c") \%stri>=\% "b"
-}
 }
 \seealso{
 Other locale_sensitive: \code{\link{stri_cmp}},
@@ -91,9 +89,15 @@ Other locale_sensitive: \code{\link{stri_cmp}},
   \code{\link{stri_duplicated}},
   \code{\link{stri_duplicated_any}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_collator}};
   \code{\link{stri_order}}, \code{\link{stri_sort}};
   \code{\link{stri_split_boundaries}};

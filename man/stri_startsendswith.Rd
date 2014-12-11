@@ -14,23 +14,24 @@ stri_startswith(str, ..., fixed, coll, charclass)
 
 stri_endswith(str, ..., fixed, coll, charclass)
 
-stri_startswith_fixed(str, pattern, from = 1L)
+stri_startswith_fixed(str, pattern, from = 1L, ..., opts_fixed = NULL)
 
-stri_endswith_fixed(str, pattern, to = -1L)
+stri_endswith_fixed(str, pattern, to = -1L, ..., opts_fixed = NULL)
 
 stri_startswith_charclass(str, pattern, from = 1L)
 
 stri_endswith_charclass(str, pattern, to = -1L)
 
-stri_startswith_coll(str, pattern, from = 1L, opts_collator = NULL)
+stri_startswith_coll(str, pattern, from = 1L, ..., opts_collator = NULL)
 
-stri_endswith_coll(str, pattern, to = -1L, opts_collator = NULL)
+stri_endswith_coll(str, pattern, to = -1L, ..., opts_collator = NULL)
 }
 \arguments{
 \item{str}{character vector}
 
-\item{...}{additional arguments passed to the underlying functions;
-\code{stri_startswith} and \code{stri_endswith} only}
+\item{...}{supplementary arguments passed to the underlying functions,
+including additional settings for \code{opts_collator}, \code{opts_fixed},
+and so on.}
 
 \item{pattern,fixed,coll,charclass}{character vector defining search patterns;
 for more details refer to \link{stringi-search}}
@@ -39,9 +40,10 @@ for more details refer to \link{stringi-search}}
 
 \item{to}{integer vector}
 
-\item{opts_collator}{a named list with \pkg{ICU} Collator's settings
-as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-for default settings; \code{stri_*_coll} only}
+\item{opts_collator,opts_fixed}{a named list used to tune up
+a search engine's settings; see \code{\link{stri_opts_collator}}
+and \code{\link{stri_opts_fixed}}, respectively; \code{NULL}
+for default settings;}
 }
 \value{
 All the functions return a logical vector.
@@ -84,19 +86,15 @@ For that you may use the "\code{^}" and "\code{$}" metacharacters,
 see \link{stringi-search-regex}.
 }
 \examples{
-\donttest{
 stri_startswith_charclass(" trim me! ", "\\\\p{WSpace}")
 stri_startswith_fixed(c("a1", "a2", "b3", "a4", "c5"), "a")
 stri_detect_regex(c("a1", "a2", "b3", "a4", "c5"), "^a")
 stri_startswith_fixed("ababa", "ba")
 stri_startswith_fixed("ababa", "ba", from=2)
-stri_startswith_coll(c("a1", "A2", "b3", "A4", "C5"), "a",
-   opts_collator=stri_opts_collator(strength=1))
+stri_startswith_coll(c("a1", "A2", "b3", "A4", "C5"), "a", strength=1)
 pat <- stri_paste("\\u0635\\u0644\\u0649 \\u0627\\u0644\\u0644\\u0647 ",
                   "\\u0639\\u0644\\u064a\\u0647 \\u0648\\u0633\\u0644\\u0645XYZ")
-stri_endswith_coll("\\ufdfa\\ufdfa\\ufdfaXYZ", pat,
-   opts=stri_opts_collator(strength = 1))
-}
+stri_endswith_coll("\\ufdfa\\ufdfa\\ufdfaXYZ", pat, strength=1)
 }
 \seealso{
 Other search_detect: \code{\link{stri_detect}},

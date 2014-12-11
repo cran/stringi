@@ -3,10 +3,12 @@
 \alias{stri_unique}
 \title{Extract Unique Elements}
 \usage{
-stri_unique(str, opts_collator = NULL)
+stri_unique(str, ..., opts_collator = NULL)
 }
 \arguments{
 \item{str}{character vector}
+
+\item{...}{additional settings for \code{opts_collator}}
 
 \item{opts_collator}{a named list with \pkg{ICU} Collator's options
 as generated with \code{\link{stri_opts_collator}}, \code{NULL}
@@ -31,14 +33,11 @@ than its base R counterpart.
 See also \code{\link{stri_duplicated}} for indicating non-unique elements.
 }
 \examples{
-\donttest{
-# normalized and non-unicode-normalized version of the same code point:
+# normalized and non-Unicode-normalized version of the same code point:
 stri_unique(c("\\u0105", stri_trans_nfkd("\\u0105")))
 unique(c("\\u0105", stri_trans_nfkd("\\u0105")))
 
-stri_unique(c("gro\\\\u00df", "GROSS", "Gro\\\\u00df", "Gross"),
-   stri_opts_collator(strength=1))
-}
+stri_unique(c("gro\\u00df", "GROSS", "Gro\\u00df", "Gross"), strength=1)
 }
 \seealso{
 Other locale_sensitive: \code{\link{\%s!==\%}},
@@ -61,9 +60,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stri_duplicated}},
   \code{\link{stri_duplicated_any}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_collator}};
   \code{\link{stri_order}}, \code{\link{stri_sort}};
   \code{\link{stri_split_boundaries}};

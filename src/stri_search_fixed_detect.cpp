@@ -58,16 +58,20 @@
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+ *    FR #110, #23: opts_fixed arg added
  */
-SEXP stri_detect_fixed(SEXP str, SEXP pattern)
+SEXP stri_detect_fixed(SEXP str, SEXP pattern, SEXP opts_fixed)
 {
+   uint32_t pattern_flags = StriContainerByteSearch::getByteSearchFlags(opts_fixed);
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
 
    STRI__ERROR_HANDLER_BEGIN(2)
    int vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
    StriContainerUTF8 str_cont(str, vectorize_length);
-   StriContainerByteSearch pattern_cont(pattern, vectorize_length);
+   StriContainerByteSearch pattern_cont(pattern, vectorize_length, pattern_flags);
 
    SEXP ret;
    STRI__PROTECT(ret = Rf_allocVector(LGLSXP, vectorize_length));
@@ -125,8 +129,7 @@ SEXP stri_detect_fixed(SEXP str, SEXP pattern)
 //         if (matcher) uregex_close(matcher);
 //         utp = utext_openUTF8(utp, last_p->c_str(), last_p->length(), &err);
 //         matcher = uregex_openUText(utp, UREGEX_LITERAL, NULL, &err);
-//         if (U_FAILURE(err))
-//            throw StriException(MSG__REGEXP_FAILED);
+//         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 //      }
 //
 //      if (last_s != cur_s) {

@@ -12,28 +12,30 @@
 \alias{stri_compare}
 \title{Compare Strings with or without Collation}
 \usage{
-stri_compare(e1, e2, opts_collator = NULL)
+stri_compare(e1, e2, ..., opts_collator = NULL)
 
-stri_cmp(e1, e2, opts_collator = NULL)
+stri_cmp(e1, e2, ..., opts_collator = NULL)
 
 stri_cmp_eq(e1, e2)
 
 stri_cmp_neq(e1, e2)
 
-stri_cmp_equiv(e1, e2, opts_collator = NULL)
+stri_cmp_equiv(e1, e2, ..., opts_collator = NULL)
 
-stri_cmp_nequiv(e1, e2, opts_collator = NULL)
+stri_cmp_nequiv(e1, e2, ..., opts_collator = NULL)
 
-stri_cmp_lt(e1, e2, opts_collator = NULL)
+stri_cmp_lt(e1, e2, ..., opts_collator = NULL)
 
-stri_cmp_gt(e1, e2, opts_collator = NULL)
+stri_cmp_gt(e1, e2, ..., opts_collator = NULL)
 
-stri_cmp_le(e1, e2, opts_collator = NULL)
+stri_cmp_le(e1, e2, ..., opts_collator = NULL)
 
-stri_cmp_ge(e1, e2, opts_collator = NULL)
+stri_cmp_ge(e1, e2, ..., opts_collator = NULL)
 }
 \arguments{
 \item{e1,e2}{character vectors or objects coercible to character vectors}
+
+\item{...}{additional settings for \code{opts_collator}}
 
 \item{opts_collator}{a named list with \pkg{ICU} Collator's options
 as generated with \code{\link{stri_opts_collator}}, \code{NULL}
@@ -41,8 +43,7 @@ for default collation options.}
 }
 \value{
 The \code{stri_cmp} and \code{stri_compare} functions
-return an integer vector
-with comparison results of corresponding
+return an integer vector with comparison results of corresponding
 pairs of elements in \code{e1} and \code{e2}:
 \code{-1} if \code{e1[...] < e2[...]},
 \code{0} if they are canonically equivalent, and \code{1} if greater.
@@ -52,28 +53,26 @@ whether a given relation holds between two corresponding elements
 in \code{e1} and \code{e2}.
 }
 \description{
-These functions  may be used to determine if two strings
-are equal, canonically equivalent (this is performed in a way more clever
+These functions may be used to determine if two strings
+are equal, canonically equivalent (this is performed in a much more clever
 fashion than when testing for equality),
 or to check whether they appear in
 a specific lexicographic order.
 }
 \details{
-All the functions are vectorized over \code{e1} and \code{e2}.
+All the functions listed here are vectorized over \code{e1} and \code{e2}.
 
 \code{stri_cmp_eq} tests whether two corresponding strings
 consist of exactly the same code points, while \code{stri_cmp_neq} allow
-to check whether there is any difference between them.
-These are locale-independent operations: for
-natural language text processing, in which the notion of canonical equivalence
-is more valid, this may not be exactly what
-you are looking for, see Examples.
-Also note that \pkg{stringi} always silently removes UTF-8
-BOMs from input strings,
-so e.g. \code{stri_cmp_eq} does not take BOMs into account while
-comparing strings.
+to check whether there is any difference between them. These are
+locale-independent operations: for natural language text processing,
+in which the notion of canonical equivalence is more valid, this might
+not be exactly what you are looking for, see Examples.
+By the way, note that \pkg{stringi} always silently removes UTF-8
+BOMs from input strings, so e.g. \code{stri_cmp_eq} does not take
+BOMs into account while comparing strings.
 
-On the other hand, \code{stri_cmp_equiv} test for
+On the other hand, \code{stri_cmp_equiv} tests for
 canonical equivalence of two strings and is locale-dependent.
 Additionally, the \pkg{ICU}'s Collator may be tuned up so that
 e.g. the comparison is case-insensitive.
@@ -83,9 +82,8 @@ call \code{stri_cmp_nequiv}.
 What is more,  \code{stri_cmp_le} tests whether
 the elements in the first vector are less than or equal to
 the corresponding elements in the second vector,
-\code{stri_cmp_ge} whether they are greater or equal,
-\code{stri_cmp_lt} if less,
-and \code{stri_cmp_gt} if greater,
+\code{stri_cmp_ge} tests whether they are greater or equal,
+\code{stri_cmp_lt} if less, and \code{stri_cmp_gt} if greater,
 see also e.g. \code{\link{\%s<\%}}.
 
 Finally, \code{stri_compare} is an alias to \code{stri_cmp}. They both
@@ -100,31 +98,29 @@ Please note that different locale settings may lead to different results
 (see the examples below).
 }
 \examples{
-\donttest{
 # in Polish ch < h:
-stri_cmp_lt("hladny", "chladny", stri_opts_collator(locale="pl_PL"))
+stri_cmp_lt("hladny", "chladny", locale="pl_PL")
 
 # in Slovak ch > h:
-stri_cmp_lt("hladny", "chladny", stri_opts_collator(locale="sk_SK"))
+stri_cmp_lt("hladny", "chladny", locale="sk_SK")
 
 # < or > (depends on locale):
 stri_cmp("hladny", "chladny")
 
 # ignore case differences:
-stri_cmp_equiv("hladny", "HLADNY", stri_opts_collator(strength=2))
+stri_cmp_equiv("hladny", "HLADNY", strength=2)
 
-# alse ignore diacritical differences:
-stri_cmp_equiv("hladn\\u00FD", "hladny", stri_opts_collator(strength=1, locale="sk_SK"))
+# also ignore diacritical differences:
+stri_cmp_equiv("hladn\\u00FD", "hladny", strength=1, locale="sk_SK")
 
-# non-normalized vs normalized string:
-stri_cmp_equiv(stri_trans_nfkd('\\u0105'), '\\u105')
+# non-Unicode-normalized vs normalized string:
+stri_cmp_equiv(stri_trans_nfkd("\\u0105"), "\\u105")
 
 # note the difference:
-stri_cmp_eq(stri_trans_nfkd('\\u0105'), '\\u105')
+stri_cmp_eq(stri_trans_nfkd("\\u0105"), "\\u105")
 
 # ligatures:
-stri_cmp_equiv("\\ufb00", "ff", stri_opts_collator(strength=2))
-}
+stri_cmp_equiv("\\ufb00", "ff", strength=2)
 }
 \seealso{
 Other locale_sensitive: \code{\link{\%s!==\%}},
@@ -141,9 +137,15 @@ Other locale_sensitive: \code{\link{\%s!==\%}},
   \code{\link{stri_duplicated}},
   \code{\link{stri_duplicated_any}};
   \code{\link{stri_enc_detect2}};
-  \code{\link{stri_extract_words}};
-  \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+  \code{\link{stri_extract_all_words}},
+  \code{\link{stri_extract_first_words}},
+  \code{\link{stri_extract_last_words}};
+  \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_opts_collator}};
   \code{\link{stri_order}}, \code{\link{stri_sort}};
   \code{\link{stri_split_boundaries}};

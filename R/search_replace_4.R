@@ -73,13 +73,11 @@
 #' @param pattern,regex,fixed,coll,charclass character vector defining search patterns;
 #' for more details refer to \link{stringi-search}
 #' @param replacement character vector with replacements for matched patterns
-#' @param opts_regex a named list with \pkg{ICU} Regex settings
-#' as generated with \code{\link{stri_opts_regex}}; \code{NULL}
+#' @param opts_collator,opts_fixed,opts_regex a named list used to tune up
+#' a search engine's settings; see
+#' \code{\link{stri_opts_collator}}, \code{\link{stri_opts_fixed}},
+#' and \code{\link{stri_opts_regex}}, respectively; \code{NULL}
 #' for default settings;
-#' \code{stri_replace_*_regex} only
-#' @param opts_collator a named list with \pkg{ICU} Collator's settings
-#' as generated with \code{\link{stri_opts_collator}}; \code{NULL}
-#' for default settings; \code{stri_replace_*_coll} only
 #' @param merge single logical value;
 #' should consecutive matches be merged into one string;
 #' \code{stri_replace_all_charclass} only
@@ -89,16 +87,17 @@
 #' \code{stri_replace_all_*} only
 #' @param mode single string;
 #' one of: \code{"first"} (the default), \code{"all"}, \code{"last"}
-#' @param ... additional arguments passed to the underlying functions
+#' @param ... supplementary arguments passed to the underlying functions,
+#' including additional settings for \code{opts_collator}, \code{opts_regex},
+#' \code{opts_fixed}, and so on
 #'
 #' @return All the functions return a character vector.
 #'
 #' @examples
-#' \donttest{
 #' stri_replace_all_charclass("aaaa", "[a]", "b", merge=c(TRUE, FALSE))
 #'
 #' stri_replace_all_charclass("a\nb\tc   d", "\\p{WHITE_SPACE}", " ")
-#' stri_replace_all_charclass("a\nb\tc   d", "\\p{WHITE_SPACE}", " ", merge=RUE)
+#' stri_replace_all_charclass("a\nb\tc   d", "\\p{WHITE_SPACE}", " ", merge=TRUE)
 #'
 #' s <- "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 #' stri_replace_all_fixed(s, " ", "#")
@@ -121,7 +120,6 @@
 #'      c("quick", "brown", "fox"), c("slow",  "black", "bear"), vectorize_all=FALSE)
 #' stri_replace_all_regex("The quicker brown fox jumped over the lazy dog.",
 #'      "\\b"%s+%c("quick", "brown", "fox")%s+%"\\b", c("slow",  "black", "bear"), vectorize_all=FALSE)
-#' }
 #'
 #' @family search_replace
 #' @export
@@ -205,94 +203,100 @@ stri_replace <- function(str, replacement, ..., regex, fixed, coll, charclass,
 #' @export
 #' @rdname stri_replace
 stri_replace_all_charclass <- function(str, pattern, replacement, merge=FALSE, vectorize_all=TRUE) {
-   .Call("stri_replace_all_charclass", str, pattern, replacement, merge, vectorize_all,
-         PACKAGE="stringi")
+   .Call(C_stri_replace_all_charclass, str, pattern, replacement, merge, vectorize_all)
 }
 
 
 #' @export
 #' @rdname stri_replace
 stri_replace_first_charclass <- function(str, pattern, replacement) {
-   .Call("stri_replace_first_charclass", str, pattern, replacement,
-         PACKAGE="stringi")
+   .Call(C_stri_replace_first_charclass, str, pattern, replacement)
 }
 
 
 #' @export
 #' @rdname stri_replace
 stri_replace_last_charclass <- function(str, pattern, replacement) {
-   .Call("stri_replace_last_charclass", str, pattern, replacement,
-         PACKAGE="stringi")
+   .Call(C_stri_replace_last_charclass, str, pattern, replacement)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_all_coll <- function(str, pattern, replacement, vectorize_all=TRUE, opts_collator=NULL) {
-   .Call("stri_replace_all_coll", str, pattern, replacement, vectorize_all, opts_collator,
-         PACKAGE="stringi")
+stri_replace_all_coll <- function(str, pattern, replacement, vectorize_all=TRUE, ..., opts_collator=NULL) {
+   if (!missing(...))
+       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+   .Call(C_stri_replace_all_coll, str, pattern, replacement, vectorize_all, opts_collator)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_first_coll <- function(str, pattern, replacement, opts_collator=NULL) {
-   .Call("stri_replace_first_coll", str, pattern, replacement, opts_collator,
-         PACKAGE="stringi")
+stri_replace_first_coll <- function(str, pattern, replacement, ..., opts_collator=NULL) {
+   if (!missing(...))
+       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+   .Call(C_stri_replace_first_coll, str, pattern, replacement, opts_collator)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_last_coll <- function(str, pattern, replacement, opts_collator=NULL) {
-   .Call("stri_replace_last_coll", str, pattern, replacement, opts_collator,
-         PACKAGE="stringi")
+stri_replace_last_coll <- function(str, pattern, replacement, ..., opts_collator=NULL) {
+   if (!missing(...))
+       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+   .Call(C_stri_replace_last_coll, str, pattern, replacement, opts_collator)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_all_fixed <- function(str, pattern, replacement, vectorize_all=TRUE) {
-   .Call("stri_replace_all_fixed", str, pattern, replacement, vectorize_all,
-         PACKAGE="stringi")
+stri_replace_all_fixed <- function(str, pattern, replacement, vectorize_all=TRUE, ..., opts_fixed=NULL) {
+   if (!missing(...))
+       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+   .Call(C_stri_replace_all_fixed, str, pattern, replacement, vectorize_all, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_first_fixed <- function(str, pattern, replacement) {
-   .Call("stri_replace_first_fixed", str, pattern, replacement,
-         PACKAGE="stringi")
+stri_replace_first_fixed <- function(str, pattern, replacement, ..., opts_fixed=NULL) {
+   if (!missing(...))
+       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+   .Call(C_stri_replace_first_fixed, str, pattern, replacement, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_last_fixed <- function(str, pattern, replacement) {
-   .Call("stri_replace_last_fixed", str, pattern, replacement,
-         PACKAGE="stringi")
+stri_replace_last_fixed <- function(str, pattern, replacement, ..., opts_fixed=NULL) {
+   if (!missing(...))
+       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+   .Call(C_stri_replace_last_fixed, str, pattern, replacement, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_all_regex <- function(str, pattern, replacement, vectorize_all=TRUE, opts_regex=NULL) {
-   .Call("stri_replace_all_regex", str, pattern, replacement, vectorize_all, opts_regex,
-         PACKAGE="stringi")
+stri_replace_all_regex <- function(str, pattern, replacement, vectorize_all=TRUE, ..., opts_regex=NULL) {
+   if (!missing(...))
+       opts_regex <- do.call(stri_opts_regex, as.list(c(opts_regex, ...)))
+   .Call(C_stri_replace_all_regex, str, pattern, replacement, vectorize_all, opts_regex)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_first_regex <- function(str, pattern, replacement, opts_regex=NULL) {
-   .Call("stri_replace_first_regex", str, pattern, replacement, opts_regex,
-         PACKAGE="stringi")
+stri_replace_first_regex <- function(str, pattern, replacement, ..., opts_regex=NULL) {
+   if (!missing(...))
+       opts_regex <- do.call(stri_opts_regex, as.list(c(opts_regex, ...)))
+   .Call(C_stri_replace_first_regex, str, pattern, replacement, opts_regex)
 }
 
 
 #' @export
 #' @rdname stri_replace
-stri_replace_last_regex <- function(str, pattern, replacement, opts_regex=NULL) {
-   .Call("stri_replace_last_regex", str, pattern, replacement, opts_regex,
-         PACKAGE="stringi")
+stri_replace_last_regex <- function(str, pattern, replacement, ..., opts_regex=NULL) {
+   if (!missing(...))
+       opts_regex <- do.call(stri_opts_regex, as.list(c(opts_regex, ...)))
+   .Call(C_stri_replace_last_regex, str, pattern, replacement, opts_regex)
 }

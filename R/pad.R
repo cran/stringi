@@ -64,30 +64,28 @@
 #'
 #' @rdname stri_pad
 #' @examples
-#' \donttest{
 #' stri_pad_left("stringi", 10, pad="#")
 #' stri_pad_both("stringi", 8:12, pad="*")
 #' # center on screen:
 #' cat(stri_pad_both(c("the", "string", "processing", "package"),
 #'    getOption("width")*0.9), sep='\n')
-#' }
 #' @export
 stri_pad_both <- function(str, min_length=floor(0.9*getOption("width")), pad=" ") {
-   .Call("stri_pad", str, min_length, 2L, pad, PACKAGE="stringi")
+   .Call(C_stri_pad, str, min_length, 2L, pad)
 }
 
 
 #' @rdname stri_pad
 #' @export
 stri_pad_left <- function(str, min_length=floor(0.9*getOption("width")), pad=" ") {
-   .Call("stri_pad", str, min_length, 0L, pad, PACKAGE="stringi")
+   .Call(C_stri_pad, str, min_length, 0L, pad)
 }
 
 
 #' @rdname stri_pad
 #' @export
 stri_pad_right <- function(str, min_length=floor(0.9*getOption("width")), pad=" ") {
-   .Call("stri_pad", str, min_length, 1L, pad, PACKAGE="stringi")
+   .Call(C_stri_pad, str, min_length, 1L, pad)
 }
 
 

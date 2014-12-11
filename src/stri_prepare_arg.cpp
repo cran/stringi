@@ -65,7 +65,7 @@ SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
       R_len_t nv = LENGTH(x);
       for (R_len_t i=0; i<nv; ++i) {
          SEXP cur = VECTOR_ELT(x, i);
-         if (isNull(cur))
+         if ((bool)isNull(cur))
             continue; // NA
          if (!isRaw(cur))
             Rf_error(MSG__ARG_EXPECTED_RAW_IN_LIST_NO_COERCION, argname);  // error() allowed here
@@ -98,7 +98,7 @@ SEXP stri_prepare_arg_list_integer(SEXP x, const char* argname)
    if ((SEXP*)argname == (SEXP*)R_NilValue)
       argname = "<noname>";
 
-   if (isNull(x)) {
+   if ((bool)isNull(x)) {
        return x;
    }
    else if (Rf_isVectorList(x)) {
@@ -110,7 +110,7 @@ SEXP stri_prepare_arg_list_integer(SEXP x, const char* argname)
          SEXP xold = x;
          PROTECT(x = Rf_allocVector(VECSXP, narg));
          for (R_len_t i=0; i<narg; ++i) {
-            if (isNull(VECTOR_ELT(xold, i)))
+            if ((bool)isNull(VECTOR_ELT(xold, i)))
                SET_VECTOR_ELT(x, i, R_NilValue);
             // @TODO: stri_prepare_arg_integer may call Rf_error, no UNPROTECT
             else
@@ -197,25 +197,31 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
  *
  * @version 0.1-?? (Marek Gagolewski)
  *          argname added
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-19)
+ *    BUGFIX: PROTECT mem from GC in factor object given
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *        treat NULLs as empty vectors
  */
 SEXP stri_prepare_arg_string(SEXP x, const char* argname)
 {
    if ((SEXP*)argname == (SEXP*)R_NilValue)
       argname = "<noname>";
 
-   if (isString(x))
+   if ((bool)isString(x))
       return x; // return as-is
    else if (Rf_isFactor(x))
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-      x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-      UNPROTECT(1);
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      UNPROTECT(2);
       return x;
    }
-   else if (Rf_isVectorAtomic(x))
+   else if (Rf_isVectorAtomic(x) || isNull(x))
       return Rf_coerceVector(x, STRSXP);
-   else if (isSymbol(x))
+   else if ((bool)isSymbol(x))
       return Rf_ScalarString(PRINTNAME(x));
 
    Rf_error(MSG__ARG_EXPECTED_STRING, argname); // allowed here
@@ -240,6 +246,12 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
  *
  * @version 0.1-?? (Marek Gagolewski)
  *          argname added
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-19)
+ *    BUGFIX: PROTECT mem from GC in factor object given
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *        treat NULLs as empty vectors
  */
 SEXP stri_prepare_arg_double(SEXP x, const char* argname)
 {
@@ -250,13 +262,14 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-      x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-      UNPROTECT(1);
-      return Rf_coerceVector(x, REALSXP);
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      PROTECT(x = Rf_coerceVector(x, REALSXP));
+      UNPROTECT(3);
+      return x;
    }
-   else if(isReal(x))
+   else if ((bool)isReal(x))
       return x; //return as-is
-   else if (Rf_isVectorAtomic(x))
+   else if (Rf_isVectorAtomic(x) || isNull(x))
       return Rf_coerceVector(x, REALSXP);
 
    Rf_error(MSG__ARG_EXPECTED_NUMERIC, argname); // allowed here
@@ -281,6 +294,12 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
  *
  * @version 0.1-?? (Marek Gagolewski)
  *          argname added
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-19)
+ *    BUGFIX: PROTECT mem from GC in factor object given
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *        treat NULLs as empty vectors
  */
 SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
 {
@@ -291,13 +310,14 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-      x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-      UNPROTECT(1);
-      return Rf_coerceVector(x, INTSXP);
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      PROTECT(x = Rf_coerceVector(x, INTSXP));
+      UNPROTECT(3);
+      return x;
    }
    else if (Rf_isInteger(x))
       return x; // return as-is
-   else if (Rf_isVectorAtomic(x))
+   else if (Rf_isVectorAtomic(x) || isNull(x))
       return Rf_coerceVector(x, INTSXP);
 
    Rf_error(MSG__ARG_EXPECTED_INTEGER, argname); //allowed here
@@ -322,6 +342,12 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
  *
  * @version 0.1-?? (Marek Gagolewski)
  *          argname added
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-19)
+ *    BUGFIX: PROTECT mem from GC in factor object given
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *        treat NULLs as empty vectors
  */
 SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
 {
@@ -332,13 +358,14 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-      x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-      UNPROTECT(1);
-      return Rf_coerceVector(x, LGLSXP);
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      PROTECT(x = Rf_coerceVector(x, LGLSXP));
+      UNPROTECT(3);
+      return x;
    }
-   else if (isLogical(x))
+   else if ((bool)isLogical(x))
       return x; // return as-is
-   else if (Rf_isVectorAtomic(x))
+   else if (Rf_isVectorAtomic(x) || isNull(x))
       return Rf_coerceVector(x, LGLSXP);
 
    Rf_error(MSG__ARG_EXPECTED_LOGICAL, argname); // allowed here
@@ -360,6 +387,12 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
  * @return raw vector
  *
  * @version 0.1-?? (Marek Gagolewski)
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-19)
+ *    BUGFIX: PROTECT mem from GC in factor object given
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *        treat NULLs as empty vectors
  */
 SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
 {
@@ -370,13 +403,14 @@ SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-      x = Rf_eval(call, R_GlobalEnv); // this will mark it's encoding manually
-      UNPROTECT(1);
-      return Rf_coerceVector(x, RAWSXP);
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      PROTECT(x = Rf_coerceVector(x, RAWSXP));
+      UNPROTECT(3);
+      return x;
    }
    else if (TYPEOF(x) == RAWSXP)
       return x; // return as-is
-   else if (Rf_isVectorAtomic(x))
+   else if (Rf_isVectorAtomic(x) || isNull(x))
       return Rf_coerceVector(x, RAWSXP);
 
    Rf_error(MSG__ARG_EXPECTED_RAW, argname); // allowed here
@@ -715,6 +749,10 @@ const char* stri__prepare_arg_locale(SEXP loc, const char* argname, bool allowde
          size_t ret_n = strlen(ret_tmp);
          /* R_alloc ==  Here R will reclaim the memory at the end of the call to .Call */
          char* ret = R_alloc(ret_n+1, (int)sizeof(char));
+         if (!ret) {
+            UNPROTECT(1);
+            Rf_error(MSG__MEM_ALLOC_ERROR);
+         }
          memcpy(ret, ret_tmp, ret_n+1);
          UNPROTECT(1);
          return ret;
@@ -778,6 +816,10 @@ const char* stri__prepare_arg_enc(SEXP enc, const char* argname, bool allowdefau
          size_t ret_n = strlen(ret_tmp);
          /* R_alloc ==  Here R will reclaim the memory at the end of the call to .Call */
          char* ret = R_alloc(ret_n+1, (int)sizeof(char));
+         if (!ret) {
+            UNPROTECT(1);
+            Rf_error(MSG__MEM_ALLOC_ERROR);
+         }
          memcpy(ret, ret_tmp, ret_n+1);
          UNPROTECT(1);
          return ret;

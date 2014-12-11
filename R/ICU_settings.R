@@ -38,7 +38,7 @@
 #' @param short logical; whether or not the results should be given
 #' in a concise form; defaults to \code{TRUE}
 #'
-#' @return If \code{short==TRUE}, then a single string containing
+#' @return If \code{short=TRUE}, then a single string containing
 #' information on default character encoding, locale, and Unicode
 #' as well as \pkg{ICU} version is returned.
 #'
@@ -58,7 +58,7 @@
 stri_info <- function(short=FALSE) {
    stopifnot(is.logical(short), length(short) == 1)
 
-   info <- .Call("stri_info", PACKAGE="stringi")
+   info <- .Call(C_stri_info)
    if (info$Charset.native$Name.friendly != "UTF-8") {
 #       if (!info$Charset.native$CharSize.8bit)    # this should not cause problems, e.g. in the Big5 encoding
 #          warning("You use a non-8bit native charset. " %s+%
@@ -84,7 +84,8 @@ stri_info <- function(short=FALSE) {
    else {
       locale <- info$Locale$Name
       charset <- info$Charset.native$Name.friendly
-      return(stri_paste(locale, ".", charset,
+      return(stri_paste("stringi_", as.character(packageVersion("stringi")), "; ",
+         locale, ".", charset,
          "; ICU4C ", info$ICU.version,
          "; Unicode ", info$Unicode.version))
    }

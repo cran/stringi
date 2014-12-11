@@ -56,28 +56,28 @@
 #' @family encoding_detection
 #' @export
 stri_enc_isutf16be <- function(str) {
-   .Call("stri_enc_isenc", str, 3L, PACKAGE="stringi")
+   .Call(C_stri_enc_isenc, str, 3L)
 }
 
 
 #' @rdname stri_enc_isutf16
 #' @export
 stri_enc_isutf16le <- function(str) {
-   .Call("stri_enc_isenc", str, 4L, PACKAGE="stringi")
+   .Call(C_stri_enc_isenc, str, 4L)
 }
 
 
 #' @rdname stri_enc_isutf16
 #' @export
 stri_enc_isutf32be <- function(str) {
-   .Call("stri_enc_isenc", str, 5L, PACKAGE="stringi")
+   .Call(C_stri_enc_isenc, str, 5L)
 }
 
 
 #' @rdname stri_enc_isutf16
 #' @export
 stri_enc_isutf32le <- function(str) {
-   .Call("stri_enc_isenc", str, 6L, PACKAGE="stringi")
+   .Call(C_stri_enc_isenc, str, 6L)
 }
 
 
@@ -99,15 +99,13 @@ stri_enc_isutf32le <- function(str) {
 #' corresponds to a valid ASCII byte sequence.
 #'
 #' @examples
-#' \donttest{
 #' stri_enc_isascii(letters[1:3])
 #' stri_enc_isascii("\u0105\u0104")
-#' }
 #'
 #' @family encoding_detection
 #' @export
 stri_enc_isascii <- function(str) {
-   .Call("stri_enc_isenc", str, 1L, PACKAGE="stringi")
+   .Call(C_stri_enc_isenc, str, 1L)
 }
 
 
@@ -144,14 +142,12 @@ stri_enc_isascii <- function(str) {
 #' corresponds to a valid UTF-8 byte sequence.
 #'
 #' @examples
-#' \donttest{
 #' stri_enc_isutf8(letters[1:3])
 #' stri_enc_isutf8("\u0105\u0104")
 #' stri_enc_isutf8("\u1234\u0222")
-#' }
 #'
 #' @family encoding_detection
 #' @export
 stri_enc_isutf8 <- function(str) {
-   .Call("stri_enc_isenc", str, 2L, PACKAGE="stringi")
+   .Call(C_stri_enc_isenc, str, 2L)
 }

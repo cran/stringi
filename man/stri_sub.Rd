@@ -67,7 +67,6 @@ In \code{stri_sub<-}, ``strange'' configurations of indices work as
 string concatenation at the front, back, or middle.
 }
 \examples{
-\donttest{
 s <- "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 stri_sub(s, from=1:3*6, to=21)
 stri_sub(s, from=c(1,7,13), length=5)
@@ -78,10 +77,13 @@ stri_sub(s, -5, length=4)
 (stri_sub(s, -6, length=5) <- ".")
 (stri_sub(s, 1, 1:3) <- 1:2)
 }
-}
 \seealso{
-Other indexing: \code{\link{stri_locate_boundaries}},
-  \code{\link{stri_locate_words}};
+Other indexing: \code{\link{stri_locate_all_boundaries}},
+  \code{\link{stri_locate_all_words}},
+  \code{\link{stri_locate_first_boundaries}},
+  \code{\link{stri_locate_first_words}},
+  \code{\link{stri_locate_last_boundaries}},
+  \code{\link{stri_locate_last_words}};
   \code{\link{stri_locate}}, \code{\link{stri_locate_all}},
   \code{\link{stri_locate_all_charclass}},
   \code{\link{stri_locate_all_coll}},

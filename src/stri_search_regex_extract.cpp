@@ -78,15 +78,16 @@ SEXP stri__extract_firstlast_regex(SEXP str, SEXP pattern, SEXP opts_regex, bool
       UErrorCode status = U_ZERO_ERROR;
       RegexMatcher *matcher = pattern_cont.getMatcher(i); // will be deleted automatically
       str_text = utext_openUTF8(str_text, str_cont.get(i).c_str(), str_cont.get(i).length(), &status);
-      if (U_FAILURE(status)) throw StriException(status);
+      STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
       int m_start = -1;
       int m_end = -1;
       matcher->reset(str_text);
       if ((int)matcher->find()) { // find first match
          m_start = (int)matcher->start(status); // The **native** position in the input string :-)
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
          m_end   = (int)matcher->end(status);
-         if (U_FAILURE(status)) throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
       else {
          SET_STRING_ELT(ret, i, NA_STRING);
@@ -97,7 +98,7 @@ SEXP stri__extract_firstlast_regex(SEXP str, SEXP pattern, SEXP opts_regex, bool
          while ((int)matcher->find()) {
             m_start = (int)matcher->start(status);
             m_end   = (int)matcher->end(status);
-            if (U_FAILURE(status)) throw StriException(status);
+            STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
          }
       }
 
@@ -163,17 +164,24 @@ SEXP stri_extract_last_regex(SEXP str, SEXP pattern, SEXP opts_regex)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
+ *    FR #117: omit_no_match arg added
+ *
+ * @version 0.4-1 (Marek Gagolewski, 2014-12-04)
+ *    allow `simplify=NA`
  */
-SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_regex)
+SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP omit_no_match, SEXP opts_regex)
 {
+   uint32_t pattern_flags = StriContainerRegexPattern::getRegexFlags(opts_regex);
+   bool omit_no_match1 = stri__prepare_arg_logical_1_notNA(omit_no_match, "omit_no_match");
+   PROTECT(simplify = stri_prepare_arg_logical_1(simplify, "simplify"));
    PROTECT(str = stri_prepare_arg_string(str, "str")); // prepare string argument
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern")); // prepare string argument
    R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
-   bool simplify1 = stri__prepare_arg_logical_1_notNA(simplify, "simplify");
-   uint32_t pattern_flags = StriContainerRegexPattern::getRegexFlags(opts_regex);
 
    UText* str_text = NULL; // may potentially be slower, but definitely is more convenient!
-   STRI__ERROR_HANDLER_BEGIN(2)
+   STRI__ERROR_HANDLER_BEGIN(3)
    StriContainerUTF8 str_cont(str, vectorize_length);
    StriContainerRegexPattern pattern_cont(pattern, vectorize_length, pattern_flags);
 
@@ -186,12 +194,12 @@ SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_reg
    {
       STRI__CONTINUE_ON_EMPTY_OR_NA_STR_PATTERN(str_cont, pattern_cont,
          SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));,
-         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));)
+         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(omit_no_match1?0:1));)
 
       UErrorCode status = U_ZERO_ERROR;
       RegexMatcher *matcher = pattern_cont.getMatcher(i); // will be deleted automatically
       str_text = utext_openUTF8(str_text, str_cont.get(i).c_str(), str_cont.get(i).length(), &status);
-      if (U_FAILURE(status)) throw StriException(status);
+      STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
       matcher->reset(str_text);
 
@@ -200,12 +208,12 @@ SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_reg
          occurrences.push_back(pair<R_len_t, R_len_t>(
             (R_len_t)matcher->start(status), (R_len_t)matcher->end(status)
          ));
-         if (U_FAILURE(status)) throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
 
       R_len_t noccurrences = (R_len_t)occurrences.size();
       if (noccurrences <= 0) {
-         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(1));
+         SET_VECTOR_ELT(ret, i, stri__vector_NA_strings(omit_no_match1?0:1));
          continue;
       }
 
@@ -227,9 +235,13 @@ SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP opts_reg
       str_text = NULL;
    }
 
-   if (simplify1) {
-      ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
-         stri__vector_NA_strings(1));
+   if (LOGICAL(simplify)[0] == NA_LOGICAL) {
+      STRI__PROTECT(ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
+         stri__vector_NA_strings(1), Rf_ScalarInteger(0)))
+   }
+   else if (LOGICAL(simplify)[0]) {
+      STRI__PROTECT(ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
+         stri__vector_empty_strings(1), Rf_ScalarInteger(0)))
    }
 
    STRI__UNPROTECT_ALL

@@ -41,7 +41,7 @@
    "incorrect option for `%s`"
 
 #define MSG__INCORRECT_COLLATOR_OPTION \
-   "incorrect collator option: `%s`. ignoring"
+   "incorrect opts_collator setting: `%s`. ignoring"
 
 #define MSG__INCORRECT_COLLATOR_OPTION_SPEC \
    "incorrect collator option specifier. see ?stri_opts_collator"
@@ -49,8 +49,11 @@
 #define MSG__INCORRECT_BRKITER_OPTION_SPEC \
    "incorrect break iterator option specifier. see ?stri_opts_brkiter"
 
+#define MSG__INCORRECT_FIXED_OPTION \
+   "incorrect opts_fixed setting: `%s`. ignoring"
+
 #define MSG__INCORRECT_REGEX_OPTION \
-   "incorrect regex option: `%s`. ignoring"
+   "incorrect opts_regex setting: `%s`. ignoring"
 
 #define MSG__INVALID_CODE_POINT \
    "invalid Unicode codepoint \\U%08.8x"
@@ -101,6 +104,9 @@
 #define MSG__ICU_ERROR \
    "%s (%s)"
 
+#define MSG__ICU_WARNING \
+   "%s (%s)"
+
 #define MSG__EXPECTED_NONNEGATIVE \
    "argument `%s`: expected a nonnegative numeric value"
 
@@ -145,6 +151,9 @@
 
 #define MSG__REGEXP_CONFIG_FAILED \
    "regexp engine config failed"
+
+#define MSG__FIXED_CONFIG_FAILED \
+   "fixed search engine config failed"
 
 #define MSG__REGEXP_FAILED_DETAILS \
    "regexp search failed: %s"
@@ -255,5 +264,8 @@
 
 #define MSG__OVERLAPPING_PATTERN_UNSUPPORTED \
    "overlapping pattern matches are not supported"
+
+#define MSG__MEM_ALLOC_ERROR \
+   "memory allocation error"
 
 #endif

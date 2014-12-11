@@ -87,7 +87,6 @@
 #' side effect: after a call, \code{str} is modified.
 #'
 #' @examples
-#' \donttest{
 #' s <- "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
 #' stri_sub(s, from=1:3*6, to=21)
 #' stri_sub(s, from=c(1,7,13), length=5)
@@ -97,7 +96,6 @@
 #' (stri_sub(s, 1, 5) <- "stringi")
 #' (stri_sub(s, -6, length=5) <- ".")
 #' (stri_sub(s, 1, 1:3) <- 1:2)
-#' }
 #'
 #' @family indexing
 #' @rdname stri_sub
@@ -107,14 +105,14 @@ stri_sub <- function(str, from = 1L, to = -1L, length) {
    if (missing(length)) {
       if (is.matrix(from) && !missing(to))
          warning("argument `to` is ignored in given context")
-      .Call("stri_sub", str, from, to, NULL, PACKAGE="stringi")
+      .Call(C_stri_sub, str, from, to, NULL)
    }
    else {
       if (!missing(to))
          warning("argument `to` is ignored in given context")
       if (is.matrix(from))
          warning("argument `length` is ignored in given context")
-      .Call("stri_sub", str, from, NULL, length, PACKAGE="stringi")
+      .Call(C_stri_sub, str, from, NULL, length)
    }
 }
 
@@ -127,13 +125,13 @@ stri_sub <- function(str, from = 1L, to = -1L, length) {
    if (missing(length)) {
       if (is.matrix(from) && !missing(to))
          warning("argument `to` is ignored in given context")
-      .Call("stri_sub_replacement", str, from, to, NULL, value, PACKAGE="stringi")
+      .Call(C_stri_sub_replacement, str, from, to, NULL, value)
    }
    else {
       if (!missing(to))
          warning("argument `to` is ignored in given context")
       if (is.matrix(from))
          warning("argument `length` is ignored in given context")
-      .Call("stri_sub_replacement", str, from, NULL, length, value, PACKAGE="stringi")
+      .Call(C_stri_sub_replacement, str, from, NULL, length, value)
    }
 }

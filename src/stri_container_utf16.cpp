@@ -59,6 +59,7 @@ StriContainerUTF16::StriContainerUTF16(R_len_t _nrecycle)
    this->init_Base(_nrecycle, _nrecycle, false);
    if (this->n > 0) {
       this->str = new UnicodeString[this->n];
+      if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
    }
 }
 
@@ -84,9 +85,14 @@ StriContainerUTF16::StriContainerUTF16(SEXP rstr, R_len_t _nrecycle, bool _shall
       return; /* nothing more to do */
 
    this->str = new UnicodeString[this->n];
+   if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
    for (R_len_t i=0; i<this->n; ++i)
       this->str[i].setToBogus(); // in case it fails during conversion (this is NA)
 
+   /* Important: ICU provides full internationalization functionality
+   without any conversion table data. The common library contains
+   code to handle several important encodings algorithmically: US-ASCII,
+   ISO-8859-1, UTF-7/8/16/32, SCSU, BOCU-1, CESU-8, and IMAP-mailbox-name */
    StriUcnv ucnvASCII("US-ASCII");
    StriUcnv ucnvLatin1("ISO-8859-1");
    StriUcnv ucnvNative(NULL);
@@ -102,14 +108,13 @@ StriContainerUTF16::StriContainerUTF16(SEXP rstr, R_len_t _nrecycle, bool _shall
          UConverter* ucnv = ucnvASCII.getConverter();
          UErrorCode status = U_ZERO_ERROR;
          this->str[i].setTo(
-            UnicodeString(CHAR(curs), LENGTH(curs), ucnv, status)
+            UnicodeString((const char*)CHAR(curs), (int32_t)LENGTH(curs), ucnv, status)
          );
-         if (U_FAILURE(status)) {
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
          // Performance improvement attempt #1:
          // this->str[i] = new UnicodeString(UnicodeString::fromUTF8(CHAR(curs)));
+         // if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
          // slower than the above
 
          // Performance improvement attempt #2:
@@ -135,11 +140,9 @@ StriContainerUTF16::StriContainerUTF16(SEXP rstr, R_len_t _nrecycle, bool _shall
          UConverter* ucnv = ucnvLatin1.getConverter();
          UErrorCode status = U_ZERO_ERROR;
          this->str[i].setTo(
-            UnicodeString(CHAR(curs), LENGTH(curs), ucnv, status)
+            UnicodeString((const char*)CHAR(curs), (int32_t)LENGTH(curs), ucnv, status)
          );
-         if (U_FAILURE(status)) {
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
       }
       else if (IS_BYTES(curs)) {
          throw StriException(MSG__BYTESENC);
@@ -154,11 +157,9 @@ StriContainerUTF16::StriContainerUTF16(SEXP rstr, R_len_t _nrecycle, bool _shall
             UConverter* ucnv = ucnvNative.getConverter();
             UErrorCode status = U_ZERO_ERROR;
             this->str[i].setTo(
-               UnicodeString(CHAR(curs), LENGTH(curs), ucnv, status)
+               UnicodeString((const char*)CHAR(curs), (int32_t)LENGTH(curs), ucnv, status)
             );
-            if (U_FAILURE(status)) {
-               throw StriException(status);
-            }
+            STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
          }
       }
    }
@@ -180,6 +181,7 @@ StriContainerUTF16::StriContainerUTF16(StriContainerUTF16& container)
 {
    if (container.str) {
       this->str = new UnicodeString[this->n];
+      if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
       for (int i=0; i<this->n; ++i) {
          this->str[i].setTo(container.str[i]);
       }
@@ -201,6 +203,7 @@ StriContainerUTF16& StriContainerUTF16::operator=(StriContainerUTF16& container)
 
    if (container.str) {
       this->str = new UnicodeString[this->n];
+      if (!this->str) throw StriException(MSG__MEM_ALLOC_ERROR);
       for (int i=0; i<this->n; ++i) {
          this->str[i].setTo(container.str[i]);
       }
@@ -263,10 +266,7 @@ SEXP StriContainerUTF16::toR() const
          int outrealsize = 0;
          u_strToUTF8(outbuf.data(), outbufsize, &outrealsize,
             str[i%n].getBuffer(), str[i%n].length(), &status);
-         if (U_FAILURE(status)) {
-            UNPROTECT(1); // unprotect procected mem before leaving
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {UNPROTECT(1);})
          SET_STRING_ELT(ret, i,
             Rf_mkCharLenCE(outbuf.data(), outrealsize, (cetype_t)CE_UTF8));
       }

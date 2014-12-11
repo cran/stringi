@@ -69,7 +69,7 @@ class StriUcnv  {
                  UConverterCallbackReason reason,
                  UErrorCode* err);
 
-      void openConverter();
+      void openConverter(bool register_callbacks);
 
    public:
 
@@ -85,6 +85,7 @@ class StriUcnv  {
       {
          if (m_ucnv)
             ucnv_close(m_ucnv);
+         m_ucnv = NULL;
       }
 
 
@@ -109,13 +110,11 @@ class StriUcnv  {
       bool isUTF8() {
          if (m_isutf8 != NA_LOGICAL) return m_isutf8;
 
-         openConverter();
+         openConverter(false);
          UErrorCode status = U_ZERO_ERROR;
          // get "offical" encoder name
          const char* ucnv_name = ucnv_getName(m_ucnv, &status);
-         if (U_FAILURE(status)) {
-            throw StriException(status);
-         }
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
          m_isutf8 = !strcmp(ucnv_name, "UTF-8");
          return m_isutf8;
       }
@@ -124,13 +123,13 @@ class StriUcnv  {
       bool is8bit() {
          if (m_is8bit != NA_LOGICAL) return m_is8bit;
 
-         openConverter();
+         openConverter(false);
          m_is8bit = (ucnv_getMaxCharSize(m_ucnv) == 1);
          return m_is8bit;
       }
 
 
-      UConverter* getConverter();
+      UConverter* getConverter(bool register_callbacks=false);
 
       bool hasASCIIsubset();
       bool is1to1Unicode();
@@ -139,31 +138,28 @@ class StriUcnv  {
       static const char* getFriendlyName(const char* canname);
 
 
-      /** restores default ICU's substitute callbacks
-       */
-      void setCallBackSubstitute() {
-         openConverter();
-
-         UErrorCode status = U_ZERO_ERROR;
-         ucnv_setFromUCallBack(m_ucnv, UCNV_FROM_U_CALLBACK_SUBSTITUTE, NULL, NULL, NULL, &status);
-         if (U_FAILURE(status))
-            throw StriException(MSG__ENC_ERROR_SET); // error() allowed here
-
-         status = U_ZERO_ERROR;
-         ucnv_setToUCallBack(m_ucnv, UCNV_TO_U_CALLBACK_SUBSTITUTE,   NULL, NULL, NULL, &status);
-         if (U_FAILURE(status))
-            throw StriException(MSG__ENC_ERROR_SET); // error() allowed here
-      }
+//      /** restores default ICU's substitute callbacks
+//       */
+//      void setCallBackSubstitute() {
+//         openConverter();
+//
+//         UErrorCode status = U_ZERO_ERROR;
+//         ucnv_setFromUCallBack(m_ucnv, UCNV_FROM_U_CALLBACK_SUBSTITUTE, NULL, NULL, NULL, &status);
+//         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+//
+//         status = U_ZERO_ERROR;
+//         ucnv_setToUCallBack(m_ucnv, UCNV_TO_U_CALLBACK_SUBSTITUTE,   NULL, NULL, NULL, &status);
+//         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+//      }
 
       /**
        * get R's cetype_t corresponding to this converter
        */
       cetype_t getCE() {
-         openConverter();
+         openConverter(false);
          UErrorCode status = U_ZERO_ERROR;
          const char* ucnv_name = ucnv_getName(m_ucnv, &status);
-         if (U_FAILURE(status))
-            throw StriException(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
          if (!strcmp(ucnv_name, "US-ASCII")) {
             m_is8bit = true;
