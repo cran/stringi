@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -130,8 +130,7 @@ stri_locale_get <- function() {
 #' It may be used, however, to get insight on how ICU understands a provided
 #' locale identifier.
 #'
-#' @param locale \code{NULL} or \code{""}
-#' for default locale,
+#' @param locale \code{NULL} or \code{""} for default locale,
 #' or a single string with locale identifier.
 #'
 #' @return

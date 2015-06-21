@@ -43,6 +43,7 @@ stri_search_coll_split.cpp \
 stri_search_coll_startsendswith.cpp \
 stri_search_coll_subset.cpp \
 stri_search_boundaries_count.cpp \
+stri_search_boundaries_extract.cpp \
 stri_search_boundaries_locate.cpp \
 stri_search_boundaries_split.cpp \
 stri_search_fixed_count.cpp \
@@ -68,7 +69,12 @@ stri_stats.cpp \
 stri_stringi.cpp \
 stri_sub.cpp \
 stri_test.cpp \
+stri_time_zone.cpp \
+stri_time_calendar.cpp \
+stri_time_symbols.cpp \
+stri_time_format.cpp \
 stri_trans_casemap.cpp \
+stri_trans_other.cpp \
 stri_trans_normalization.cpp \
 stri_trans_transliterate.cpp \
 stri_ucnv.cpp \

@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,9 @@
  * @version 0.3-1 (Marek Gagolewski, 2014-11-02)
  *          BUGFIX?: Added explicit zero bytes at the end of each array;
  *          new methods: replaceAllAtPos(), setNA()
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-02-14)
+ *          new field: m_isASCII
  */
 class String8  {
 
@@ -67,7 +70,8 @@ class String8  {
 
       char* m_str;      ///< character data in UTF-8, NULL denotes NA
       R_len_t m_n;      ///< string length (in bytes), not including NUL
-      bool m_memalloc;  /// < should the memory be freed at the end
+      bool m_memalloc;  ///< should the memory be freed at the end
+      bool m_isASCII;   ///< ASCII or UTF-8?
 
 
    public:
@@ -79,6 +83,7 @@ class String8  {
          this->m_str = NULL; // a missing value
          this->m_n = 0;
          this->m_memalloc = false;
+         this->m_isASCII = false;
       }
 
 
@@ -89,8 +94,9 @@ class String8  {
        * @param n buffer length (not including NUL)
        * @param memalloc should a deep copy of the buffer be done?
        * @param killbom whether to detect and delete UTF-8 BOMs
+       * @param isASCII
        */
-      void initialize(const char* str, R_len_t n, bool memalloc=false, bool killbom=false)
+      void initialize(const char* str, R_len_t n, bool memalloc, bool killbom, bool isASCII)
       {
 #ifndef NDEBUG
          if (!isNA())
@@ -103,15 +109,19 @@ class String8  {
             // has BOM - get rid of it
             this->m_memalloc = true; // ignore memalloc val
             this->m_n = n-3;
+            this->m_isASCII = isASCII;
             this->m_str = new char[this->m_n+1];
+            if (!this->m_str) throw StriException(MSG__MEM_ALLOC_ERROR);
             memcpy(this->m_str, str+3, (size_t)this->m_n);
             this->m_str[this->m_n] = '\0';
          }
          else {
             this->m_memalloc = memalloc;
             this->m_n = n;
+            this->m_isASCII = isASCII;
             if (memalloc) {
                this->m_str = new char[this->m_n+1];
+               if (!this->m_str) throw StriException(MSG__MEM_ALLOC_ERROR);
                // memcpy may be very fast in some libc implementations
                memcpy(this->m_str, str, (size_t)this->m_n);
                this->m_str[this->m_n] = '\0';
@@ -128,11 +138,13 @@ class String8  {
        * @param str character buffer
        * @param n buffer length (not including NUL)
        * @param memalloc should a deep copy of the buffer be done?
+       * @param killbom whether to detect and delete UTF-8 BOMs
+       * @param isASCII
        */
-      String8(const char* str, R_len_t n, bool memalloc=false)
+      String8(const char* str, R_len_t n, bool memalloc, bool killbom, bool isASCII)
       {
          this->m_str = NULL; // a missing value
-         initialize(str, n, memalloc);
+         initialize(str, n, memalloc, killbom, isASCII);
       }
 
 
@@ -147,12 +159,12 @@ class String8  {
 
 
       /** destructor */
-      void setNA()
+      inline void setNA()
       {
          if (this->m_str && this->m_memalloc) {
             delete [] this->m_str;
+            this->m_str = NULL;
          }
-         this->m_str = NULL;
       }
 
 
@@ -161,8 +173,10 @@ class String8  {
       {
          this->m_memalloc = s.m_memalloc;
          this->m_n = s.m_n;
+         this->m_isASCII = s.m_isASCII;
          if (s.m_memalloc) {
             this->m_str = new char[this->m_n+1];
+            if (!this->m_str) throw StriException(MSG__MEM_ALLOC_ERROR);
             memcpy(this->m_str, s.m_str, (size_t)this->m_n);
             this->m_str[this->m_n] = '\0';
          }
@@ -179,8 +193,10 @@ class String8  {
 
          this->m_memalloc = s.m_memalloc;
          this->m_n = s.m_n;
+         this->m_isASCII = s.m_isASCII;
          if (s.m_memalloc) {
             this->m_str = new char[this->m_n+1];
+            if (!this->m_str) throw StriException(MSG__MEM_ALLOC_ERROR);
             memcpy(this->m_str, s.m_str, (size_t)this->m_n);
             this->m_str[this->m_n] = '\0';
          }
@@ -194,6 +210,16 @@ class String8  {
       /** does this String8 represent a missing value? */
       inline bool isNA() const {
          return !this->m_str;
+      }
+
+      /** does this String8 is in ASCII? */
+      inline bool isASCII() const {
+         return this->m_isASCII;
+      }
+
+      /** does this String8 is in UTF-8? */
+      inline bool isUTF8() const {
+         return !this->m_isASCII;
       }
 
       /** misleading name: did we allocate mem in String8
@@ -231,6 +257,9 @@ class String8  {
          if (isNA())
             throw StriException("String8::isNA() in countCodePoints()");
 #endif
+         if (m_isASCII)
+            return m_n;
+
          UChar32 c = 0;
          R_len_t j = 0;
          R_len_t i = 0;
@@ -243,6 +272,75 @@ class String8  {
          }
 
          return i;
+      }
+
+
+      /**
+       *
+       * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+       *
+       * @version 0.5-1 (Marek Gagolewski, 2015-02-14)
+       *    moved from StriContainerByteSearch to String8
+       */
+      bool endsWith(R_len_t byteindex, const char* patternStr, R_len_t patternLen, bool caseInsensitive) const
+      {
+         if (caseInsensitive) {
+            R_len_t k = patternLen;
+            UChar32 c1;
+            UChar32 c2;
+            while (k > 0) {
+               if (byteindex <= 0) return false;
+               U8_PREV(m_str, 0, byteindex, c1);
+               U8_PREV(patternStr, 0, k, c2);
+               if (u_toupper(c1) != u_toupper(c2))
+                  return false;
+            }
+            return true;
+         }
+         else {
+            if (byteindex-patternLen < 0) return false;
+
+            for (R_len_t k=0; k < patternLen; ++k)
+               if (m_str[byteindex-k-1] != patternStr[patternLen-k-1])
+                  return false;
+
+            return true; // found
+         }
+      }
+
+
+      /**
+       *
+       * @version 0.4-1 (Marek Gagolewski, 2014-12-07)
+       *
+       * @version 0.5-1 (Marek Gagolewski, 2015-02-14)
+       * moved from StriContainerByteSearch to String8
+       */
+      bool startsWith(R_len_t byteindex, const char* patternStr, R_len_t patternLen, bool caseInsensitive) const
+      {
+         if (caseInsensitive) {
+            R_len_t k = 0;
+            UChar32 c1;
+            UChar32 c2;
+
+            while (k < patternLen) {
+               if (byteindex >= m_n) return false;
+               U8_NEXT(m_str,      byteindex, m_n,        c1);
+               U8_NEXT(patternStr, k,         patternLen, c2);
+               if (u_toupper(c1) != u_toupper(c2))
+                  return false;
+            }
+            return true;
+         }
+         else {
+            if (byteindex+patternLen > m_n) return false;
+
+            for (R_len_t k=0; k < patternLen; ++k)
+               if (m_str[byteindex+k] != patternStr[k])
+                  return false;
+
+            return true; // found
+         }
       }
 
 
@@ -264,6 +362,7 @@ class String8  {
          this->m_str = new char[buf_size+1];
          this->m_n = buf_size;
          this->m_memalloc = true;
+         this->m_isASCII = true; /* TO DO */
 
          R_len_t buf_used = 0;
          R_len_t jlast = 0;

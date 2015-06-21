@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@
 #' and dictionaries, and other locale data.
 #'
 #' Without the ICU data library (icudt) many \pkg{stringi} features
-#' will not be available. icudt size is approx. 10-20 MB.
+#' will not be available. icudt size is approx. 10-30 MB.
 #'
 #' \code{stri_install_check()} tests whether some ICU services
 #' are available. If they are not, it is most likely due to
@@ -60,9 +60,9 @@
 #' @param check enable \code{stri_install_check()} tests
 #' @param outpath path to install icudt to. If \code{NULL}, then
 #' \code{file.path(path.package("stringi"), "libs")} will be used.
-#' @param inpath path to search icudt archive in (must end with a slash).
-#' If \code{NULL}, then only stringi mirror servers will be used as possible sources
-#' Custom, non-default paths should not be used normally by \pkg{stringi} users.
+#' @param inpath path to search icudt archive in.
+#' If \code{NULL}, then only stringi mirror servers will be used.
+#' Mainly of interest to system admins and software developers.
 #'
 #' @return These functions return a logical value, invisibly.
 #' \code{TRUE} denotes that the requested operation has been completed
@@ -92,7 +92,7 @@ stri_install_check <- function(silent=FALSE) {
    if (!silent) {
       if (allok) message("All tests completed successfully.")
       else {
-         message("It seems that ICU data library has not been installed properly.")
+         message("It seems that the ICU data library has not been installed properly.")
          message("Call stri_install_icudt() to fix this problem.")
       }
    }
@@ -115,11 +115,11 @@ stri_install_icudt <- function(check=TRUE, outpath=NULL, inpath=NULL) {
       outpath <- file.path(path.package("stringi"), "libs")
    stopifnot(is.character(outpath), length(outpath) == 1, file.exists(outpath))
 
-   fname <- if (.Platform$endian == 'little') "icudt52l.zip"
-                                         else "icudt52b.zip"
+   fname <- if (.Platform$endian == 'little') "icudt55l.zip"
+                                         else "icudt55b.zip"
 
-   md5ex <- if (.Platform$endian == 'little') "d86d3191818ae58d5703f1ac78b0050c"
-                                         else "91cd9aacaa4e776bd14f20c8839cd9c2"
+   md5ex <- if (.Platform$endian == 'little') "ff345529f230cc39bb8d450af0607708"
+                                         else "1194f0dd879d3c1c1f189cde5fd90efe"
 
    mirrors <- c("http://static.rexamine.com/packages/",
                 "http://www.mini.pw.edu.pl/~gagolews/stringi/",
@@ -131,18 +131,18 @@ stri_install_icudt <- function(check=TRUE, outpath=NULL, inpath=NULL) {
    }
 
    outfname <- tempfile(fileext=".zip")
-   download_from_mirror <- function(href, outfname) {
+   download_from_mirror <- function(href, fname, outfname) {
       tryCatch({
          suppressWarnings(file.remove(outfname))
          if (!grepl("^https?://", href)) {
             # try to copy icudt from a local repo
-            if (!file.exists(href)) return("no icudt in a local repo")
+            if (!file.exists(file.path(href, fname))) return("no icudt in a local repo")
             message("icudt has been found in a local repo")
-            file.copy(href, outfname)
+            file.copy(file.path(href, fname), outfname)
          }
          else {
             # download icudt
-            if (download.file(href, outfname, mode="wb") != 0)
+            if (download.file(paste(href, fname, sep=""), outfname, mode="wb") != 0)
                return("download error")
          }
          if (!file.exists(outfname)) return("download error")
@@ -157,7 +157,7 @@ stri_install_icudt <- function(check=TRUE, outpath=NULL, inpath=NULL) {
    message("the files will be extracted to: ", outpath)
    allok <- FALSE
    for (m in mirrors) {
-      if (identical(status <- download_from_mirror(paste0(m, fname), outfname), TRUE)) {
+      if (identical(status <- download_from_mirror(m, fname, outfname), TRUE)) {
          allok <- TRUE
          break
       }

@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@
  * @param min_length integer vector
  * @param side [internal int]
  * @param pad character vector
+ * @param use_length single logical value
  * @return character vector
  *
  * @version 0.1-?? (Bartlomiej Tartanus)
@@ -57,8 +58,12 @@
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-04-22)
+ *    `use_length` arg added,
+ *    second argument renamed `width`
 */
-SEXP stri_pad(SEXP str, SEXP min_length, SEXP side, SEXP pad)
+SEXP stri_pad(SEXP str, SEXP width, SEXP side, SEXP pad, SEXP use_length)
 {
    // this is an internal arg, check manually, error() allowed here
    if (!Rf_isInteger(side) || LENGTH(side) != 1)
@@ -67,24 +72,25 @@ SEXP stri_pad(SEXP str, SEXP min_length, SEXP side, SEXP pad)
    if (_side < 0 || _side > 2)
       Rf_error(MSG__INCORRECT_INTERNAL_ARG);
 
-   PROTECT(str        = stri_prepare_arg_string(str, "str"));
-   PROTECT(min_length = stri_prepare_arg_integer(min_length, "min_length"));
-   PROTECT(pad        = stri_prepare_arg_string(pad, "pad"));
+   bool use_length_val = stri__prepare_arg_logical_1_notNA(use_length, "use_length");
+   PROTECT(str         = stri_prepare_arg_string(str, "str"));
+   PROTECT(width       = stri_prepare_arg_integer(width, "width"));
+   PROTECT(pad         = stri_prepare_arg_string(pad, "pad"));
 
 //   side       = stri_prepare_arg_string(side, "side");
 //   const char* side_opts[] = {"left", "right", "both", NULL};
 
    R_len_t str_length     = LENGTH(str);
-   R_len_t length_length  = LENGTH(min_length);
+   R_len_t width_length  = LENGTH(width);
 //   R_len_t side_length    = LENGTH(side);
    R_len_t pad_length     = LENGTH(pad);
 
    R_len_t vectorize_length = stri__recycling_rule(true, 3,
-      str_length, length_length, /*side_length, */ pad_length);
+      str_length, width_length, /*side_length, */ pad_length);
 
    STRI__ERROR_HANDLER_BEGIN(3)
    StriContainerUTF8       str_cont(str, vectorize_length);
-   StriContainerInteger length_cont(min_length, vectorize_length);
+   StriContainerInteger  width_cont(width, vectorize_length);
 //   StriContainerUTF8      side_cont(side, vectorize_length);
    StriContainerUTF8       pad_cont(pad, vectorize_length);
 
@@ -94,7 +100,7 @@ SEXP stri_pad(SEXP str, SEXP min_length, SEXP side, SEXP pad)
    String8buf buf(0); // TODO: prealloc
    for (R_len_t i=0; i<vectorize_length; ++i) {
       if (str_cont.isNA(i) || pad_cont.isNA(i)
-          || /*side_cont.isNA(i) ||*/ length_cont.isNA(i)) {
+          || /*side_cont.isNA(i) ||*/ width_cont.isNA(i)) {
          SET_STRING_ELT(ret, i, NA_STRING);
          continue;
       }
@@ -102,31 +108,42 @@ SEXP stri_pad(SEXP str, SEXP min_length, SEXP side, SEXP pad)
       // get the current string
       R_len_t str_cur_n = str_cont.get(i).length();
       const char* str_cur_s = str_cont.get(i).c_str();
-      R_len_t str_cur_len = str_cont.get(i).countCodePoints();
+      R_len_t str_cur_width;
 
-      // get the padding code point
-      UChar32 pad_cur = 0;
+      // get the width/length of padding code point(s)
       R_len_t pad_cur_n = pad_cont.get(i).length();
       const char* pad_cur_s = pad_cont.get(i).c_str();
-      R_len_t k = 0;
-      U8_NEXT(pad_cur_s, k, pad_cur_n, pad_cur);
-      if (pad_cur <= 0 || k < pad_cur_n)
-         throw StriException(MSG__NOT_EQ_N_CODEPOINTS, "pad", 1);
+      R_len_t pad_cur_width;
+      if (use_length_val) {
+         pad_cur_width = 1;
+         str_cur_width = str_cont.get(i).countCodePoints();
+         R_len_t k = 0;
+         UChar32 pad_cur = 0;
+         U8_NEXT(pad_cur_s, k, pad_cur_n, pad_cur);
+         if (pad_cur <= 0 || k < pad_cur_n)
+            throw StriException(MSG__NOT_EQ_N_CODEPOINTS, "pad", 1);
+      }
+      else {
+         pad_cur_width = stri__width_string(pad_cur_s, pad_cur_n);
+         str_cur_width = stri__width_string(str_cur_s, str_cur_n);
+         if (pad_cur_width != 1)
+            throw StriException(MSG__NOT_EQ_N_WIDTH, "pad", 1);
+      }
 
-      // get the minimal length
-      R_len_t length_cur = length_cont.get(i);
+      // get the minimal width
+      R_len_t width_cur = width_cont.get(i);
 
-
-      if (str_cur_len >= length_cur)  {
+      if (str_cur_width >= width_cur)  {
          // no padding at all
          SET_STRING_ELT(ret, i, str_cont.toR(i));
          continue;
       }
 
-      R_len_t padnum = length_cur-str_cur_len;
+      R_len_t padnum = width_cur-str_cur_width;
       buf.resize(str_cur_n+padnum*pad_cur_n, false);
 
       char* buftmp = buf.data();
+      R_len_t k = 0;
       switch(_side) {
 
          case 0: // left

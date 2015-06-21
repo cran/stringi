@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 #include "stri_stringi.h"
 #include <cstring>
 #include <cstdlib>
-
+#include <unicode/uclean.h>
 
 #define STRI__MK_CALL(symb, name, args) \
    {symb, (DL_FUNC)&name, args}
@@ -48,8 +48,9 @@
  */
 static const R_CallMethodDef cCallMethods[] = {
 
-//   STRI__MK_CALL("C_stri_charcategories",           stri_charcategories,             0),  // TO BE v>0.3
-//   STRI__MK_CALL("C_stri_chartype",                 stri_chartype,                   1),  // TO BE v>0.3
+//   STRI__MK_CALL("C_stri_charcategories",           stri_charcategories,             0),  // TO BE v>0.5
+//   STRI__MK_CALL("C_stri_chartype",                 stri_chartype,                   1),  // TO BE v>0.5
+   STRI__MK_CALL("C_stri_c_posixst",                  stri_c_posixst,                  1),
    STRI__MK_CALL("C_stri_cmp_codepoints",             stri_cmp_codepoints,             3),
    STRI__MK_CALL("C_stri_cmp_integer",                stri_cmp_integer,                3),
    STRI__MK_CALL("C_stri_cmp_logical",                stri_cmp_logical,                4),
@@ -58,6 +59,13 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MK_CALL("C_stri_count_fixed",                stri_count_fixed,                3),
    STRI__MK_CALL("C_stri_count_coll",                 stri_count_coll,                 3),
    STRI__MK_CALL("C_stri_count_regex",                stri_count_regex,                3),
+   STRI__MK_CALL("C_stri_datetime_symbols",           stri_datetime_symbols,           3),
+   STRI__MK_CALL("C_stri_datetime_fields",            stri_datetime_fields,            3),
+   STRI__MK_CALL("C_stri_datetime_now",               stri_datetime_now,               0),
+   STRI__MK_CALL("C_stri_datetime_create",            stri_datetime_create,            9),
+   STRI__MK_CALL("C_stri_datetime_format",            stri_datetime_format,            4),
+   STRI__MK_CALL("C_stri_datetime_parse",             stri_datetime_parse,             5),
+   STRI__MK_CALL("C_stri_datetime_add",               stri_datetime_add,               5),
    STRI__MK_CALL("C_stri_detect_charclass",           stri_detect_charclass,           2),
    STRI__MK_CALL("C_stri_detect_coll",                stri_detect_coll,                3),
    STRI__MK_CALL("C_stri_detect_fixed",               stri_detect_fixed,               3),
@@ -82,6 +90,9 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MK_CALL("C_stri_endswith_coll",              stri_endswith_coll,              4),
    STRI__MK_CALL("C_stri_endswith_fixed",             stri_endswith_fixed,             4),
    STRI__MK_CALL("C_stri_escape_unicode",             stri_escape_unicode,             1),
+   STRI__MK_CALL("C_stri_extract_first_boundaries",   stri_extract_first_boundaries,   2),
+   STRI__MK_CALL("C_stri_extract_last_boundaries",    stri_extract_last_boundaries,    2),
+   STRI__MK_CALL("C_stri_extract_all_boundaries",     stri_extract_all_boundaries,     4),
    STRI__MK_CALL("C_stri_extract_first_charclass",    stri_extract_first_charclass,    2),
    STRI__MK_CALL("C_stri_extract_last_charclass",     stri_extract_last_charclass,     2),
    STRI__MK_CALL("C_stri_extract_all_charclass",      stri_extract_all_charclass,      5),
@@ -95,12 +106,12 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MK_CALL("C_stri_extract_last_regex",         stri_extract_last_regex,         3),
    STRI__MK_CALL("C_stri_extract_all_regex",          stri_extract_all_regex,          5),
    STRI__MK_CALL("C_stri_flatten_withressep",         stri_flatten_withressep,         2),
-//   STRI__MK_CALL("C_stri_in_fixed",                 stri_in_fixed,                   3),  // TODO: version > 0.3
+//   STRI__MK_CALL("C_stri_in_fixed",                 stri_in_fixed,                   3),  // TODO: version > 0.5
    STRI__MK_CALL("C_stri_info",                       stri_info,                       0),
    STRI__MK_CALL("C_stri_isempty",                    stri_isempty,                    1),
    STRI__MK_CALL("C_stri_join_withcollapse",          stri_join_withcollapse,          4),
    STRI__MK_CALL("C_stri_join2_nocollapse",           stri_join2_nocollapse,           2),
-//   STRI__MK_CALL("C_stri_justify",                  stri_justify,                    2),  // TODO: version > 0.3
+//   STRI__MK_CALL("C_stri_justify",                  stri_justify,                    2),  // TODO: version > 0.5
    STRI__MK_CALL("C_stri_length",                     stri_length,                     1),
    STRI__MK_CALL("C_stri_list2matrix",                stri_list2matrix,                4),
    STRI__MK_CALL("C_stri_locale_info",                stri_locale_info,                1),
@@ -126,8 +137,9 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MK_CALL("C_stri_match_all_regex",            stri_match_all_regex,            5),
    STRI__MK_CALL("C_stri_numbytes",                   stri_numbytes,                   1),
    STRI__MK_CALL("C_stri_order_or_sort",              stri_order_or_sort,              5),
-   STRI__MK_CALL("C_stri_pad",                        stri_pad,                        4),
+   STRI__MK_CALL("C_stri_pad",                        stri_pad,                        5),
    STRI__MK_CALL("C_stri_prepare_arg_string",         stri_prepare_arg_string,         2),
+   STRI__MK_CALL("C_stri_prepare_arg_POSIXct",        stri_prepare_arg_POSIXct,        2),
    STRI__MK_CALL("C_stri_prepare_arg_double",         stri_prepare_arg_double,         2),
    STRI__MK_CALL("C_stri_prepare_arg_integer",        stri_prepare_arg_integer,        2),
    STRI__MK_CALL("C_stri_prepare_arg_logical",        stri_prepare_arg_logical,        2),
@@ -159,7 +171,7 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MK_CALL("C_stri_split_lines",                stri_split_lines,                2),
    STRI__MK_CALL("C_stri_split_lines1",               stri_split_lines1,               1),
    STRI__MK_CALL("C_stri_split_regex",                stri_split_regex,                7),
-//   STRI__MK_CALL("C_stri_split_pos",                stri_split_pos,              3), // TODO: version > 0.3
+//   STRI__MK_CALL("C_stri_split_pos",                stri_split_pos,              3), // TODO: version > 0.5
    STRI__MK_CALL("C_stri_startswith_charclass",       stri_startswith_charclass,       3),
    STRI__MK_CALL("C_stri_startswith_coll",            stri_startswith_coll,            4),
    STRI__MK_CALL("C_stri_startswith_fixed",           stri_startswith_fixed,           4),
@@ -176,7 +188,11 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MK_CALL("C_stri_test_UnicodeContainer16",    stri_test_UnicodeContainer16,    1),
    STRI__MK_CALL("C_stri_test_UnicodeContainer16b",   stri_test_UnicodeContainer16b,   1),
    STRI__MK_CALL("C_stri_test_UnicodeContainer8",     stri_test_UnicodeContainer8,     1),
+   STRI__MK_CALL("C_stri_timezone_list",              stri_timezone_list,              2),
+   STRI__MK_CALL("C_stri_timezone_set",               stri_timezone_set,               1),
+   STRI__MK_CALL("C_stri_timezone_info",              stri_timezone_info,              3),
    STRI__MK_CALL("C_stri_trans_casemap",              stri_trans_casemap,              3),
+   STRI__MK_CALL("C_stri_trans_char",                 stri_trans_char,                 3),
    STRI__MK_CALL("C_stri_trans_isnf",                 stri_trans_isnf,                 2),
    STRI__MK_CALL("C_stri_trans_general",              stri_trans_general,              2),
    STRI__MK_CALL("C_stri_trans_list",                 stri_trans_list,                 0),
@@ -187,9 +203,9 @@ static const R_CallMethodDef cCallMethods[] = {
    STRI__MK_CALL("C_stri_trim_right",                 stri_trim_right,                 2),
    STRI__MK_CALL("C_stri_unescape_unicode",           stri_unescape_unicode,           1),
    STRI__MK_CALL("C_stri_unique",                     stri_unique,                     2),
-   STRI__MK_CALL("C_stri_wrap",                       stri_wrap,                       8),
-//   STRI__MK_CALL("C_stri_trim_double",              stri_trim_double,                3), // TODO: version > 0.3
-//   STRI__MK_CALL("C_stri_width",                    stri_width,                      1), // TODO: version > 0.3
+   STRI__MK_CALL("C_stri_width",                      stri_width,                      1),
+   STRI__MK_CALL("C_stri_wrap",                       stri_wrap,                      10),
+//   STRI__MK_CALL("C_stri_trim_double",              stri_trim_double,                3), // TODO: version > 0.5
 
    // the list must be NULL-terminated:
    {NULL,                           NULL,                  0}
@@ -216,8 +232,11 @@ void stri_set_icu_data_directory(const char* libpath)
    }
 
    // idx+5 -> if the string is shorter, as many characters as possible are used
-   dir = dir.substr(0, idx+5); // 5 == strlen("libs/") or strlen("libs\\")
+   dir = dir.substr(0, idx+4); // 4 == strlen("libs")
    u_setDataDirectory(dir.c_str());
+// #ifndef NDEBUG
+   // fprintf(stderr, "ICU data directory=%s\n", dir.c_str());
+// #endif
 
    // anyway, if .dat file will not be found,
    // ICU will use system data (may be stub)
@@ -238,6 +257,21 @@ void stri_set_icu_data_directory(const char* libpath)
  */
 extern "C" void R_init_stringi(DllInfo* dll)
 {
+   stri_set_icu_data_directory((char*)*(char**)(dll) /* dll->path */);
+
+/* BTW: u_init: It is OK to simply use ICU services and functions without
+   first having initialized ICU by calling u_init().
+
+   u_init() will attempt to load some part of ICU's data, and is useful
+   as a test for configuration or installation problems that leave
+   the ICU data inaccessible. A successful invocation of u_init() does not,
+   however, guarantee that all ICU data is accessible.
+*/
+   UErrorCode status = U_ZERO_ERROR;
+   u_init(&status);
+   if (U_FAILURE(status))
+      Rf_error("ICU init failed: %s", u_errorName(status));
+
    R_registerRoutines(dll, NULL, cCallMethods, NULL, NULL);
 //   R_useDynamicSymbols(dll, Rboolean(FALSE)); // slower
 
@@ -246,26 +280,17 @@ extern "C" void R_init_stringi(DllInfo* dll)
       Rf_error("R does not support UTF-8 encoding.");
    }
 
-   stri_set_icu_data_directory((char*)*(char**)(dll) /* dll->path */);
-
 
 #ifndef NDEBUG
-   fprintf(stdout, "!NDEBUG: ************************************************\n");
-   fprintf(stdout, "!NDEBUG: Dynamic library `stringi` loaded\n");
-   fprintf(stdout, "!NDEBUG: Check out http://stringi.rexamine.com\n");
-   fprintf(stdout, "!NDEBUG: \n");
-   fprintf(stdout, "!NDEBUG: Please send bug reports to stringi@rexamine.com \n");
-   fprintf(stdout, "!NDEBUG: or at https://github.com/Rexamine/stringi/issues\n");
-   fprintf(stdout, "!NDEBUG: \n");
-   fprintf(stdout, "!NDEBUG: Have fun testing! :-)\n");
-   fprintf(stdout, "!NDEBUG: ************************************************\n");
-
-// /* u_init: It is OK to simply use ICU services and functions without
-// first having initialized ICU by calling u_init(). */
-//    UErrorCode status;
-//    u_init(&status);
-//    if (U_FAILURE(status))
-//      error("ICU init failed: %s", u_errorName(status));
+//    fprintf(stdout, "!NDEBUG: ************************************************\n");
+//    fprintf(stdout, "!NDEBUG: Dynamic library `stringi` loaded\n");
+//    fprintf(stdout, "!NDEBUG: Check out http://stringi.rexamine.com\n");
+//    fprintf(stdout, "!NDEBUG: \n");
+//    fprintf(stdout, "!NDEBUG: Please send bug reports to stringi@rexamine.com \n");
+//    fprintf(stdout, "!NDEBUG: or at https://github.com/Rexamine/stringi/issues\n");
+//    fprintf(stdout, "!NDEBUG: \n");
+//    fprintf(stdout, "!NDEBUG: Have fun testing! :-)\n");
+//    fprintf(stdout, "!NDEBUG: ************************************************\n");
 #endif
 }
 

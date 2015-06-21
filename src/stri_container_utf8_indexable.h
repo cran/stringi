@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,9 @@
  *
  * @version 0.2-1  (Marek Gagolewski, 2014-03-20)
  *          separated from StriContainerUTF8
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-02-14)
+ *          use String8::isASCII
  */
 class StriContainerUTF8_indexable : public StriContainerUTF8 {
 

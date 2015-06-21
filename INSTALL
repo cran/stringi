@@ -1,24 +1,60 @@
 The stringi package depends on the ICU4C >= 50 library.
 If you build the package from sources and either:
-
 * these requirements are not met (check out http://site.icu-project.org/download
    or e.g. the `libicu-devel` rpm package on Fedora or `libicu-dev` on Ubuntu),
-
 * `pkg-config` is not able to find proper build settings for ICU-based projects,
 or
-
 * R CMD INSTALL is called with `--configure-args='--disable-pkg-config'`,
 
 then the library will be built together with stringi
-(a custom subset of ICU4C 52.1 is shipped with the package).
+(a custom subset of ICU4C 55.1 is shipped with the package).
+
+> To get the most out of stringi, end users are encouraged to rely on our
+> ICU4C package bundle. This guarantees maximum portability of stringi-based
+> scripts.
+
+By default, the ICU data library will be downloaded from one of our mirror servers.
+However, if you have already downloaded a version of `icudt*.zip`
+suitable for your platform (big/little endian), you may wish to install
+the package by calling:
+
+    install.packages("stringi", configure.vars="ICUDT_DIR=<icudt_dir>")
+
+Also do note that for R >= 3.1.0  we require (by default) C++11 support
+to build the package from sources. This is because ICU4C uses the `long long`
+type in a few functions, and this is not part of the C++98 standard. Yet, if
+your compiler does not support C++11 but you are sure it tolerates the
+`long long` type (which is very common -- this will be checked by the
+`configure` script anyway), you may disable the C++11 usage by passing
+the `--disable-cxx11` flag to the `configure` script.
 
 
-You are encouraged to check whether the ICU data library (`icudt`)
-has been successfully installed by calling:
+Auxiliary `./configure` features and options:
 
-    > library('stringi')
-    > stri_install_check()
+* `--disable-cxx11`: Disable use of C++11; if you build ICU4C from
+   sources, make sure your C++ compiler supports the long long type.
+* `--disable-icu-bundle`: Force the use of the system ICU.
+* `--disable-pkg-config`: Disable pkg-config usage for finding ICU4C-devel; in
+  such a case ICU4C will be compiled from sources.
+* `--enable-gcc-debug`: Enable -UNDEBUG when compiling stringi (for stringi
+  developers)
+* `--enable-gcc-pedantic`: Enable -Wall -Wextra -ansi -pedantic when compiling
+  stringi with gcc/clang (for stringi developers)
+* `--with-extra-cflags=FLAGS`: Additional C compiler flags
+* `--with-extra-cppflags=FLAGS`: Additional C/C++ preprocessor flags
+* `--with-extra-cxxflags=FLAGS`: Additional C++ compiler flags
+* `--with-extra-ldflags=FLAGS`: Additional linker flags
+* `--with-extra-libs=FLAGS`: Additional libraries to link against
 
-This will also make you sure that ICU has detected your locale and native
-encoding properly.
 
+Some influential environment variables:
+
+* `R_HOME`: Override default directory with R installation, e.g.,
+  `/usr/lib64/R`. Note that `$R_HOME/bin/R` should point to the R executable.
+* `ICUDT_DIR`: Optional directory from which an already downloaded ICU data
+  archive (`icudt*.zip`) may be copied; either an absolute path or a
+  path relative to `<package source dir>/src`; defaults to `icu55/data`.
+* `CAT`: The `cat` command used for generating the list of source files
+  to compile
+* `PKG_CONFIG_PATH`: An optional list of directories to search for
+  `pkg-config`s `.pc` files.

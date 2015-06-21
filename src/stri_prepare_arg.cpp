@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -203,15 +203,16 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
  *
  * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
  *        treat NULLs as empty vectors
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-05-01)
+ *        #154 - the class attribute set fires up an as.xxxx call
  */
 SEXP stri_prepare_arg_string(SEXP x, const char* argname)
 {
    if ((SEXP*)argname == (SEXP*)R_NilValue)
       argname = "<noname>";
 
-   if ((bool)isString(x))
-      return x; // return as-is
-   else if (Rf_isFactor(x))
+   if (Rf_isFactor(x))
    {
       SEXP call;
       PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
@@ -219,6 +220,16 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
       UNPROTECT(2);
       return x;
    }
+   else if (Rf_isVectorList(x) || isObject(x))
+   {
+      SEXP call;
+      PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      UNPROTECT(2);
+      return x;
+   }
+   else if ((bool)isString(x))
+      return x; // return as-is
    else if (Rf_isVectorAtomic(x) || isNull(x))
       return Rf_coerceVector(x, STRSXP);
    else if ((bool)isSymbol(x))
@@ -252,6 +263,9 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
  *
  * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
  *        treat NULLs as empty vectors
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-05-01)
+ *        #154 - the class attribute set fires up an as.xxxx call
  */
 SEXP stri_prepare_arg_double(SEXP x, const char* argname)
 {
@@ -267,6 +281,14 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
       UNPROTECT(3);
       return x;
    }
+   else if (Rf_isVectorList(x) || isObject(x))
+   {
+      SEXP call;
+      PROTECT(call = Rf_lang2(Rf_install("as.double"), x));
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      UNPROTECT(2);
+      return x;
+   }
    else if ((bool)isReal(x))
       return x; //return as-is
    else if (Rf_isVectorAtomic(x) || isNull(x))
@@ -274,6 +296,48 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
 
    Rf_error(MSG__ARG_EXPECTED_NUMERIC, argname); // allowed here
    return x; // avoid compiler warning
+}
+
+
+/**
+ * POSIXt
+ *
+ * If the object cannot be coerced, then an error will be generated
+ *
+ * WARNING: this fuction is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ *
+ * @param x a numeric vector with class POSIXct
+ * @param argname argument name (message formatting)
+ * @return numeric vector
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2014-12-30)
+ *
+ */
+SEXP stri_prepare_arg_POSIXct(SEXP x, const char* argname)
+{
+   if ((SEXP*)argname == (SEXP*)R_NilValue)
+      argname = "<noname>";
+
+   if (Rf_inherits(x, "POSIXlt") || Rf_inherits(x, "Date")) {
+      PROTECT(x = Rf_eval(Rf_lang2(Rf_install("as.POSIXct"), x), R_GlobalEnv));
+   }
+   else
+      PROTECT(x);
+
+   if (!Rf_inherits(x, "POSIXct")) {
+      Rf_error(MSG__ARG_EXPECTED_POSIXct, argname);
+   }
+
+   SEXP attrib_class, attrib_tzone;
+   PROTECT(attrib_class = Rf_getAttrib(x, Rf_ScalarString(Rf_mkChar("class"))));
+   PROTECT(attrib_tzone = Rf_getAttrib(x, Rf_ScalarString(Rf_mkChar("tzone"))));
+   PROTECT(x = stri_prepare_arg_double(x, argname));
+   Rf_setAttrib(x, Rf_ScalarString(Rf_mkChar("class")), attrib_class);
+   Rf_setAttrib(x, Rf_ScalarString(Rf_mkChar("tzone")), attrib_tzone);
+   UNPROTECT(4);
+   return x;
 }
 
 
@@ -300,6 +364,9 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
  *
  * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
  *        treat NULLs as empty vectors
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-05-01)
+ *        #154 - the class attribute set fires up an as.xxxx call
  */
 SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
 {
@@ -313,6 +380,14 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
       PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
       PROTECT(x = Rf_coerceVector(x, INTSXP));
       UNPROTECT(3);
+      return x;
+   }
+   else if (Rf_isVectorList(x) || isObject(x))
+   {
+      SEXP call;
+      PROTECT(call = Rf_lang2(Rf_install("as.integer"), x));
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      UNPROTECT(2);
       return x;
    }
    else if (Rf_isInteger(x))
@@ -348,6 +423,9 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
  *
  * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
  *        treat NULLs as empty vectors
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-05-01)
+ *        #154 - the class attribute set fires up an as.xxxx call
  */
 SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
 {
@@ -361,6 +439,14 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
       PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
       PROTECT(x = Rf_coerceVector(x, LGLSXP));
       UNPROTECT(3);
+      return x;
+   }
+   else if (Rf_isVectorList(x) || isObject(x))
+   {
+      SEXP call;
+      PROTECT(call = Rf_lang2(Rf_install("as.logical"), x));
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      UNPROTECT(2);
       return x;
    }
    else if ((bool)isLogical(x))
@@ -393,6 +479,9 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
  *
  * @version 0.4-1 (Marek Gagolewski, 2014-11-27)
  *        treat NULLs as empty vectors
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-05-01)
+ *        #154 - the class attribute set fires up an as.xxxx call
  */
 SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
 {
@@ -406,6 +495,14 @@ SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
       PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
       PROTECT(x = Rf_coerceVector(x, RAWSXP));
       UNPROTECT(3);
+      return x;
+   }
+   else if (Rf_isVectorList(x) || isObject(x))
+   {
+      SEXP call;
+      PROTECT(call = Rf_lang2(Rf_install("as.raw"), x));
+      PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark it's encoding manually
+      UNPROTECT(2);
       return x;
    }
    else if (TYPEOF(x) == RAWSXP)
@@ -693,6 +790,40 @@ double stri__prepare_arg_double_1_notNA(SEXP x, const char* argname)
 }
 
 
+/** Prepare double argument - one value, not NA [no re-encoding done!!!]
+ *
+ * If there are 0 elements -> error
+ * If there are >1 elements -> warning
+ *
+ * WARNING: this fuction is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ *
+ * @param x R object to be checked/coerced
+ * @param argname argument name (message formatting)
+ * @return a character string
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2014-12-25)
+ */
+const char* stri__prepare_arg_string_1_notNA(SEXP x, const char* argname)
+{
+   PROTECT(x = stri_prepare_arg_string_1(x, argname));
+   if (STRING_ELT(x, 0) == NA_STRING)
+      Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // allowed here
+   const char* ret_tmp = (const char*)CHAR(STRING_ELT(x, 0)); // ret may be gc'ed
+   size_t ret_n = strlen(ret_tmp);
+   /* R_alloc ==  Here R will reclaim the memory at the end of the call to .Call */
+   char* ret = R_alloc(ret_n+1, (int)sizeof(char));
+   if (!ret) {
+      UNPROTECT(1);
+      Rf_error(MSG__MEM_ALLOC_ERROR);
+   }
+   memcpy(ret, ret_tmp, ret_n+1);
+   UNPROTECT(1);
+   return ret;
+}
+
+
 /**
  * Prepare character vector argument that will be used to choose a locale
  *
@@ -720,8 +851,11 @@ double stri__prepare_arg_double_1_notNA(SEXP x, const char* argname)
  * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
  *
-  * @version 0.3-1 (Marek Gagolewski, 2014-11-06)
+ * @version 0.3-1 (Marek Gagolewski, 2014-11-06)
  *    Use R_alloc for the string returned
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2015-01-01)
+ *    "@keyword=value" may use default locale from now; also, loc is trimmed
  */
 const char* stri__prepare_arg_locale(SEXP loc, const char* argname, bool allowdefault, bool allowna)
 {
@@ -731,32 +865,108 @@ const char* stri__prepare_arg_locale(SEXP loc, const char* argname, bool allowde
       PROTECT(loc = stri_prepare_arg_string_1(loc, argname));
       if (STRING_ELT(loc, 0) == NA_STRING) {
          UNPROTECT(1);
-         if (allowna)
-            return NULL;
-         else
-            Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // Rf_error allowed here
+         if (allowna) return NULL;
+         else Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // Rf_error allowed here
       }
 
-      if (LENGTH(STRING_ELT(loc, 0)) == 0) {
-         UNPROTECT(1);
-         if (allowdefault)
-            return uloc_getDefault();
-         else
-            Rf_error(MSG__LOCALE_INCORRECT_ID); // allowed here
+      UErrorCode err = U_ZERO_ERROR;
+      char buf[ULOC_FULLNAME_CAPACITY];
+      uloc_canonicalize((const char*)CHAR(STRING_ELT(loc, 0)), buf, ULOC_FULLNAME_CAPACITY, &err);
+      STRI__CHECKICUSTATUS_RFERROR(err, {;})
+
+      R_len_t ret_n = strlen(buf);
+      char* ret = R_alloc(ret_n+1, (int)sizeof(char));
+      memcpy(ret, buf, ret_n+1);
+
+      // right-trim
+      while (ret_n > 0 && (ret[ret_n-1] == ' ' || ret[ret_n-1] == '\t' || ret[ret_n-1] == '\n' || ret[ret_n-1] == '\r'))
+         ret[--ret_n] = '\0';
+
+      // left-trim
+      while (ret[0] == ' ' || ret[0] == '\t' || ret[0] == '\n' || ret[0] == '\r') {
+         ++ret;
+         --ret_n;
       }
-      else {
-         const char* ret_tmp = (const char*)CHAR(STRING_ELT(loc, 0)); // ret may be gc'ed
-         size_t ret_n = strlen(ret_tmp);
-         /* R_alloc ==  Here R will reclaim the memory at the end of the call to .Call */
-         char* ret = R_alloc(ret_n+1, (int)sizeof(char));
-         if (!ret) {
-            UNPROTECT(1);
-            Rf_error(MSG__MEM_ALLOC_ERROR);
-         }
-         memcpy(ret, ret_tmp, ret_n+1);
+
+      if (ret_n == 0) {
          UNPROTECT(1);
+         if (allowdefault) return uloc_getDefault();
+         else Rf_error(MSG__LOCALE_INCORRECT_ID); // Rf_error allowed here
+      }
+
+      if (ret[0] == ULOC_KEYWORD_SEPARATOR) { // length is > 0
+         // no locale specifier, just keywords
+         if (!allowdefault) { UNPROTECT(1); Rf_error(MSG__LOCALE_INCORRECT_ID); }
+         const char* ret_default = uloc_getDefault();
+         R_len_t ret_detault_n = strlen(ret_default);
+         const char* ret_tmp2 = ret;
+         ret = R_alloc(ret_detault_n+ret_n+1, (int)sizeof(char));
+         memcpy(ret, ret_default, ret_detault_n);
+         memcpy(ret+ret_detault_n, ret_tmp2, ret_n+1);
+      }
+
+      UNPROTECT(1);
+      return ret;
+   }
+
+   // won't come here anyway
+   return NULL; // avoid compiler warning
+}
+
+
+/**
+ * Prepare character vector argument that will be used to choose a time zone
+ *
+ * If the \code{tz} argument is incorrect, then an error is generated.
+ * If something goes wrong, a warning is given.
+ *
+ * WARNING: this fuction is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ *
+ * @param tz generally, a single character string or NULL
+ * @param defaulttz default time zone to be used here
+ * @return TimeZone object - owned by the caller
+ *
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2014-12-24)
+ */
+TimeZone* stri__prepare_arg_timezone(SEXP tz, const char* argname, bool allowdefault)
+{
+   UnicodeString tz_val("");
+
+   if (!isNull(tz)) {
+      PROTECT(tz = stri_prepare_arg_string_1(tz, argname));
+      if (STRING_ELT(tz, 0) == NA_STRING) {
+         UNPROTECT(1);
+         Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // Rf_error allowed here
+      }
+      tz_val.setTo(UnicodeString((const char*)CHAR(STRING_ELT(tz, 0))));
+      UNPROTECT(1);
+   }
+
+//   if (tz_val.length() == 0 && !isNull(defaulttz)) {
+//      PROTECT(defaulttz = stri_prepare_arg_string_1(defaulttz, argname));
+//      if (STRING_ELT(defaulttz, 0) == NA_STRING) {
+//         UNPROTECT(1);
+//         Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // Rf_error allowed here
+//      }
+//      tz_val.setTo(UnicodeString((const char*)CHAR(STRING_ELT(defaulttz, 0))));
+//      UNPROTECT(1);
+//   }
+
+   if (tz_val.length() == 0) {
+      if (!allowdefault) Rf_error(MSG__TIMEZONE_INCORRECT_ID);
+      return TimeZone::createDefault();
+   }
+   else {
+      TimeZone* ret = TimeZone::createTimeZone(tz_val);
+      if (*ret == TimeZone::getUnknown()) {
+         delete ret;
+         Rf_error(MSG__TIMEZONE_INCORRECT_ID); // allowed here
+      }
+      else
          return ret;
-      }
    }
 
    // won't come here anyway

@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -34,17 +34,22 @@
 #'
 #' @description
 #' This function breaks text paragraphs into lines,
-#' each consisting - if it is possible - of at most \code{width} code points.
+#' of total width - if it is possible - of at most given \code{width}.
 #'
 #' @details
 #' Vectorized over \code{str}.
 #'
-#' \pkg{ICU}'s line-\code{BreakIterator} is used to determine
+#' If \code{whitespace_only} is \code{FALSE},
+#' then \pkg{ICU}'s line-\code{BreakIterator} is used to determine
 #' text boundaries at which a line break is possible.
 #' This is a locale-dependent operation.
+#' Otherwise, the breaks are only at whitespaces.
+#'
 #' Note that Unicode code points may have various widths when
-#' printed on screen. This function acts like each code point
-#' is of width 1. This function should rather be used with
+#' printed on the console and that the function takes that by default
+#' into account. By changing the state of the \code{use_length}
+#' argument, this function starts to act like each code point
+#' was of width 1. This feature should rather be used with
 #' text in Latin script.
 #'
 #' If \code{normalize} is \code{FALSE},
@@ -57,10 +62,11 @@
 #' before applying this function.
 #'
 #' On the other hand, if \code{normalize} is \code{TRUE}, then
-#' all consecutive white space sequences are replaced with single spaces, by calling i.a.
-#' \code{\link{stri_trim}(\link{stri_replace_all_charclass}(str, "\\\\p{WHITE_SPACE}", " ", merge=TRUE))}
+#' all consecutive white space (ASCII space, horizontal TAB, CR, LF)
+#' sequences are replaced with single ASCII spaces
 #' before actual string wrapping. Moreover, \code{\link{stri_split_lines}}
 #' and \code{\link{stri_trans_nfc}} is called on the input character vector.
+#' This is for compatibility with \code{\link{strwrap}}.
 #'
 #' The greedy algorithm (for \code{cost_exponent} being non-positive)
 #' provides a very simple way for word wrapping.
@@ -75,7 +81,7 @@
 #' Note that the cost of printing the last line is always zero.
 #'
 #' @param str character vector of strings to reformat
-#' @param width single positive integer giving the desired
+#' @param width single integer giving the suggested
 #'        maximal number of code points per line
 #' @param cost_exponent single numeric value, values not greater than zero
 #'        will select a greedy word-wrapping algorithm; otherwise
@@ -90,9 +96,14 @@
 #' of subsequent lines in paragraphs
 #' @param prefix,initial single strings; \code{prefix} is used as prefix for each
 #' line except the first, for which \code{initial} is utilized
+#' @param whitespace_only single logical value; allow breaks only at whitespaces?
+#' if \code{FALSE}, \pkg{ICU}'s line break iterator is used to split text
+#' into words, which is suitable for natural language processing
 #' @param locale \code{NULL} or \code{""} for text boundary analysis following
 #' the conventions of the default locale, or a single string with
 #' locale identifier, see \link{stringi-locale}
+#' @param use_length single logical value; should the number of code
+#' points be used instead of the total code point width (see \code{\link{stri_width}})?
 #'
 #' @return
 #' If \code{simplify} is \code{TRUE}, then a character vector is returned.
@@ -117,7 +128,7 @@
 #' 1981, pp. 1119--1184
 stri_wrap <- function(str, width=floor(0.9*getOption("width")),
    cost_exponent=2.0, simplify=TRUE, normalize=TRUE, indent=0, exdent=0,
-   prefix="", initial=prefix, locale=NULL)
+   prefix="", initial=prefix, whitespace_only=FALSE, use_length=FALSE, locale=NULL)
 {
    simplify <- as.logical(simplify)
 
@@ -125,11 +136,12 @@ stri_wrap <- function(str, width=floor(0.9*getOption("width")),
    if (normalize)  # this will give an informative warning or error if sth is wrong
    {
       str <- sapply(stri_split_lines(str), function(s) stri_flatten(s, collapse=' '))
-      str <- stri_trim(stri_replace_all_charclass(str, "\\p{WHITE_SPACE}", " ", TRUE))
+      str <- stri_trim(stri_replace_all_charclass(str, "[\\u0020\\r\\n\\t]", " ", merge=TRUE))
       str <- stri_trans_nfc(str)
    }
 
-   ret <- .Call(C_stri_wrap, str, width, cost_exponent, indent, exdent, prefix, initial, locale)
+   ret <- .Call(C_stri_wrap, str, width, cost_exponent,
+      indent, exdent, prefix, initial, whitespace_only, use_length, locale)
 
    if (simplify) # this will give an informative warning or error if sth is wrong
       as.character(unlist(ret))

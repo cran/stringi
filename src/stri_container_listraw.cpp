@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,8 @@ StriContainerListRaw::StriContainerListRaw(SEXP rstr)
       this->init_Base(1, 1, true);
       this->data = new String8[this->n];
       if (!this->data) throw StriException(MSG__MEM_ALLOC_ERROR);
-      this->data[0].initialize((const char*)RAW(rstr), LENGTH(rstr), false); // shallow copy
+      this->data[0].initialize((const char*)RAW(rstr), LENGTH(rstr),
+         false/*memalloc*/, false/*killbom*/, false/*isASCII*/); // shallow copy
    }
    else if (Rf_isVectorList(rstr)) {
       R_len_t nv = LENGTH(rstr);
@@ -74,7 +75,8 @@ StriContainerListRaw::StriContainerListRaw(SEXP rstr)
       for (R_len_t i=0; i<this->n; ++i) {
          SEXP cur = VECTOR_ELT(rstr, i);
          if (!isNull(cur))
-            this->data[i].initialize((const char*)RAW(cur), LENGTH(cur), false); // shallow copy
+            this->data[i].initialize((const char*)RAW(cur), LENGTH(cur),
+               false/*memalloc*/, false/*killbom*/, false/*isASCII*/); // shallow copy
          // else leave as-is, i.e. NA
       }
    }
@@ -86,7 +88,8 @@ StriContainerListRaw::StriContainerListRaw(SEXP rstr)
       for (R_len_t i=0; i<this->n; ++i) {
          SEXP cur = STRING_ELT(rstr, i);
          if (cur != NA_STRING)
-            this->data[i].initialize(CHAR(cur), LENGTH(cur), false); // shallow copy
+            this->data[i].initialize(CHAR(cur), LENGTH(cur),
+               false/*memalloc*/, false/*killbom*/, false/*isASCII*/); // shallow copy
          // else leave as-is, i.e. NA
       }
    }

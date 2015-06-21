@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,6 +58,7 @@
 #include <unicode/utf16.h>
 #include <unicode/brkiter.h>
 #include <unicode/rbbi.h>
+#include <unicode/timezone.h>
 using namespace icu;
 
 #define USE_RINTERNALS

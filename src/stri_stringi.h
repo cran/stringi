@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,17 +42,10 @@
 #include "stri_container_utf16.h"
 
 
-// ------------------------------------------------------------------------
-
-// @TODO: SEXP stri_enc_fromutf16(SEXP str);              // ...TODO... be careful: BOMs! [version >=0.3]
-// @TODO: SEXP stri_enc_toutf16(SEXP str);                // ...TODO... -> list with elems of type raw [version >=0.3]
-
-// ------------------------------------------------------------------------
-
-
 // common.cpp
 void    stri__set_names(SEXP object, R_len_t numnames, ...);
-SEXP    stri__make_character_vector(R_len_t numnames, ...);
+SEXP    stri__make_character_vector_char_ptr(R_len_t numnames, ...);
+SEXP    stri__make_character_vector_UnicodeString_ptr(R_len_t numnames, ...);
 R_len_t stri__recycling_rule(bool enableWarning, int n, ...);
 SEXP    stri__vector_NA_integers(R_len_t howmany);
 SEXP    stri__vector_NA_strings(R_len_t howmany);
@@ -101,7 +94,9 @@ R_len_t stri__numbytes_max(SEXP str);
 SEXP    stri_numbytes(SEXP str);
 SEXP    stri_length(SEXP str);
 SEXP    stri_isempty(SEXP str);
-// SEXP stri_width(SEXP str);                               // ...TODO... [version >= 0.3]
+int     stri__width_char(UChar32 c);
+int     stri__width_string(const char* str_cur_s, int str_cur_n);
+SEXP    stri_width(SEXP str);
 
 
 // prepare_arg.cpp:
@@ -110,10 +105,12 @@ SEXP        stri_prepare_arg_list_integer(SEXP x,     const char* argname);
 SEXP        stri_prepare_arg_list_raw(SEXP x,         const char* argname);
 SEXP        stri_prepare_arg_string(SEXP x,           const char* argname);
 SEXP        stri_prepare_arg_double(SEXP x,           const char* argname);
+SEXP        stri_prepare_arg_POSIXct(SEXP x,          const char* argname);
 SEXP        stri_prepare_arg_integer(SEXP x,          const char* argname);
 SEXP        stri_prepare_arg_logical(SEXP x,          const char* argname);
 SEXP        stri_prepare_arg_raw(SEXP x,              const char* argname);
 SEXP        stri_prepare_arg_string_1(SEXP x,         const char* argname);
+const char* stri__prepare_arg_string_1_notNA(SEXP x, const char* argname);
 SEXP        stri_prepare_arg_double_1(SEXP x,         const char* argname);
 double      stri__prepare_arg_double_1_notNA(SEXP x,  const char* argname);
 SEXP        stri_prepare_arg_integer_1(SEXP x,        const char* argname);
@@ -124,7 +121,7 @@ const char* stri__prepare_arg_locale(SEXP loc,        const char* argname,
                                      bool allowdefault, bool allowna=false);
 const char* stri__prepare_arg_enc(SEXP loc,           const char* argname,
                                      bool allowdefault);
-
+TimeZone* stri__prepare_arg_timezone(SEXP tz, const char* argname, bool allowdefault);
 
 // reverse.cpp
 SEXP stri_reverse(SEXP s);
@@ -166,7 +163,8 @@ SEXP stri_locale_set(SEXP loc);
 
 // wrap.cpp
 SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent,
-   SEXP indent, SEXP exdent, SEXP prefix, SEXP initial, SEXP locale);
+   SEXP indent, SEXP exdent, SEXP prefix, SEXP initial, SEXP whitespace_only,
+   SEXP use_length, SEXP locale);
 
 // justify.cpp
 // SEXP stri_justify(SEXP str, SEXP width);                                    // TODO [version >= 0.3]
@@ -261,11 +259,15 @@ SEXP stri_startswith_charclass(SEXP str, SEXP pattern, SEXP from);
 SEXP stri_subset_charclass(SEXP str, SEXP pattern, SEXP omit_na);
 
 
+SEXP stri_extract_all_boundaries(SEXP str, SEXP simplify, SEXP omit_no_match, SEXP opts_brkiter);
+SEXP stri_extract_first_boundaries(SEXP str, SEXP opts_brkiter);
+SEXP stri_extract_last_boundaries(SEXP str, SEXP opts_brkiter);
 SEXP stri_locate_all_boundaries(SEXP str, SEXP omit_no_match, SEXP opts_brkiter);
 SEXP stri_locate_first_boundaries(SEXP str, SEXP opts_brkiter);
 SEXP stri_locate_last_boundaries(SEXP str, SEXP opts_brkiter);
 SEXP stri_split_boundaries(SEXP str, SEXP n, SEXP tokens_only, SEXP simplify, SEXP opts_brkiter);
 SEXP stri_count_boundaries(SEXP str, SEXP opts_brkiter);
+
 SEXP stri_split_lines(SEXP str, SEXP omit_empty);
 SEXP stri_split_lines1(SEXP str);
 
@@ -284,7 +286,7 @@ SEXP stri_trim_right(SEXP str, SEXP pattern);
 
 
 // pad.cpp
-SEXP stri_pad(SEXP str, SEXP min_length, SEXP side, SEXP pad);
+SEXP stri_pad(SEXP str, SEXP width, SEXP side, SEXP pad, SEXP use_length);
 
 
 // random.cpp
@@ -295,6 +297,10 @@ SEXP stri_rand_strings(SEXP n, SEXP length, SEXP pattern);
 // stats.cpp
 SEXP stri_stats_general(SEXP str);
 SEXP stri_stats_latex(SEXP str);
+
+
+// trans_other.cpp:
+SEXP stri_trans_char(SEXP str, SEXP pattern, SEXP replacement);
 
 
 // trans_casemap.cpp:
@@ -319,6 +325,23 @@ SEXP stri_test_UnicodeContainer16b(SEXP str);
 SEXP stri_test_UnicodeContainer8(SEXP str);
 SEXP stri_test_returnasis(SEXP x);
 
+
+// date/time
+SEXP stri_timezone_list(SEXP region, SEXP offset);
+SEXP stri_timezone_set(SEXP tz);
+SEXP stri_timezone_info(SEXP tz, SEXP locale, SEXP display_type);
+
+SEXP stri_datetime_symbols(SEXP locale, SEXP context, SEXP width);
+
+SEXP stri_c_posixst(SEXP x);
+SEXP stri_datetime_now();
+void stri__set_class_POSIXct(SEXP x);
+SEXP stri_datetime_add(SEXP time, SEXP delta, SEXP units, SEXP tz, SEXP locale);
+SEXP stri_datetime_fields(SEXP time, SEXP tz, SEXP locale);
+SEXP stri_datetime_create(SEXP year, SEXP month, SEXP day, SEXP hour,
+   SEXP minute, SEXP second, SEXP lenient, SEXP tz, SEXP locale);
+SEXP stri_datetime_format(SEXP time, SEXP format, SEXP tz, SEXP locale);
+SEXP stri_datetime_parse(SEXP str, SEXP format, SEXP lenient, SEXP tz, SEXP locale);
 
 // utils.cpp
 SEXP stri_list2matrix(SEXP x, SEXP byrow, SEXP fill, SEXP n_min);

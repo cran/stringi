@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -119,6 +119,9 @@
 #define MSG__EXPECTED_ASCII \
    "incorrect argument: the string contains non-ASCII characters"
 
+#define MSG__TIMEZONE_INCORRECT_ID \
+   "incorrect time zone identifier"
+
 #define MSG__LOCALE_ERROR_SET \
    "could not set or select given locale"
 
@@ -179,6 +182,9 @@
 #define MSG__NOT_EQ_N_CODEPOINTS \
    "each string in `%s` should consist of exactly %d code points"
 
+#define MSG__NOT_EQ_N_WIDTH \
+   "each string in `%s` should consist of code points of total width %d"
+
 #define MSG__CHARCLASS_INCORRECT_WHICH \
    "unknown charclass `%s`. assuming NA"
 
@@ -227,6 +233,9 @@
 
 #define MSG__ARG_EXPECTED_NUMERIC \
    "argument `%s` should be a numeric vector (or an object coercible to)"
+
+#define MSG__ARG_EXPECTED_POSIXct \
+   "argument `%s` should be an object of class POSIXct (or an object coercible to)"
 
 #define MSG__ARG_EXPECTED_STRING_NO_COERCION \
    "argument `%s` should be a character vector"

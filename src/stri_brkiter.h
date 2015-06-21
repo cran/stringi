@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -216,6 +216,11 @@ class StriRuleBasedBreakIterator : public StriBrkIterOptions {
                throw StriException(MSG__INTERNAL_ERROR);
          }
          STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+
+//         UnicodeString s = rbiterator->getRules();
+//         std::string s2;
+//         s.toUTF8String(s2);
+//         printf("%s\n", s2.c_str());
       }
 
       bool ignoreBoundary();

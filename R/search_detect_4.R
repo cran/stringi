@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,8 @@
 #' It calls either \code{stri_detect_regex},
 #' \code{stri_detect_fixed}, \code{stri_detect_coll},
 #' or \code{stri_detect_charclass}, depending on the argument used.
-#' Unless you are a very lazy person, please call the underlying functions
-#' directly for better performance.
+#' Relying on those underlying functions will make your code run slightly
+#' faster.
 #'
 #' See also \code{\link{stri_startswith}} and \code{\link{stri_endswith}}
 #' for testing whether a string starts or ends with a given pattern

@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@
 #' \code{stri_cmp_eq} tests whether two corresponding strings
 #' consist of exactly the same code points, while \code{stri_cmp_neq} allow
 #' to check whether there is any difference between them. These are
-#' locale-independent operations: for natural language text processing, 
+#' locale-independent operations: for natural language text processing,
 #' in which the notion of canonical equivalence is more valid, this might
 #' not be exactly what you are looking for, see Examples.
 #' By the way, note that \pkg{stringi} always silently removes UTF-8
@@ -95,6 +95,10 @@
 #' whether a given relation holds between two corresponding elements
 #' in \code{e1} and \code{e2}.
 #'
+#' @references
+#' \emph{Collation} - ICU User Guide,
+#' \url{http://userguide.icu-project.org/collation}
+#'
 #' @examples
 #' # in Polish ch < h:
 #' stri_cmp_lt("hladny", "chladny", locale="pl_PL")
@@ -119,6 +123,10 @@
 #'
 #' # ligatures:
 #' stri_cmp_equiv("\ufb00", "ff", strength=2)
+#'
+#' # phonebook collation
+#' stri_cmp_equiv("G\u00e4rtner", "Gaertner", locale="de_DE@@collation=phonebook", strength=1L)
+#' stri_cmp_equiv("G\u00e4rtner", "Gaertner", locale="de_DE", strength=1L)
 #'
 #' @family locale_sensitive
 #' @export
@@ -397,11 +405,11 @@ stri_cmp_ge <- function(e1, e2, ..., opts_collator=NULL) {
 #' Interestingly, our benchmarks indicate that \code{stri_order}
 #' is most often faster that \R's \code{order}.
 #'
-#' @param str character vector
-#' @param decreasing single logical value; should the sort order
+#' @param str a character vector
+#' @param decreasing a single logical value; should the sort order
 #'    be nondecreasing (\code{FALSE}, default)
 #'    or nonincreasing (\code{TRUE})?
-#' @param na_last single logical value; controls the treatment of \code{NA}s
+#' @param na_last a single logical value; controls the treatment of \code{NA}s
 #'    in \code{str}. If \code{TRUE}, then missing values in \code{str} are put
 #'    at the end; if \code{FALSE}, they are put at the beginning;
 #'    if \code{NA}, then they are removed from the output.
@@ -415,6 +423,10 @@ stri_cmp_ge <- function(e1, e2, ..., opts_collator=NULL) {
 #'
 #' For \code{stri_order}, you get a sorted version of \code{str},
 #' i.e. a character vector.
+#'
+#' @references
+#' \emph{Collation} - ICU User Guide,
+#' \url{http://userguide.icu-project.org/collation}
 #'
 #' @family locale_sensitive
 #' @export
@@ -457,7 +469,7 @@ stri_sort <-  function(str, decreasing=FALSE, na_last=NA, ..., opts_collator=NUL
 #'
 #' See also \code{\link{stri_duplicated}} for indicating non-unique elements.
 #'
-#' @param str character vector
+#' @param str a character vector
 #' @param opts_collator a named list with \pkg{ICU} Collator's options
 #' as generated with \code{\link{stri_opts_collator}}, \code{NULL}
 #' for default collation options
@@ -471,6 +483,10 @@ stri_sort <-  function(str, decreasing=FALSE, na_last=NA, ..., opts_collator=NUL
 #' unique(c("\u0105", stri_trans_nfkd("\u0105")))
 #'
 #' stri_unique(c("gro\u00df", "GROSS", "Gro\u00df", "Gross"), strength=1)
+#'
+#' @references
+#' \emph{Collation} - ICU User Guide,
+#' \url{http://userguide.icu-project.org/collation}
 #'
 #' @family locale_sensitive
 #' @export
@@ -504,8 +520,8 @@ stri_unique <-  function(str, ..., opts_collator=NULL) {
 #'
 #' See also \code{\link{stri_unique}} for extracting unique elements.
 #'
-#' @param str character vector
-#' @param fromLast single logical value;
+#' @param str a character vector
+#' @param fromLast a single logical value;
 #'    indicating whether duplication should be considered from the
 #'    reverse side
 #' @param opts_collator a named list with \pkg{ICU} Collator's options
@@ -521,6 +537,10 @@ stri_unique <-  function(str, ..., opts_collator=NULL) {
 #' \code{stri_duplicated_any()} returns a single non-negative integer.
 #' Value of 0 indicates that all the elements in \code{str} are unique.
 #' Otherwise, it gives the index of the first non-unique element.
+#'
+#' @references
+#' \emph{Collation} - ICU User Guide,
+#' \url{http://userguide.icu-project.org/collation}
 #'
 #' @examples
 #' # In the following examples, we have 3 duplicated values,

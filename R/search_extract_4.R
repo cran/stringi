@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2014, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -47,9 +47,9 @@
 #'
 #' \code{stri_extract}, \code{stri_extract_all}, \code{stri_extract_first},
 #' and \code{stri_extract_last} are convenience functions.
-#' They just call \code{stri_extract_*_*}, depending on arguments used.
-#' Unless you are a very lazy person, please call the underlying functions
-#' directly for better performance.
+#' They just call \code{stri_extract_*_*}, depending on the arguments used.
+#' Relying
+#' on one of those underlying functions will make your code run slightly faster.
 #'
 #' @param str character vector with strings to search in
 #' @param pattern,regex,fixed,coll,charclass character vector defining search patterns;
