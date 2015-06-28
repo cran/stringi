@@ -143,17 +143,12 @@
 #' Note that each man page provides many further links to other
 #' interesting facilities and topics.
 #'
-#' You are encouraged to call \code{\link{stri_install_check}}
-#' after the package installation or update.
-#'
 #' @name stringi-package
 #' @rdname stringi-package
 #' @aliases stringi
 #' @docType package
 #' @author Marek Gagolewski \email{gagolews@@rexamine.com},\cr
-#' Bartek Tartanus \email{bartektartanus@@rexamine.com},\cr
-#' with some contributions from Marcin Bujarski at the early stage
-#' of package development.
+#' with contributions from Bartek Tartanus \email{bartektartanus@@rexamine.com}.
 #' ICU4C was developed by IBM and others.
 #' The Unicode Character Database is due to Unicode, Inc.;
 #' see the COPYRIGHTS file for more details.
@@ -171,4 +166,10 @@
 #'
 #' @family stringi_general_topics
 #' @useDynLib stringi, .registration = TRUE
+#' @importFrom tools md5sum
+#' @importFrom utils packageVersion
+#' @importFrom utils download.file
+#' @importFrom utils unzip
+#' @importFrom stats runif
+#' @importFrom stats rnorm
 invisible(NULL)
