@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -47,39 +47,40 @@
 #' as \code{from} and the second one as \code{to}. In such case arguments
 #' \code{to} and \code{length} are ignored.
 #'
-#' Of course, the indices are code point-based,
-#' and not byte-based.
+#' Of course, the indices are code point-based, and not byte-based.
 #' Note that for some Unicode strings, the extracted substrings may not
 #' be well-formed, especially if the input is not NFC-normalized
 #' (see \code{\link{stri_trans_nfc}}),
 #' includes byte order marks, Bidirectional text marks, and so on.
 #' Handle with care.
 #'
-#' Indices are 1-based, i.e. an index equal to 1 denotes the first character
+#' Indices are 1-based, i.e., an index equal to 1 denotes the first character
 #' in a string, which gives a typical \R look-and-feel.
 #' Argument \code{to} defines the last index of the substring, inclusive.
 #'
 #' For negative indices in \code{from} or \code{to},
 #' counting starts at the end of the string.
-#' E.g. index -1 denotes the last code point in the string.
+#' For instance, index -1 denotes the last code point in the string.
 #' Negative \code{length} means counting backwards.
 #'
 #'
 #' In \code{stri_sub}, out-of-bound indices are silently
 #' corrected. If \code{from} > \code{to}, then an empty string is returned.
 #'
-#' In \code{stri_sub<-}, ``strange'' configurations of indices work as
+#' In \code{stri_sub<-}, some configurations of indices may work as
 #' string concatenation at the front, back, or middle.
 #'
 #' @param str character vector
 #' @param from integer vector or two-column matrix
 #' @param to integer vector; mutually exclusive with \code{length} and \code{from} being a matrix
 #' @param length integer vector; mutually exclusive with \code{to} and \code{from} being a matrix
-#' @param value character vector to be substituted [replacement function]
+#' @param omit_na single logical value; if \code{TRUE}, missing values in \code{from},
+#' \code{to}, or \code{length} will result in an unchanged input; replacement function only
+#' @param value character vector to be substituted with; replacement function only
 #'
 #'
 #' @return \code{stri_sub} returns a character vector.
-#' \code{stri_sub<-} changes the \code{value} object.
+#' \code{stri_sub<-} changes the \code{str} object.
 #'
 #' The extract function \code{stri_sub} returns the indicated substrings.
 
@@ -97,21 +98,22 @@
 #' (stri_sub(s, -6, length=5) <- ".")
 #' (stri_sub(s, 1, 1:3) <- 1:2)
 #'
+#' x <- c("a;b", "c:d")
+#' (stri_sub(x, stri_locate_first_fixed(x, ";"), omit_na=TRUE) <- "_")
 #' @family indexing
 #' @rdname stri_sub
 #' @export
 stri_sub <- function(str, from = 1L, to = -1L, length) {
-   # Whoaaa! One of the longest R functions in stringi :)
    if (missing(length)) {
       if (is.matrix(from) && !missing(to))
-         warning("argument `to` is ignored in given context")
+         warning("argument `to` is ignored in the current context")
       .Call(C_stri_sub, str, from, to, NULL)
    }
    else {
       if (!missing(to))
-         warning("argument `to` is ignored in given context")
+         warning("argument `to` is ignored in the current context")
       if (is.matrix(from))
-         warning("argument `length` is ignored in given context")
+         warning("argument `length` is ignored in the current context")
       .Call(C_stri_sub, str, from, NULL, length)
    }
 }
@@ -119,19 +121,18 @@ stri_sub <- function(str, from = 1L, to = -1L, length) {
 
 #' @rdname stri_sub
 #' @export
-#' @usage stri_sub(str, from = 1L, to = -1L, length) <- value
-"stri_sub<-" <- function(str, from = 1L, to = -1L, length, value) {
-   # Whoaaa! One of the longest R functions in stringi :)
+#' @usage stri_sub(str, from = 1L, to = -1L, length, omit_na=FALSE) <- value
+"stri_sub<-" <- function(str, from = 1L, to = -1L, length, omit_na=FALSE, value) {
    if (missing(length)) {
       if (is.matrix(from) && !missing(to))
-         warning("argument `to` is ignored in given context")
-      .Call(C_stri_sub_replacement, str, from, to, NULL, value)
+         warning("argument `to` is ignored in the current context")
+      .Call(C_stri_sub_replacement, str, from, to, NULL, omit_na, value)
    }
    else {
       if (!missing(to))
-         warning("argument `to` is ignored in given context")
+         warning("argument `to` is ignored in the current context")
       if (is.matrix(from))
-         warning("argument `length` is ignored in given context")
-      .Call(C_stri_sub_replacement, str, from, NULL, length, value)
+         warning("argument `length` is ignored in the current context")
+      .Call(C_stri_sub_replacement, str, from, NULL, length, omit_na, value)
    }
 }

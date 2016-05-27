@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,9 +61,13 @@
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 1.0-3 (Marek Gagolewski, 2016-02-03)
+ *    FR #216: `negate` arg added
  */
-SEXP stri_detect_charclass(SEXP str, SEXP pattern)
+SEXP stri_detect_charclass(SEXP str, SEXP pattern, SEXP negate)
 {
+   bool negate_1 = stri__prepare_arg_logical_1_notNA(negate, "negate");
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
    R_len_t vectorize_length =
@@ -101,6 +105,7 @@ SEXP stri_detect_charclass(SEXP str, SEXP pattern)
             break;
          }
       }
+      if (negate_1) ret_tab[i] = !ret_tab[i];
    }
 
    STRI__UNPROTECT_ALL

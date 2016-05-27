@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -232,11 +232,16 @@ SEXP stri_sub(SEXP str, SEXP from, SEXP to, SEXP length)
  *
  * @version 0.5-9003 (Marek Gagolewski, 2015-08-05)
  *    Bugfix #183: floating point exception when to or length is an empty vector
+ *
+ * @version 1.0-2 (Marek Gagolewski, 2016-01-31)
+ *    FR #199: new arg: `omit_na`
+ *    FR #207: allow insertions
  */
-SEXP stri_sub_replacement(SEXP str, SEXP from, SEXP to, SEXP length, SEXP value)
+SEXP stri_sub_replacement(SEXP str, SEXP from, SEXP to, SEXP length, SEXP omit_na, SEXP value)
 {
    PROTECT(str   = stri_prepare_arg_string(str, "str"));
    PROTECT(value = stri_prepare_arg_string(value, "value"));
+   bool omit_na_1 = stri__prepare_arg_logical_1_notNA(omit_na, "omit_na");
 
    R_len_t value_len     = LENGTH(value);
    R_len_t str_len       = LENGTH(str);
@@ -270,18 +275,31 @@ SEXP stri_sub_replacement(SEXP str, SEXP from, SEXP to, SEXP length, SEXP value)
    {
       R_len_t cur_from     = from_tab[i % from_len];
       R_len_t cur_to       = (to_tab)?to_tab[i % to_len]:length_tab[i % length_len];
-      if (str_cont.isNA(i) || cur_from == NA_INTEGER || cur_to == NA_INTEGER || value_cont.isNA(i)) {
+      if (str_cont.isNA(i) || value_cont.isNA(i)) {
          SET_STRING_ELT(ret, i, NA_STRING);
+         continue;
+      }
+
+      if (cur_from == NA_INTEGER || cur_to == NA_INTEGER) {
+         if (omit_na_1) {
+            SET_STRING_ELT(ret, i, str_cont.toR(i));
+         }
+         else {
+            SET_STRING_ELT(ret, i, NA_STRING);
+         }
          continue;
       }
 
       if (length_tab) {
          if (cur_to <= 0) {
-            SET_STRING_ELT(ret, i, R_BlankString);
-            continue;
+            // SET_STRING_ELT(ret, i, R_BlankString);
+            // continue;
+            cur_to = 0;
          }
-         cur_to = cur_from + cur_to - 1;
-         if (cur_from < 0 && cur_to >= 0) cur_to = -1;
+         else {
+            cur_to = cur_from + cur_to - 1;
+            if (cur_from < 0 && cur_to >= 0) cur_to = -1;
+         }
       }
 
       const char* str_cur_s   = str_cont.get(i).c_str();
@@ -293,6 +311,7 @@ SEXP stri_sub_replacement(SEXP str, SEXP from, SEXP to, SEXP length, SEXP value)
       R_len_t cur_to2;   // UTF-8 byte incices
 
       STRI__SUB_GET_INDICES(cur_from, cur_to, cur_from2, cur_to2)
+      if (cur_to2 < cur_from2) cur_to2 = cur_from2;
 
       R_len_t buflen = str_cur_n-(cur_to2-cur_from2)+value_cur_n;
       buf.resize(buflen, false/*destroy contents*/);

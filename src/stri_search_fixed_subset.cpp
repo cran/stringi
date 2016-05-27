@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@
  * @param str character vector
  * @param pattern character vector
  * @param omit_na single logical value
+ * @param opts_fixed list
  * @return character vector
  *
  * @version 0.3-1 (Bartek Tartanus, 2014-07-25)
@@ -61,9 +62,13 @@
  *
  * @version 0.5-1 (Marek Gagolewski, 2015-02-14)
  *    use StriByteSearchMatcher
+ *
+ * @version 1.0-3 (Marek Gagolewski, 2016-02-03)
+ *    FR #216: `negate` arg added
  */
-SEXP stri_subset_fixed(SEXP str, SEXP pattern, SEXP omit_na, SEXP opts_fixed)
+SEXP stri_subset_fixed(SEXP str, SEXP pattern, SEXP omit_na, SEXP negate, SEXP opts_fixed)
 {
+   bool negate_1 = stri__prepare_arg_logical_1_notNA(negate, "negate");
    uint32_t pattern_flags = StriContainerByteSearch::getByteSearchFlags(opts_fixed);
    bool omit_na1 = stri__prepare_arg_logical_1_notNA(omit_na, "omit_na");
    PROTECT(str = stri_prepare_arg_string(str, "str"));
@@ -86,11 +91,12 @@ SEXP stri_subset_fixed(SEXP str, SEXP pattern, SEXP omit_na, SEXP opts_fixed)
    {
       STRI__CONTINUE_ON_EMPTY_OR_NA_STR_PATTERN(str_cont, pattern_cont,
          {if (omit_na1) which[i] = FALSE; else {which[i] = NA_LOGICAL; result_counter++;} },
-         {which[i] = FALSE; })
+         {which[i] = negate_1; if (which[i]) result_counter++;})
 
       StriByteSearchMatcher* matcher = pattern_cont.getMatcher(i);
       matcher->reset(str_cont.get(i).c_str(), str_cont.get(i).length());
       which[i] = (int)(matcher->findFirst() != USEARCH_DONE);
+      if (negate_1) which[i] = !which[i];
       if (which[i]) result_counter++;
    }
 
@@ -100,3 +106,64 @@ SEXP stri_subset_fixed(SEXP str, SEXP pattern, SEXP omit_na, SEXP opts_fixed)
    return ret;
    STRI__ERROR_HANDLER_END( ;/* do nothing special on error */ )
 }
+
+
+/**
+ * Substitutes vector elements if a pattern occurs in a string
+ *
+ * @param str character vector
+ * @param pattern character vector
+ * @param opts_fixed list
+ * @param value character vector
+ * @return character vector
+ *
+ * @version 1.0-3 (Marek Gagolewski, 2016-02-02)
+ *   FR#124
+ *
+ *  @version 1.0-3 (Marek Gagolewski, 2016-02-03)
+ *    FR #216: `negate` arg added
+ */
+SEXP stri_subset_fixed_replacement(SEXP str, SEXP pattern, SEXP negate, SEXP opts_fixed, SEXP value)
+{
+   bool negate_1 = stri__prepare_arg_logical_1_notNA(negate, "negate");
+   uint32_t pattern_flags = StriContainerByteSearch::getByteSearchFlags(opts_fixed);
+   PROTECT(str = stri_prepare_arg_string(str, "str"));
+   PROTECT(pattern = stri_prepare_arg_string_1(pattern, "pattern"));
+   PROTECT(value = stri_prepare_arg_string(value, "value"));
+
+   int vectorize_length = LENGTH(str);
+   int value_length = LENGTH(value);
+   if (value_length == 0)
+      Rf_error(MSG__REPLACEMENT_ZERO);
+
+   STRI__ERROR_HANDLER_BEGIN(3)
+   StriContainerUTF8 str_cont(str, vectorize_length);
+   StriContainerUTF8 value_cont(value, value_length);
+   StriContainerByteSearch pattern_cont(pattern, vectorize_length, pattern_flags);
+
+   SEXP ret;
+   STRI__PROTECT(ret = Rf_allocVector(STRSXP, vectorize_length));
+
+   R_len_t k = 0;
+   for (R_len_t i = str_cont.vectorize_init();
+         i != str_cont.vectorize_end();
+         i = str_cont.vectorize_next(i))
+   {
+      STRI__CONTINUE_ON_EMPTY_OR_NA_STR_PATTERN(str_cont, pattern_cont,
+      {SET_STRING_ELT(ret, i, NA_STRING);},
+      {SET_STRING_ELT(ret, i, (negate_1)?value_cont.toR((k++)%value_length):str_cont.toR(i));} )
+
+      StriByteSearchMatcher* matcher = pattern_cont.getMatcher(i);
+      matcher->reset(str_cont.get(i).c_str(), str_cont.get(i).length());
+      if (((int)(matcher->findFirst() != USEARCH_DONE) && !negate_1) ||
+          ((int)(matcher->findFirst() == USEARCH_DONE) && negate_1))
+         SET_STRING_ELT(ret, i, value_cont.toR((k++)%value_length));
+      else
+         SET_STRING_ELT(ret, i, str_cont.toR(i));
+   }
+
+   STRI__UNPROTECT_ALL
+   return ret;
+   STRI__ERROR_HANDLER_END(;/* nothing special to be done on error */)
+}
+

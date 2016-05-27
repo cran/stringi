@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,9 +55,16 @@
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-05)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 1.0-2 (Marek Gagolewski, 2016-01-29)
+ *    Issue #214: allow a regex pattern like `.*`  to match an empty string
+ *
+ * @version 1.0-3 (Marek Gagolewski, 2016-02-03)
+ *    FR #216: `negate` arg added
  */
-SEXP stri_detect_regex(SEXP str, SEXP pattern, SEXP opts_regex)
+SEXP stri_detect_regex(SEXP str, SEXP pattern, SEXP negate, SEXP opts_regex)
 {
+   bool negate_1 = stri__prepare_arg_logical_1_notNA(negate, "negate");
    PROTECT(str = stri_prepare_arg_string(str, "str"));
    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
    R_len_t vectorize_length =
@@ -78,12 +85,13 @@ SEXP stri_detect_regex(SEXP str, SEXP pattern, SEXP opts_regex)
          i != pattern_cont.vectorize_end();
          i = pattern_cont.vectorize_next(i))
    {
-      STRI__CONTINUE_ON_EMPTY_OR_NA_STR_PATTERN(str_cont,
-         pattern_cont, ret_tab[i] = NA_LOGICAL, ret_tab[i] = FALSE)
+      STRI__CONTINUE_ON_EMPTY_OR_NA_PATTERN(str_cont,
+         pattern_cont, ret_tab[i] = NA_LOGICAL)
 
       RegexMatcher *matcher = pattern_cont.getMatcher(i); // will be deleted automatically
       matcher->reset(str_cont.get(i));
       ret_tab[i] = (int)matcher->find(); // returns UBool
+      if (negate_1) ret_tab[i] = !ret_tab[i];
 
 //      // mbmark-regex-detect1.R: UTF16 0.07171792 s; UText 0.10531605 s
 //      UText* str_text = NULL;

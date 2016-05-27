@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
+ * Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -161,8 +161,10 @@ class String8  {
       /** destructor */
       inline void setNA()
       {
-         if (this->m_str && this->m_memalloc) {
-            delete [] this->m_str;
+         if (this->m_str) {
+            if (this->m_memalloc) {
+               delete [] this->m_str;
+            }
             this->m_str = NULL;
          }
       }

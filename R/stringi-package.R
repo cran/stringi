@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (C) 2013-2015, Marek Gagolewski and Bartek Tartanus
+## Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -34,14 +34,13 @@
 #' @description
 #' \pkg{stringi} is THE \R package for fast, correct, consistent,
 #' and convenient string/text manipulation.
-#' We put a lot of effort into creating a software package that
-#' gives predictable results on every platform, in each locale,
+#' It gives predictable results on every platform, in each locale,
 #' and under any ``native'' character encoding.
 #'
 #' \bold{Keywords}: R, text processing, character strings,
 #' internationalization, localization, ICU, ICU4C, i18n, l10n, Unicode.
 #'
-#' \bold{Homepage}: \url{http://stringi.rexamine.com}
+#' \bold{Homepage}: \url{http://www.gagolewski.com/software/stringi/}
 #'
 #' \bold{License}: The BSD-3-clause license for the package code,
 #' the ICU license for the accompanying ICU4C distribution,
@@ -80,7 +79,7 @@
 #'    matching,
 #' \item \link{stringi-search-coll} -- locale-aware pattern matching
 #'    for natural language processing tasks,
-#' \item \link{stringi-search-charclass} -- for finding elements of
+#' \item \link{stringi-search-charclass} -- seeking elements of
 #'    particular character classes, like ``all whitespaces'' or ``all digits'',
 #' \item \link{stringi-search-boundaries} -- text boundary analysis.
 #' }
@@ -102,7 +101,7 @@
 #' \item \code{\link{stri_length}} (among others) for determining the number
 #' of code points in a string. See also \code{\link{stri_count_boundaries}}
 #' for counting the number of \code{Unicode characters}
-#' and \code{\link{stri_width}} for approximating the width of a string..
+#' and \code{\link{stri_width}} for approximating the width of a string.
 #'
 #' \item \code{\link{stri_trim}} (among others) for
 #' trimming characters from the beginning or/and end of a string,
@@ -111,8 +110,8 @@
 #' Additionally, \code{\link{stri_wrap}} wraps text into lines.
 #'
 #' \item \code{\link{stri_trans_tolower}} (among others) for case mapping,
-#' i.e. conversion to lower, UPPER, or Title Case,
-#' \code{\link{stri_trans_nfc}} (i.a.) for Unicode normalization,
+#' i.e., conversion to lower, UPPER, or Title Case,
+#' \code{\link{stri_trans_nfc}} (among others) for Unicode normalization,
 #' \code{\link{stri_trans_char}} for translating invidual code points,
 #' and \code{\link{stri_trans_general}} for other very general yet powerful
 #' text transforms, including transliteration.
@@ -134,10 +133,6 @@
 #' \item DRAFT API: \code{\link{stri_read_raw}},
 #' \code{\link{stri_read_lines}}, and  \code{\link{stri_write_lines}}
 #' for reading and writing text files.
-#'
-#' \item TO DO [these will appear in future versions
-#' of \pkg{stringi}]: HTML entities, MIME Base 64 encode/decode,
-#' number formatting, number spellout, and many more.
 #' }
 #'
 #' Note that each man page provides many further links to other
@@ -147,13 +142,13 @@
 #' @rdname stringi-package
 #' @aliases stringi
 #' @docType package
-#' @author Marek Gagolewski \email{gagolews@@rexamine.com},\cr
-#' with contributions from Bartek Tartanus \email{bartektartanus@@rexamine.com}.
+#' @author Marek Gagolewski,
+#' with contributions from Bartek Tartanus.
 #' ICU4C was developed by IBM and others.
 #' The Unicode Character Database is due to Unicode, Inc.;
 #' see the COPYRIGHTS file for more details.
 #' @references
-#' \emph{\pkg{stringi} Package homepage}, \url{http://stringi.rexamine.com}
+#' \emph{\pkg{stringi} Package homepage}, \url{http://www.gagolewski.com/software/stringi/}
 #'
 #' \emph{ICU -- International Components for Unicode}, \url{http://www.icu-project.org/}
 #'
