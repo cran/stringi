@@ -1,8 +1,8 @@
-33c90f904d95ea0c5b186f4508d3c23f *DESCRIPTION
+94d98723af945077e27023a4f9cc6092 *DESCRIPTION
 9c47bdb52da886a78df8171543fa053f *INSTALL
 917d54fd0de4f028322b2265d9307c5e *LICENSE
 0c7ba4582547b178091a7ddfab722771 *NAMESPACE
-5b8de54dc733b199cf0ad36ab11d32f8 *NEWS
+c85de79f683ea06e161dd40c218e21d1 *NEWS
 041b295d49331c3a79af471c6235e2b8 *R/ICU_settings.R
 135398ce83412fceb3eafedb662534a8 *R/compare.R
 b323636ececa61126e5c47358610d4d0 *R/draft_encdetect.R
@@ -59,7 +59,7 @@ d178863770608bb4ac417a717d4722e0 *R/todo_search_in.R
 e401b8360844994f01510e31cd32b8d7 *R/utils.R
 d9bb943f6ea5138b643f2a191102630c *R/wrap.R
 8b7d9182fddf64d7eb7187569a79483d *cleanup
-473adb03b9413eda735a3f86a2f3ca1a *configure
+937f6d1015f6d6f8134727aaa6570eb3 *configure
 01eb39501669fa9713bb7afdc2aa79bd *configure.win
 01d914cf4094ab4bac3ca743eef219f1 *inst/AUTHORS
 e1feb43ce365e9d593e84d4f0fe3176b *inst/CITATION
@@ -225,7 +225,7 @@ a61f8b45e0105b8439b599e24eacdd56 *src/icu55/common/propname.h
 577daead49b544d16f92f4d2ceb00641 *src/icu55/common/propsvec.h
 877da4941fc4f62110c1f5bc83f3bcf2 *src/icu55/common/punycode.cpp
 3d8ad972ab49c8240f0ae343301c56ea *src/icu55/common/punycode.h
-9390f41200214797a49851cdbbf17b89 *src/icu55/common/putil.cpp
+6fd9b05ae02829e14544b0a3c9f7b237 *src/icu55/common/putil.cpp
 bd4f913a7d03729916a87dd7bdf81b76 *src/icu55/common/putilimp.h
 905f6d15b9865c67e0802e91b91e9b66 *src/icu55/common/rbbi.cpp
 75221f5e07f859a6a1332ea4a22976b7 *src/icu55/common/rbbidata.cpp
@@ -1020,9 +1020,9 @@ aaa6e1b456b0134fdced617cd7bf8725 *src/stri_stats.cpp
 b3041dfab6f87001e0eee89e3b494aa9 *src/stri_string8buf.h
 501a15663af43d4f4f52dfd40abe6a36 *src/stri_stringi.cpp
 4e730b900eab5490dc5af599420c17dd *src/stri_stringi.h
-363de7719733a6307f770e9f6205eedd *src/stri_sub.cpp
+c064a7b651c42ed00c0bde6e0824ebf1 *src/stri_sub.cpp
 aca94d72c6c03739881cfe431c31671e *src/stri_test.cpp
-24b9dbef547d6d1462b9f36dc4b8f7a1 *src/stri_time_calendar.cpp
+3c14ecb7b40872d59ccb8f6833f687ee *src/stri_time_calendar.cpp
 74588b302e39ae6549b84e28c9a17970 *src/stri_time_format.cpp
 feeb76d4823ccb34f60469214d702825 *src/stri_time_symbols.cpp
 10a41cc3db89223527b1a056aa5a9cfe *src/stri_time_zone.cpp
