@@ -624,11 +624,6 @@ ac_includes_default="\
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 ICU_FOUND
-STRINGI_LIBS
-STRINGI_LDFLAGS
-STRINGI_CFLAGS
-STRINGI_CPPFLAGS
-STRINGI_CXXFLAGS
 STRINGI_CXXSTD
 STRINGI_OBJECTS
 STRINGI_ICU_STUBDATA_SOURCES_C
@@ -638,24 +633,32 @@ STRINGI_ICU_I18N_SOURCES_CPP
 STRINGI_ICU_COMMON_SOURCES_C
 STRINGI_ICU_COMMON_SOURCES_CPP
 STRINGI_SOURCES_CPP
-PKG_CONFIG
 ac_ct_CXX
 EGREP
 GREP
-CPP
 OBJEXT
 EXEEXT
 ac_ct_CC
+STRINGI_LIBS
+STRINGI_LDFLAGS
+STRINGI_CXXFLAGS
+STRINGI_CPPFLAGS
+STRINGI_CFLAGS
+STRINGI_DISABLE_PKG_CONFIG
+STRINGI_DISABLE_ICU_BUNDLE
+STRINGI_DISABLE_CXX11
+LDFLAGS
 CXXCPP
 CXXFLAGS
 CXX
 CPPFLAGS
-LDFLAGS
+CPP
 CFLAGS
 CC
-CAT
 PKG_CONFIG_PATH
 ICUDT_DIR
+PKG_CONFIG
+CAT
 R_HOME
 target_alias
 host_alias
@@ -713,18 +716,27 @@ with_extra_libs
 host_alias
 target_alias
 R_HOME
+CAT
+PKG_CONFIG
 ICUDT_DIR
 PKG_CONFIG_PATH
-CAT
 CC
 CFLAGS
-LDFLAGS
-LIBS
+CPP
 CPPFLAGS
 CXX
 CXXFLAGS
 CXXCPP
-CPP
+LDFLAGS
+LIBS
+STRINGI_DISABLE_CXX11
+STRINGI_DISABLE_ICU_BUNDLE
+STRINGI_DISABLE_PKG_CONFIG
+STRINGI_CFLAGS
+STRINGI_CPPFLAGS
+STRINGI_CXXFLAGS
+STRINGI_LDFLAGS
+STRINGI_LIBS
 CCC'
 
 
@@ -1335,7 +1347,7 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --disable-cxx11         Disable use of C++11; if you build ICU4C from
+  --disable-cxx11         Disable the use of C++11; if you build ICU4C from
                           sources, make sure your C++ compiler supports the
                           long long type.
   --disable-icu-bundle    Force the use of the system ICU.
@@ -1350,19 +1362,28 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-extra-cflags=FLAGS
-                          Additional C compiler flags
+                          Additional C compiler flags, see also the
+                          STRINGI_CFLAGS environment variable
   --with-extra-cppflags=FLAGS
-                          Additional C/C++ preprocessor flags
+                          Additional C/C++ preprocessor flags, see also the
+                          STRINGI_CPPFLAGS environment variable
   --with-extra-cxxflags=FLAGS
-                          Additional C++ compiler flags
+                          Additional C++ compiler flags, see also the
+                          STRINGI_CXXFLAGS environment variable
   --with-extra-ldflags=FLAGS
-                          Additional linker flags
-  --with-extra-libs=FLAGS Additional libraries to link against
+                          Additional linker flags, see also the
+                          STRINGI_LDFLAGS environment variable
+  --with-extra-libs=FLAGS Additional libraries to link against, see also the
+                          STRINGI_LIBS environment variable
 
 Some influential environment variables:
   R_HOME      Override the default directory with R installation, e.g.,
               /usr/lib64/R, where /usr/lib64 is in the search path. Note that
               $R_HOME/bin/R should point to the R executable.
+  CAT         The 'cat' command used for generating the list of source files
+              to compile.
+  PKG_CONFIG  The 'pkg-config' command used for getting necessary compiler
+              flags to link to and existing libicu installation.
   ICUDT_DIR   Optional directory from which an already downloaded ICU data
               archive (icudt*.zip) may be copied; either an absolute path or a
               path relative to <package source dir>/src; defaults to
@@ -1370,17 +1391,33 @@ Some influential environment variables:
   PKG_CONFIG_PATH
               An optional list of directories to search for pkg-config's .pc
               files.
-  CAT         The 'cat' command used for generating the list of source files
-              to compile.
   CC          Purposedly ignored.
   CFLAGS      Purposedly ignored.
-  LDFLAGS     Purposedly ignored.
-  LIBS        Purposedly ignored.
+  CPP         Purposedly ignored.
   CPPFLAGS    Purposedly ignored.
   CXX         Purposedly ignored.
   CXXFLAGS    Purposedly ignored.
   CXXCPP      Purposedly ignored.
-  CPP         C preprocessor
+  LDFLAGS     Purposedly ignored.
+  LIBS        Purposedly ignored.
+  STRINGI_DISABLE_CXX11
+              Disable the use of C++11, see also --disable-cxx11.
+  STRINGI_DISABLE_ICU_BUNDLE
+              Force the use of the system ICU, see also --disable-icu-bundle.
+  STRINGI_DISABLE_PKG_CONFIG
+              Force the use of the ICU bundle, see also --disable-pkg-config.
+  STRINGI_CFLAGS
+              Additional C compiler flags, see also --with-extra-cflags.
+  STRINGI_CPPFLAGS
+              Additional C/C++ preprocessor flags, see also
+              --with-extra-cppflags.
+  STRINGI_CXXFLAGS
+              Additional C++ compiler flags, see also --with-extra-cxxflags.
+  STRINGI_LDFLAGS
+              Additional linker flags, see also --with-extra-ldflags.
+  STRINGI_LIBS
+              Additional libraries to link against, see also
+              --with-extra-libs.
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -2167,34 +2204,57 @@ ICU_VERSION_NEEDED="50" # minimal version of ICU4C required to build stringi
 
 
 
+
+
+
+
+
+
+
 # Check whether --enable-cxx11 was given.
 if test "${enable_cxx11+set}" = set; then :
   enableval=$enable_cxx11;
 fi
 
-if test "x$enable_cxx11" != "xno"; then
+
+
+
+if test "x$enable_cxx11" != "xno" -a -z "${STRINGI_DISABLE_CXX11}"; then
    enable_cxx11="yes"
 else
    enable_cxx11="no"
 fi
+
+
 
 # Check whether --enable-icu_bundle was given.
 if test "${enable_icu_bundle+set}" = set; then :
   enableval=$enable_icu_bundle;
 fi
 
-if test "x$enable_icu_bundle" != "xno"; then
+
+
+
+if test "x$enable_icu_bundle" != "xno" -a -z "${STRINGI_DISABLE_ICU_BUNDLE}"; then
    enable_icu_bundle="yes"
 else
    enable_icu_bundle="no"
 fi
+
+
+
+
+
 
 # Check whether --enable-pkg_config was given.
 if test "${enable_pkg_config+set}" = set; then :
   enableval=$enable_pkg_config;
 fi
 
-if test "x$enable_pkg_config" != "xno"; then
+
+
+
+if test "x$enable_pkg_config" != "xno" -a -z "${STRINGI_DISABLE_PKG_CONFIG}"; then
    enable_pkg_config="yes"
 else
    enable_pkg_config="no"
@@ -2221,6 +2281,7 @@ if test "x$enable_gcc_pedantic" == "xyes"; then
 else
    enable_gcc_pedantic="no"
 fi
+
 
 
 # Check whether --with-extra_cflags was given.
@@ -2256,6 +2317,23 @@ if test "${with_extra_libs+set}" = set; then :
   withval=$with_extra_libs;
 fi
 
+
+
+
+
+
+
+
+
+
+
+
+
+with_extra_cflags="${with_extra_cflags} ${STRINGI_CFLAGS}"
+with_extra_cppflags="${with_extra_cppflags} ${STRINGI_CPPFLAGS}"
+with_extra_cxxflags="${with_extra_cxxflags} ${STRINGI_CXXFLAGS}"
+with_extra_ldflags="${with_extra_ldflags} ${STRINGI_LDFLAGS}"
+with_extra_libs="${with_extra_libs} ${STRINGI_LIBS}"
 
 ##### CHECK FOR R #############################################################
 
@@ -4147,8 +4225,7 @@ fi
  # auto-detect
 
    if test ! -f "${PKG_CONFIG}"; then
-      echo "*** The pkg-config script could not be found"
-      echo "*** Make sure it is installed if you want to use system ICU4C-devel installation"
+      echo "*** pkg-config could not be found"
       return 1 # go back immediately
    fi
 
@@ -4159,8 +4236,7 @@ $as_echo_n "checking with pkg-config for ICU4C installed... " >&6; }
       # pkg config doesn't know about icu-i18n
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-      echo "*** The pkg-config script did not detect ICU4C-devel libraries installed"
-      echo "*** We will build ICU4C from sources"
+      echo "*** pkg-config did not detect ICU4C-devel libraries installed"
       return 1 # nothing more to do
    fi
 
@@ -4179,7 +4255,6 @@ $as_echo_n "checking for ICU4C >= $ICU_VERSION_NEEDED... " >&6; }
 $as_echo "no" >&6; }
       echo "*** ICU4C ${ICU_VERSION} has been detected"
       echo "*** Minimal requirements, i.e. ICU4C >= ${ICU_VERSION_NEEDED}, are not met"
-      echo "*** We will build ICU4C from sources"
       return 1 # you may quit querying pkg-config here
    fi
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
@@ -4240,7 +4315,7 @@ else
 
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-      echo "*** ICU4C will be built from sources"
+      echo "*** System ICU4C cannot be used"
       return 1
 
 fi
@@ -4528,6 +4603,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 }
 
 if test $ICU_FOUND = 0; then
+   if test $enable_icu_bundle = "no"; then
+      echo "*** Failed to configure package build with forced system ICU usage"
+      echo "*** Consider installing, e.g., libicu-devel (RHEL, Fedora) or libicu-dev (Debian, Ubuntu)"
+      echo "*** together with pkg-config"
+      exit 1
+   fi
+
    OLD_CFLAGS=$CFLAGS
    OLD_CXXFLAGS=$CXXFLAGS
    OLD_CPPFLAGS=$CPPFLAGS
@@ -4536,6 +4618,17 @@ if test $ICU_FOUND = 0; then
    CFLAGS=$OLD_CFLAGS
    CXXFLAGS=$OLD_CXXFLAGS
    CPPFLAGS=$OLD_CPPFLAGS
+
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we can fetch icudt" >&5
+$as_echo_n "checking whether we can fetch icudt... " >&6; }
+   R --vanilla --slave -e "setwd(\"src/\"); \
+                           source(\"../R/install.R\"); \
+                           if (identical(FALSE,stri_download_icudt(\"${ICUDT_DIR}\"))) \
+                               stop(\"Stopping on error\")"
+   if test $? -ne 0; then
+      echo "*** icudt could not be downloaded. stopping."
+      exit 1
+   fi
 fi
 
 ##### PREPARE LIST OF SOURCE FILES #############################################
@@ -4567,7 +4660,8 @@ STRINGI_ICU_STUBDATA_SOURCES_C=`${CAT} src/icu55_stubdata_c.txt`
 if test $ICU_FOUND = 0; then
    if test $enable_icu_bundle = "no"; then
       echo "*** Failed to configure package build with forced system ICU usage"
-      echo "*** Make sure that libicu-dev is properly installed"
+      echo "*** Consider installing, e.g., libicu-devel (RHEL, Fedora) or libicu-dev (Debian, Ubuntu)"
+      echo "*** together with pkg-config"
       exit 1
    fi
 

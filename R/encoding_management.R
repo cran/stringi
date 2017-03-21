@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (C) 2013-2016, Marek Gagolewski and Bartek Tartanus
+## Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -130,7 +130,7 @@ stri_enc_info <- function(enc=NULL) {
 #' Unless you are an expert user and you know what you are doing,
 #' \code{stri_enc_set} should only be used if \pkg{ICU} fails to detect
 #' your system's encoding correctly (while testing \pkg{stringi}
-#' we only encountered such a situation on a very old Solaris machine, though).
+#' we only encountered such a situation on a very old Solaris machine).
 #' Note that \pkg{ICU} tries to match the encoding part of the \code{LC_CTYPE}
 #' category as given by \code{\link{Sys.getlocale}}.
 #'
