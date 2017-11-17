@@ -62,7 +62,7 @@ For portability reasons, the UTF-8 encoding is the most natural choice
 for representing Unicode character strings in \R. UTF-8 has ASCII as its
 subset (code points 1--127 represent the same characters in both of them).
 Code points larger than 127 are represented by multi-byte sequences
-(from 2 to 4 bytes: by the way, not all sequences of bytes are valid UTF-8,
+(from 2 to 4 bytes: Please note that not all sequences of bytes are valid UTF-8,
 cf. \code{\link{stri_enc_isutf8}}).
 
 Most of the computations in \pkg{stringi} are performed internally
@@ -115,7 +115,8 @@ when you change it manually by calling \code{\link{stri_enc_set}}.
 Character strings in \R (internally) can be declared to be in:
 \itemize{
 \item \code{UTF-8};
-\item \code{latin1}, i.e. ISO-8859-1 (Western European);
+\item \code{latin1}, i.e., either ISO-8859-1 (Western European on
+Linux, macOS, and other Unixes) or WINDOWS-1252 (Windows);
 \item \code{bytes} -- for strings that
     should be manipulated as sequences of bytes.
 }
@@ -126,7 +127,7 @@ Moreover, there are two other cases:
 \item \code{native} (a.k.a. \code{unknown} in \code{\link{Encoding}};
 quite a misleading name: no explicit encoding mark) -- for
 strings that are assumed to be in your platform's native (default) encoding.
-This can represent UTF-8 if you are an OS X user,
+This can represent UTF-8 if you are an macOS user,
 or some 8-bit Windows code page, for example.
 The native encoding used by \R may be determined by examining
 the LC_CTYPE category, see \code{\link{Sys.getlocale}}.
