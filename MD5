@@ -1,8 +1,8 @@
-859f51fe06d9eb47bb07cccf5a662fd3 *DESCRIPTION
+db94055227cfa8a872e7cff06b86bb77 *DESCRIPTION
 ee8b16f29c99477beb6d828fe6e91595 *INSTALL
 7046c04fd6bdbea3546adb75e91cb6db *LICENSE
 913e8dae7f4b5710551952537fea0916 *NAMESPACE
-15e3ca5a10873dd2e015072750ed4a93 *NEWS
+1a71d9fac3338aab42d7543e4e8d9163 *NEWS
 c81ac36a300bf461a0f29a37040defa1 *R/ICU_settings.R
 4621b9121f0d652b518f773d8363a1a1 *R/compare.R
 bf6f90295ce7e54700b045e587a0e087 *R/draft_encdetect.R
@@ -62,7 +62,7 @@ c2b9cff7e4a3930d0e415f77fb440dc8 *R/trans_other.R
 83b2ae8e138d637c0609c11f744a90d7 *configure
 01eb39501669fa9713bb7afdc2aa79bd *configure.win
 bdcd0c49082bf7bf93122474e958d8ff *inst/AUTHORS
-dbff8d774fa477bd3b2025e8d73efd2c *inst/CITATION
+0090f0b2b36139f4bb738872a29f389d *inst/CITATION
 15588b9d62e1c296d432a8e26983d4dd *man/oper_comparison.Rd
 dc278dae56fde988bd69a5bd60b6c375 *man/oper_plus.Rd
 f11800dd14071eea84fa531e9ef70cab *man/stri_compare.Rd
@@ -523,7 +523,7 @@ eb153278913133022722790f352d8aed *src/icu55/i18n/dcfmtimp.h
 806b040f3a961c8b233d886bbed76e6f *src/icu55/i18n/dcfmtsym.cpp
 869f55d68046f138de959dcdd68fc0d0 *src/icu55/i18n/decContext.c
 ebb59cd11b5b607aa50d7057d65201ce *src/icu55/i18n/decContext.h
-b9a7798db6114e3d37ab35fc47ca911a *src/icu55/i18n/decNumber.c
+4b9137120a095117fd7832b82848a14b *src/icu55/i18n/decNumber.c
 92bdfe8b920431980be4b64c2e690d32 *src/icu55/i18n/decNumber.h
 e970d0aa71fb12b5d39d685838a4da37 *src/icu55/i18n/decNumberLocal.h
 c844832833c09c25060d3a6e5923accf *src/icu55/i18n/decfmtst.cpp
@@ -733,7 +733,7 @@ e14dbbd19cdb747fb0c80ce3959f60d2 *src/icu55/i18n/vzone.cpp
 32cb9a21e9e477fcde415d6400c97e70 *src/icu55/i18n/vzone.h
 660f15a026eed6783fa0387df714ebf8 *src/icu55/i18n/windtfmt.cpp
 6f024cbac7cb2b68e6fa6d367b1e441c *src/icu55/i18n/windtfmt.h
-7263c8642cb5671fc7b26a973708016d *src/icu55/i18n/winnmfmt.cpp
+b7ac1b00e0da18420867ec5a2af8a9fc *src/icu55/i18n/winnmfmt.cpp
 7d27f60e0f63f6eae18b532f1a8bac4d *src/icu55/i18n/winnmfmt.h
 4b1256a0fd2bb1cf2ae104800adac3e1 *src/icu55/i18n/wintzimpl.cpp
 c616d3c02c33e239ece542c0a0f7fe7d *src/icu55/i18n/wintzimpl.h
