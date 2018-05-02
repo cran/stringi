@@ -1,14 +1,16 @@
 # `stringi` configure.win
-# (C) 2015 Marek Gagolewski
+# (C) 2015-2018 Marek Gagolewski
 
-# this is an architecture-independent configure.win  file
+# this is an architecture-independent configure.win file
 
 "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e '
    fin  <- "src/uconfig_local.h.in";
    fout <- "src/uconfig_local.h";
    f <- readLines(fin);
    f <- gsub("@ICU_FOUND@", 0, f, fixed = TRUE);
-   f <- gsub("@ICUDT_DIR@", "icu55/data", f, fixed = TRUE);
+   f <- gsub("@ICUDT_DIR@", "icu61/data", f, fixed = TRUE);
+   f <- gsub("@ICU_BUNDLE_VERSION@", "61", f, fixed = TRUE);
+   f <- gsub("@ICUDT_ENDIANNESS@", .Platform$endian, f, fixed = TRUE);
    writeLines(f, fout);
 ' `
 
@@ -17,6 +19,8 @@
    fout <- "src/install.libs.R";
    f <- readLines(fin);
    f <- gsub("@ICU_FOUND@", 0, f, fixed = TRUE);
-   f <- gsub("@ICUDT_DIR@", "icu55/data", f, fixed = TRUE);
+   f <- gsub("@ICUDT_DIR@", "icu61/data", f, fixed = TRUE);
+   f <- gsub("@ICU_BUNDLE_VERSION@", "61", f, fixed = TRUE);
+   f <- gsub("@ICUDT_ENDIANNESS@", .Platform$endian, f, fixed = TRUE);
    writeLines(f, fout);
 ' `
