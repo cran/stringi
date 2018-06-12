@@ -1,8 +1,8 @@
-4221a45946f42f8226889a702165b0f4 *DESCRIPTION
+ede1fc05eb1fb7af932adeeca2f9c01d *DESCRIPTION
 6b392a9f08baaf50a3a1bed0ac579f79 *INSTALL
 07ef73212b7d3bda84b4fc0acca9f7f6 *LICENSE
 aa97ba479aa1639691f75757c81a9e4a *NAMESPACE
-f99053567a77d08be45443ab1978d891 *NEWS
+3b9222708b0fd27a123ef9e49d8d33c3 *NEWS
 3d3a4cd288a1e024c5376e91ea1042cd *R/ICU_settings.R
 4621b9121f0d652b518f773d8363a1a1 *R/compare.R
 91353e5979961a59e44da8ff898d44e8 *R/draft_files.R
@@ -11,7 +11,7 @@ f8eae4bb15945176cde77cb727cf51a3 *R/encoding_conversion.R
 ae5146fab834513c2b5e06444a372e18 *R/encoding_detection.R
 0a96a5c4303fff13da9b113e5f2bce5a *R/encoding_management.R
 4dbeaa05b0029d059299c3079bd3960a *R/escape.R
-21e67467606fe3512176ad81058abc65 *R/install.R
+cac31d68c830d51312cfcb2360c542f3 *R/install.R
 a93cb31474fc61d117aee92572199271 *R/internal_prepare_arg.R
 78c575e30e1afba9e775272003096d05 *R/internal_test.R
 aa51b6be9dc7bb5ca6584007831edcf9 *R/join.R
@@ -58,7 +58,7 @@ c2b9cff7e4a3930d0e415f77fb440dc8 *R/trans_other.R
 6073a75797a2ba21050b476d1c4eca50 *R/utils.R
 726393464c54b2e68439fafc37177f1e *R/wrap.R
 8b7d9182fddf64d7eb7187569a79483d *cleanup
-92b9ceee1bbb1683d0eb0cbfc6f83317 *configure
+6e2a777b958f14601a8f518e7b537812 *configure
 c9634acb2c458ff51d2fe9f504413867 *configure.win
 aa60bd22da2ccb404b8b5be216b4d49a *inst/AUTHORS
 0090f0b2b36139f4bb738872a29f389d *inst/CITATION
