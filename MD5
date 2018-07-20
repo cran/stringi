@@ -1,8 +1,8 @@
-ede1fc05eb1fb7af932adeeca2f9c01d *DESCRIPTION
-6b392a9f08baaf50a3a1bed0ac579f79 *INSTALL
+b8dcf1f63cacc3dbf6b3edd5daa1dd08 *DESCRIPTION
+69138d495150c47a61b475f5ece767bd *INSTALL
 07ef73212b7d3bda84b4fc0acca9f7f6 *LICENSE
 aa97ba479aa1639691f75757c81a9e4a *NAMESPACE
-3b9222708b0fd27a123ef9e49d8d33c3 *NEWS
+b90052860d3ea00a0a4e8820f7dace27 *NEWS
 3d3a4cd288a1e024c5376e91ea1042cd *R/ICU_settings.R
 4621b9121f0d652b518f773d8363a1a1 *R/compare.R
 91353e5979961a59e44da8ff898d44e8 *R/draft_files.R
@@ -15,7 +15,7 @@ cac31d68c830d51312cfcb2360c542f3 *R/install.R
 a93cb31474fc61d117aee92572199271 *R/internal_prepare_arg.R
 78c575e30e1afba9e775272003096d05 *R/internal_test.R
 aa51b6be9dc7bb5ca6584007831edcf9 *R/join.R
-7dcfd1d6dc68d2ae7b4549c278634a05 *R/length.R
+0464ed749849b315055442269827cd07 *R/length.R
 dd68e339c8809f97f5558289e6fa9028 *R/locale.R
 4c3258077a514647593f06109e132e5a *R/locale_management.R
 4a90a044e0e586e375c198071696eecc *R/opts.R
@@ -58,7 +58,7 @@ c2b9cff7e4a3930d0e415f77fb440dc8 *R/trans_other.R
 6073a75797a2ba21050b476d1c4eca50 *R/utils.R
 726393464c54b2e68439fafc37177f1e *R/wrap.R
 8b7d9182fddf64d7eb7187569a79483d *cleanup
-6e2a777b958f14601a8f518e7b537812 *configure
+43456a7a1c8bab2dfb795b3acd72a895 *configure
 c9634acb2c458ff51d2fe9f504413867 *configure.win
 aa60bd22da2ccb404b8b5be216b4d49a *inst/AUTHORS
 0090f0b2b36139f4bb738872a29f389d *inst/CITATION
@@ -97,10 +97,10 @@ b6dec4a90c4ba08103577c28699ea516 *man/stri_extract.Rd
 881695763d0df0b4a87f881b9a40bc00 *man/stri_extract_boundaries.Rd
 250798a120e581d88aac65d6e20708b6 *man/stri_flatten.Rd
 7ededaa6dfab59a9c1707ba56f3def0c *man/stri_info.Rd
-0ad63180fece939705741ff12d2d056d *man/stri_isempty.Rd
+51a64b46fbe80fb36ae00f1600837d60 *man/stri_isempty.Rd
 45e41ed4e40dc0df20f93d3a00c69cf6 *man/stri_join.Rd
 75e49f00cadd62ab2c4b9dbc01032728 *man/stri_join_list.Rd
-09b8b7e35949ffae9c23b05a903b0e63 *man/stri_length.Rd
+a0b38d1a68c810df0bbd69de218b78b2 *man/stri_length.Rd
 f3b8011ec5e6d60872121dd96e8fbcbd *man/stri_list2matrix.Rd
 76da993ff822a63415e1cdade419bb29 *man/stri_locale_info.Rd
 e78d1d8391a76c574bda1ebca0e9a328 *man/stri_locale_list.Rd
@@ -109,7 +109,7 @@ e62f5b726e95f761ea8096ff8d9273ad *man/stri_locate.Rd
 d79eef6d3e2df3a26879b9be6560e804 *man/stri_locate_boundaries.Rd
 eb0c5404ecc362b41002d5fcef9ecf09 *man/stri_match.Rd
 271ea6b77e95c62934897fdc350c542d *man/stri_na2empty.Rd
-5d875353f4d641f44767823cae7b04af *man/stri_numbytes.Rd
+5f6a23ca9a33925decc31e2b439281da *man/stri_numbytes.Rd
 9c96f754fe30169e399954a06de8d858 *man/stri_opts_brkiter.Rd
 2d399c2525262543bad90715db294bff *man/stri_opts_collator.Rd
 5e9fba621a6b886e5591e648e97b131e *man/stri_opts_fixed.Rd
@@ -144,7 +144,7 @@ eb7a3e54d887d0890d0ec0d1bbfb7ea6 *man/stri_trans_nf.Rd
 f3f5b310309644d7ff9337ba816a7b41 *man/stri_trim.Rd
 62b1c57ffc343353e65b8d2d3d55a955 *man/stri_unescape_unicode.Rd
 44ab25c42385d0b538840310d652b2f3 *man/stri_unique.Rd
-caf2b2c5fc42cabffba6a2ae9d371252 *man/stri_width.Rd
+1653ec6db02c58d7fb2784b794634b6e *man/stri_width.Rd
 97abe47392cd57a37c9d098100f41211 *man/stri_wrap.Rd
 31afcd570890fc4d3ad70a522849a93b *man/stri_write_lines.Rd
 65895720ed65bfa6de02b0ab45479938 *man/stringi-arguments.Rd
@@ -1209,6 +1209,8 @@ e424267b5c10e0a5e3a10d0947d937fe *src/icu61/common/uvectr64.cpp
 3e798bf3dfdec25b27d12b3696b629ed *src/icu61/common/uvectr64.h
 207f862c23b5049144b28c94c9464c80 *src/icu61/common/wintz.cpp
 04dd76f6214720f0b7f3df4017642098 *src/icu61/common/wintz.h
+63752c57bd0b365c9af9f427ef79c819 *src/icu61/data/LICENSE
+6d14e059b26606f08bad3b41eb3b5c93 *src/icu61/data/icudt61l.zip
 43cdfe1c01720baf312fdb055d968775 *src/icu61/i18n/affixpatternparser.cpp
 678a92091f494e04a998898fae8e6b49 *src/icu61/i18n/affixpatternparser.h
 36e13ec0c910539ea0f11edefdf0b971 *src/icu61/i18n/alphaindex.cpp
@@ -1891,4 +1893,4 @@ b3a9037ac7945a82bbc6406457bf8c74 *src/stri_trans_transliterate.cpp
 b247553b0afead8c6407f54c199abd3f *src/stri_uloc.cpp
 8ae2c03485913996d36a769d74aea535 *src/stri_utils.cpp
 55110e1f35df17cbccd878bcaf8e2982 *src/stri_wrap.cpp
-2492144790eb386c81a81ffcc8626d00 *src/uconfig_local.h.in
+475cda9241c7decc448eb1153d7b883a *src/uconfig_local.h.in
