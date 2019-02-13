@@ -21,12 +21,12 @@ or nonincreasing (\code{TRUE})?}
 \item{na_last}{a single logical value; controls the treatment of \code{NA}s
 in \code{str}. If \code{TRUE}, then missing values in \code{str} are put
 at the end; if \code{FALSE}, they are put at the beginning;
-if \code{NA}, then they are removed from the output.}
+if \code{NA}, then they are removed from the output}
 
 \item{...}{additional settings for \code{opts_collator}}
 
-\item{opts_collator}{a named list with \pkg{ICU} Collator's options
-as generated with \code{\link{stri_opts_collator}}, \code{NULL}
+\item{opts_collator}{a named list with \pkg{ICU} Collator's options,
+see \code{\link{stri_opts_collator}}, \code{NULL}
 for default collation options}
 }
 \value{
@@ -34,10 +34,10 @@ For \code{stri_order}, an integer vector that gives the sort order
 is returned.
 
 For \code{stri_order}, you get a sorted version of \code{str},
-i.e. a character vector.
+i.e., a character vector.
 }
 \description{
-\link{stri_order} determines a permutation which rearranges
+\link{stri_order} finds a permutation which rearranges
 strings into an ascending or descending order.
 \link{stri_sort} sorts the vector according to a lexicographic order.
 }
@@ -45,12 +45,9 @@ strings into an ascending or descending order.
 For more information on \pkg{ICU}'s Collator and how to tune it up
 in \pkg{stringi}, refer to \code{\link{stri_opts_collator}}.
 
-These functions use a stable sort algorithm (\pkg{STL}'s stable_sort),
+These functions use a stable sort algorithm (\pkg{STL}'s \code{stable_sort}),
 which performs up to \eqn{N*log^2(N)} element comparisons,
 where \eqn{N} is the length of \code{str}.
-
-Interestingly, our benchmarks indicate that \code{stri_order}
-is most often faster that \R's \code{order}.
 }
 \examples{
 stri_sort(c("hladny", "chladny"), locale="pl_PL")
@@ -77,3 +74,4 @@ Other locale_sensitive: \code{\link{\%s<\%}},
   \code{\link{stringi-search-boundaries}},
   \code{\link{stringi-search-coll}}
 }
+\concept{locale_sensitive}

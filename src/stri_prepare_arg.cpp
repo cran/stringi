@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2018, Marek Gagolewski and other contributors.
+ * Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@
  * or character vector argument
  *
  * Useful when dealing with raw data, like in string encoding
- * conversion or detection. For use e.g. with StriContainerListRaw.
+ * conversion or detection. For use, e.g., with StriContainerListRaw.
  *
  * If the object cannot be coerced, then an error will be generated
  *
@@ -80,7 +80,7 @@ SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
 /**
  * Prepare list of integer vectors or an integer vector argument
  *
- *  For use e.g. with StriContainerListInt.
+ *  For use, e.g., with StriContainerListInt.
  *
  * If the object cannot be coerced, then an error will be generated
  *

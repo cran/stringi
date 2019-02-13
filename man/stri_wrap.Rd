@@ -4,10 +4,10 @@
 \alias{stri_wrap}
 \title{Word Wrap Text to Format Paragraphs}
 \usage{
-stri_wrap(str, width = floor(0.9 * getOption("width")), cost_exponent = 2,
-  simplify = TRUE, normalize = TRUE, indent = 0, exdent = 0,
-  prefix = "", initial = prefix, whitespace_only = FALSE,
-  use_length = FALSE, locale = NULL)
+stri_wrap(str, width = floor(0.9 * getOption("width")),
+  cost_exponent = 2, simplify = TRUE, normalize = TRUE, indent = 0,
+  exdent = 0, prefix = "", initial = prefix,
+  whitespace_only = FALSE, use_length = FALSE, locale = NULL)
 }
 \arguments{
 \item{str}{character vector of strings to reformat}
@@ -34,7 +34,7 @@ of subsequent lines in paragraphs}
 \item{prefix, initial}{single strings; \code{prefix} is used as prefix for each
 line except the first, for which \code{initial} is utilized}
 
-\item{whitespace_only}{single logical value; allow breaks only at whitespaces?
+\item{whitespace_only}{single logical value; allow breaks only at white-spaces?
 if \code{FALSE}, \pkg{ICU}'s line break iterator is used to split text
 into words, which is suitable for natural language processing}
 
@@ -51,16 +51,16 @@ Otherwise, you will get a list of \code{length(str)} character vectors.
 }
 \description{
 This function breaks text paragraphs into lines,
-of total width - if it is possible - of at most given \code{width}.
+of total width (if it is possible) at most given \code{width}.
 }
 \details{
 Vectorized over \code{str}.
 
 If \code{whitespace_only} is \code{FALSE},
 then \pkg{ICU}'s line-\code{BreakIterator} is used to determine
-text boundaries at which a line break is possible.
+text boundaries where a line break is possible.
 This is a locale-dependent operation.
-Otherwise, the breaks are only at whitespaces.
+Otherwise, the breaks are only at white-spaces.
 
 Note that Unicode code points may have various widths when
 printed on the console and that the function takes that by default
@@ -73,12 +73,12 @@ If \code{normalize} is \code{FALSE},
 then multiple white spaces between the word boundaries are
 preserved within each wrapped line.
 In such a case, none of the strings can contain \code{\\r}, \code{\\n},
-or other new line characters, otherwise you will get at error.
+or other new line characters, otherwise you will get an error.
 You should split the input text into lines
-or e.g. substitute line breaks with spaces
+or, for example, substitute line breaks with spaces
 before applying this function.
 
-On the other hand, if \code{normalize} is \code{TRUE}, then
+If \code{normalize} is \code{TRUE}, then
 all consecutive white space (ASCII space, horizontal TAB, CR, LF)
 sequences are replaced with single ASCII spaces
 before actual string wrapping. Moreover, \code{\link{stri_split_lines}}
@@ -138,3 +138,5 @@ Other text_boundaries: \code{\link{stri_count_boundaries}},
   \code{\link{stringi-search-boundaries}},
   \code{\link{stringi-search}}
 }
+\concept{locale_sensitive}
+\concept{text_boundaries}

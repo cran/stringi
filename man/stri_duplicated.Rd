@@ -13,13 +13,13 @@ stri_duplicated_any(str, fromLast = FALSE, ..., opts_collator = NULL)
 \item{str}{a character vector}
 
 \item{fromLast}{a single logical value;
-indicating whether duplication should be considered from the
-reverse side}
+indicates whether search should be performed from the last to the
+first string}
 
 \item{...}{additional settings for \code{opts_collator}}
 
-\item{opts_collator}{a named list with \pkg{ICU} Collator's options
-as generated with \code{\link{stri_opts_collator}}, \code{NULL}
+\item{opts_collator}{a named list with \pkg{ICU} Collator's options,
+see \code{\link{stri_opts_collator}}, \code{NULL}
 for default collation options}
 }
 \value{
@@ -47,7 +47,7 @@ these functions test for canonical equivalence of strings
 Such operations are locale-dependent.
 Hence, \code{stri_duplicated} and \code{stri_duplicated_any}
 are significantly slower (but much better suited for natural language
-processing) than their base R counterpart.
+processing) than their base R counterparts.
 
 See also \code{\link{stri_unique}} for extracting unique elements.
 }
@@ -101,3 +101,4 @@ Other locale_sensitive: \code{\link{\%s<\%}},
   \code{\link{stringi-search-boundaries}},
   \code{\link{stringi-search-coll}}
 }
+\concept{locale_sensitive}

@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2018, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-209, Marek Gagolewski and other contributors.
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -50,11 +50,11 @@
 # will not be available. icudt size is approx. 10-30 MB.
 #
 # \code{stri_install_check()} tests whether some ICU services
-# are available. If they are not, it is most likely due to
+# are available. If this is not the case, it is most likely due to
 # unavailable ICU data library.
 #
 # \code{stri_install_icudt()} downloads and installs the ICU data library
-# specific for your platform (little/big-endian). The downloaded
+# specific to your platform (little/big-endian). The downloaded
 # file will be decompressed into the directory where the package has been
 # installed, see \code{\link{find.package}}, so make sure
 # you have sufficient write permissions.
@@ -111,22 +111,22 @@ stri_install_check <- function(silent=FALSE) {
 icudt_fname <- c("little55"="icudt55l.zip",
                  "big55"   ="icudt55b.zip",
                  "little61"="icudt61l.zip",
-                 "big61"   =NA
+                 "big61"   ="icudt61b.zip"
                  )
 
 icudt_md5ex <- c("little55"="ff345529f230cc39bb8d450af0607708",
                  "big55"   ="1194f0dd879d3c1c1f189cde5fd90efe",
                  "little61"="6d14e059b26606f08bad3b41eb3b5c93",
-                 "big61"   =NA
+                 "big61"   ="45719f3208b2d67132efa620cecccb56"
                  )
 
 icudt_mirrors <- c(
                    "http://www.ibspan.waw.pl/~gagolews/stringi/",
-                   "http://www.gagolewski.com/software/stringi/",
                    "https://raw.githubusercontent.com/gagolews/stringi/master/src/icu61/data/",
                    "https://raw.githubusercontent.com/gagolews/stringi/master/src/icu55/data/",
                    "http://raw.githubusercontent.com/gagolews/stringi/master/src/icu61/data/",
-                   "http://raw.githubusercontent.com/gagolews/stringi/master/src/icu55/data/"
+                   "http://raw.githubusercontent.com/gagolews/stringi/master/src/icu55/data/",
+                   "http://www.gagolewski.com/software/stringi/"
                    )
 
 

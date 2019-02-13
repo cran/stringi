@@ -3,11 +3,14 @@
 \name{stri_sub}
 \alias{stri_sub}
 \alias{stri_sub<-}
+\alias{stri_sub_replace}
 \title{Extract a Substring From or Replace a Substring In a Character Vector}
 \usage{
 stri_sub(str, from = 1L, to = -1L, length)
 
 stri_sub(str, from = 1L, to = -1L, length, omit_na=FALSE) <- value
+
+stri_sub_replace(str, from = 1L, to = -1L, length, omit_na=FALSE, value)
 }
 \arguments{
 \item{str}{character vector}
@@ -29,12 +32,13 @@ provided will result in an unchanged input; replacement function only}
 
 The extract function \code{stri_sub} returns the indicated substrings.
 The replacement function \code{stri_sub<-} is invoked for its
-side effect: after a call, \code{str} is modified.
+side effect: once it is called, \code{str} is modified.
 }
 \description{
-The first function extracts substrings under code point-based
-index ranges provided. The second one allows to substitute parts of
-a string with given strings.
+\code{stri_sub} extracts substrings under code point-based
+index ranges provided. Its replacement version allows to substitute parts of
+a string with given strings. \code{stri_sub_replace} is its magrittr's
+pipe-operator- friendly version.
 }
 \details{
 Vectorized over \code{str}, [\code{value}], \code{from} and
@@ -46,27 +50,27 @@ If \code{from} is a two-column matrix, then the first column is used
 as \code{from} and the second one as \code{to}. In such case arguments
 \code{to} and \code{length} are ignored.
 
-Of course, the indices are code point-based, and not byte-based.
+Naturally, the indexes are code point-based, and not byte-based.
 Note that for some Unicode strings, the extracted substrings may not
 be well-formed, especially if the input is not NFC-normalized
 (see \code{\link{stri_trans_nfc}}),
 includes byte order marks, Bidirectional text marks, and so on.
 Handle with care.
 
-Indices are 1-based, i.e., an index equal to 1 denotes the first character
+Indexes are 1-based, i.e., an index equal to 1 denotes the first character
 in a string, which gives a typical \R look-and-feel.
 Argument \code{to} defines the last index of the substring, inclusive.
 
-For negative indices in \code{from} or \code{to},
+For negative indexes in \code{from} or \code{to},
 counting starts at the end of the string.
 For instance, index -1 denotes the last code point in the string.
 Non-positive \code{length} gives an empty string.
 
 
-In \code{stri_sub}, out-of-bound indices are silently
+In \code{stri_sub}, out-of-bound indexes are silently
 corrected. If \code{from} > \code{to}, then an empty string is returned.
 
-In \code{stri_sub<-}, some configurations of indices may work as
+In \code{stri_sub<-}, some configurations of indexes may work as
 string concatenation at the front, back, or middle.
 }
 \examples{
@@ -82,8 +86,11 @@ stri_sub(s, -5, length=4)
 
 x <- c("a;b", "c:d")
 (stri_sub(x, stri_locate_first_fixed(x, ";"), omit_na=TRUE) <- "_")
+
+\dontrun{x \%>\% stri_sub_replace(1, 5, value="new_substring")}
 }
 \seealso{
 Other indexing: \code{\link{stri_locate_all_boundaries}},
   \code{\link{stri_locate_all}}
 }
+\concept{indexing}

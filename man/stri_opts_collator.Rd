@@ -49,7 +49,7 @@ Returns a named list object; missing settings are left with default values.
 }
 \description{
 A convenience function to tune the \pkg{ICU} Collator's behavior,
-e.g. in \code{\link{stri_compare}}, \code{\link{stri_order}},
+e.g., in \code{\link{stri_compare}}, \code{\link{stri_order}},
 \code{\link{stri_unique}}, \code{\link{stri_duplicated}},
 as well as \code{\link{stri_detect_coll}}
 and other \link{stringi-search-coll} functions.
@@ -105,3 +105,5 @@ Other locale_sensitive: \code{\link{\%s<\%}},
 Other search_coll: \code{\link{stringi-search-coll}},
   \code{\link{stringi-search}}
 }
+\concept{locale_sensitive}
+\concept{search_coll}

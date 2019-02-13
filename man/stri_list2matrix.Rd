@@ -41,7 +41,7 @@ and \code{result[i,j] == fill} otherwise, see Examples.
 If \code{byrow} is \code{TRUE}, then the resulting matrix is
 a transposition of the above-described one.
 
-This function may be useful e.g. in connection with \code{\link{stri_split}}
+This function may be useful, e.g., in connection with \code{\link{stri_split}}
 and \code{\link{stri_extract_all}}.
 }
 \examples{
@@ -59,3 +59,4 @@ stri_list2matrix(list("a", c("b", "c")), fill="", n_min=5)
 Other utils: \code{\link{stri_na2empty}},
   \code{\link{stri_remove_empty}}
 }
+\concept{utils}

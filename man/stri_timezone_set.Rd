@@ -21,9 +21,10 @@ with the current default time zone.
 }
 \description{
 \code{stri_timezone_set} changes the current default time zone for all functions
-in the \pkg{stringi} package, i.e. establishes the meaning of the
+in the \pkg{stringi} package, i.e., establishes the meaning of the
 ``\code{NULL} time zone'' argument to date/time processing functions.
-On the other hand, \code{stri_timezone_get} gets the current default time zone.
+
+\code{stri_timezone_get} gets the current default time zone.
 
 For more information on time zone representation in \pkg{ICU}
 and \pkg{stringi}, refer to \code{\link{stri_timezone_list}}.
@@ -59,3 +60,5 @@ Other datetime: \code{\link{stri_datetime_add}},
 Other timezone: \code{\link{stri_timezone_info}},
   \code{\link{stri_timezone_list}}
 }
+\concept{datetime}
+\concept{timezone}

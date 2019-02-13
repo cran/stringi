@@ -28,7 +28,7 @@ Manual pages on general topics:
    information on encoding management in \pkg{stringi}, as well as
    on encoding detection and conversion.
 
-\item \link{stringi-locale} -- locale issues, including  locale
+\item \link{stringi-locale} -- locale issues, including locale
    management and specification in \pkg{stringi}, and the list of
    locale-sensitive operations. In particular, see
    \code{\link{stri_opts_collator}} for a description of the string
@@ -49,12 +49,12 @@ these include pattern searching, matching, string splitting, and so on.
 The following independent search engines are provided:
 \itemize{
 \item \link{stringi-search-regex} -- with ICU (Java-like) regular expressions,
-\item \link{stringi-search-fixed} -- fast, locale-independent, bytewise pattern
+\item \link{stringi-search-fixed} -- fast, locale-independent, byte-wise pattern
    matching,
 \item \link{stringi-search-coll} -- locale-aware pattern matching
    for natural language processing tasks,
 \item \link{stringi-search-charclass} -- seeking elements of
-   particular character classes, like ``all whitespaces'' or ``all digits'',
+   particular character classes, like ``all whites-paces'' or ``all digits'',
 \item \link{stringi-search-boundaries} -- text boundary analysis.
 }
 
@@ -86,8 +86,8 @@ Additionally, \code{\link{stri_wrap}} wraps text into lines.
 \item \code{\link{stri_trans_tolower}} (among others) for case mapping,
 i.e., conversion to lower, UPPER, or Title Case,
 \code{\link{stri_trans_nfc}} (among others) for Unicode normalization,
-\code{\link{stri_trans_char}} for translating invidual code points,
-and \code{\link{stri_trans_general}} for other very general yet powerful
+\code{\link{stri_trans_char}} for translating individual code points,
+and \code{\link{stri_trans_general}} for other universal yet powerful
 text transforms, including transliteration.
 
 \item \code{\link{stri_cmp}}, \code{\link{\%s<\%}}, \code{\link{stri_order}},
@@ -99,7 +99,7 @@ locale-aware operations, see also \link{stringi-locale}.
 to split a string into text lines.
 
 \item \code{\link{stri_escape_unicode}} (among others) for escaping
-certain code points.
+some code points.
 
 \item \code{\link{stri_rand_strings}}, \code{\link{stri_rand_shuffle}},
 and \code{\link{stri_rand_lipsum}} for generating (pseudo)random strings.
@@ -143,3 +143,4 @@ ICU4C was developed by IBM and others.
 The Unicode Character Database is due to Unicode, Inc.;
 see the COPYRIGHTS file for more details.
 }
+\concept{stringi_general_topics}

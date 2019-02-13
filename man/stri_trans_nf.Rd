@@ -40,7 +40,7 @@ stri_trans_isnfkc_casefold(str)
 The \code{stri_trans_nf*} functions return a character vector
 of the same length as input (the output is always in UTF-8).
 
-On the other hand, \code{stri_trans_isnf*} return a logical vector.
+\code{stri_trans_isnf*} return a logical vector.
 }
 \description{
 These functions convert strings to NFC, NFKC, NFD, NFKD, or NFKC_Casefold
@@ -48,7 +48,7 @@ Unicode Normalization Form or check whether strings are normalized.
 }
 \details{
 Unicode Normalization Forms are formally defined normalizations of Unicode
-strings which e.g. make possible to determine whether any two
+strings which, e.g., make possible to determine whether any two
 strings are equivalent.
 Essentially, the Unicode Normalization Algorithm puts all combining
 marks in a specified order, and uses rules for decomposition
@@ -75,7 +75,7 @@ that a string is in NFC, see RFC\#5198.
 
 As usual in \pkg{stringi},
 if the input character vector is in the native encoding,
-it will be converted to UTF-8 automatically.
+it will be automatically converted to UTF-8.
 
 For more general text transforms refer to \code{\link{stri_trans_general}}.
 }
@@ -107,3 +107,4 @@ Other transform: \code{\link{stri_trans_char}},
   \code{\link{stri_trans_list}},
   \code{\link{stri_trans_tolower}}
 }
+\concept{transform}

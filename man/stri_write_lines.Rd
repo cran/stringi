@@ -18,7 +18,7 @@ the current default one}
 \item{sep}{newline separator}
 }
 \value{
-This function does not return anything interesting
+This function returns nothing noteworthy.
 }
 \description{
 Writes a text file such that each element of a given
@@ -37,3 +37,4 @@ thus, it is the default one for the output.
 Other files: \code{\link{stri_read_lines}},
   \code{\link{stri_read_raw}}
 }
+\concept{files}

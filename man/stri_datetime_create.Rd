@@ -33,10 +33,10 @@ may be specified by setting \code{@calendar=name} keyword}
 Returns an object of class \code{\link{POSIXct}}.
 }
 \description{
-This function constructs date-time objects from numeric representations.
+Constructs date-time objects from numeric representations.
 }
 \details{
-Vectorized over \code{year}, \code{month}, \code{hour},
+Vectorized over \code{year}, \code{month}, \code{day}, \code{hour},
 \code{hour}, \code{minute}, and \code{second}.
 }
 \examples{
@@ -57,3 +57,4 @@ Other datetime: \code{\link{stri_datetime_add}},
   \code{\link{stri_timezone_info}},
   \code{\link{stri_timezone_list}}
 }
+\concept{datetime}

@@ -35,7 +35,7 @@ daylight savings time in the current Gregorian calendar year).
 Provides some basic information on a given time zone identifier.
 }
 \details{
-With this function you may fetch some basic information
+Used to fetch basic information
 on any supported time zone.
 
 For more information on time zone representation in \pkg{ICU},
@@ -63,3 +63,5 @@ Other datetime: \code{\link{stri_datetime_add}},
 Other timezone: \code{\link{stri_timezone_get}},
   \code{\link{stri_timezone_list}}
 }
+\concept{datetime}
+\concept{timezone}

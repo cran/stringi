@@ -32,7 +32,7 @@ containing kana characters}
 containing ideographic characters}
 
 \item{skip_line_soft}{logical; perform no action for soft line breaks,
-i.e. positions at which a line break is acceptable but not required}
+i.e., positions where a line break is acceptable but not required}
 
 \item{skip_line_hard}{logical; perform no action for hard,
 or mandatory line breaks}
@@ -59,7 +59,7 @@ in some text boundary analysis functions, see
 }
 \details{
 The \code{skip_*} family of settings may be used to prevent performing
-any special actions on particular types of text boundaries, e.g.
+any special actions on particular types of text boundaries, e.g.,
 in case of the \code{\link{stri_locate_all_boundaries}} and
 \code{\link{stri_split_boundaries}} functions.
 
@@ -86,3 +86,4 @@ Other text_boundaries: \code{\link{stri_count_boundaries}},
   \code{\link{stringi-search-boundaries}},
   \code{\link{stringi-search}}
 }
+\concept{text_boundaries}

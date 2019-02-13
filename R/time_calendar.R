@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2018, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -33,10 +33,10 @@
 #' Create a Date-Time Object
 #'
 #' @description
-#' This function constructs date-time objects from numeric representations.
+#' Constructs date-time objects from numeric representations.
 #'
 #' @details
-#' Vectorized over \code{year}, \code{month}, \code{hour},
+#' Vectorized over \code{year}, \code{month}, \code{day}, \code{hour},
 #' \code{hour}, \code{minute}, and \code{second}.
 #'
 #' @param year integer vector; 0 is 1BC, -1 is 2BC, etc.
@@ -72,7 +72,7 @@ stri_datetime_create <- function(year, month, day, hour=12L, minute=0L, second=0
 #' Get Current Date and Time
 #'
 #' @description
-#' Returns current date and time.
+#' Returns the current date and time.
 #'
 #' @details
 #' The current date and time in \pkg{stringi} is represented as the (signed)
@@ -93,7 +93,7 @@ stri_datetime_now <- function() {
 #' Get Values for Date and Time Fields
 #'
 #' @description
-#' Calculates and returns values for all date and time fields.
+#' Computes and returns values for all date and time fields.
 #'
 #' @details
 #' Vectorized over \code{time}.
@@ -103,14 +103,14 @@ stri_datetime_now <- function() {
 #' @param tz \code{NULL} or \code{""} for the default time zone or
 #' a single string with time zone identifier, see \code{\link{stri_timezone_list}}
 #' @param locale \code{NULL} or \code{""} for the current default locale,
-#' or a single string with locale identifier; a non-Gregorian calendar
+#' or a single string with a locale identifier; a non-Gregorian calendar
 #' may be specified by setting \code{@@calendar=name} keyword
 #'
 #' @return
 #' Returns a data frame with the following columns:
 #' \enumerate{
 #' \item Year (0 is 1BC, -1 is 2BC, etc.)
-#' \item Month (1-based, i.e. 1 stands for the first month, e.g. January;
+#' \item Month (1-based, i.e., 1 stands for the first month, e.g., January;
 #' note that the number of months depends on the selected calendar,
 #' see \code{\link{stri_datetime_symbols}})
 #' \item Day
@@ -156,7 +156,7 @@ stri_datetime_fields <- function(time, tz=attr(time, "tzone"), locale=NULL) {
 #' Vectorized over \code{time} and \code{value}.
 #'
 #'
-#' Note that e.g. January, 31 + 1 month = February, 28 or 29.
+#' Note that, e.g., January, 31 + 1 month = February, 28 or 29.
 #'
 #' @param time an object of class \code{\link{POSIXct}} or an object coercible to
 #' @param value integer vector; signed number of units to add to \code{time}
@@ -217,15 +217,15 @@ stri_datetime_add <- function(time, value=1L, units="seconds", tz=NULL, locale=N
 # #' inherits from (for compatibility with other base R functions)
 # #' \code{POSIXct} and \code{POSIX} classes.
 # #' In fact, it is a numeric vector representing the (signed) number of seconds
-# #' since the UNIX Epoch, i.e. 1970-01-01 00:00:00 UTC.
+# #' since the UNIX Epoch, i.e., 1970-01-01 00:00:00 UTC.
 # #' UTC leap seconds are ignored.
 # #'
-# #' Thanks to this property, standard comparison operators, e.g. \code{<}, \code{==},
+# #' Thanks to this property, standard comparison operators, e.g., \code{<}, \code{==},
 # #' etc. or the \code{sort()} function may be used.
 # #'
 # #' An object of class \code{\link{POSIXst}} may be equipped with
 # #' an attribute called \code{tzone}. Its value is used for date/time
-# #' formatting (e.g. when objects are printed in the console),
+# #' formatting (e.g., when objects are printed in the console),
 # #' see \code{\link{format.POSIXst}} and \code{\link{stri_datetime_fields}}.
 # #'
 # #' @param x ...

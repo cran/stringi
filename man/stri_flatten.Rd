@@ -4,7 +4,8 @@
 \alias{stri_flatten}
 \title{Flatten a String}
 \usage{
-stri_flatten(str, collapse = "", na_empty = FALSE, omit_empty = FALSE)
+stri_flatten(str, collapse = "", na_empty = FALSE,
+  omit_empty = FALSE)
 }
 \arguments{
 \item{str}{a vector of strings to be coerced to character}
@@ -28,7 +29,7 @@ Joins the elements of a character vector into one string.
 The \code{stri_flatten(str, collapse='XXX')} call
 is equivalent to \code{\link{paste}(str, collapse='XXX', sep="")}.
 
-If you wish to use some more fancy (e.g. differing)
+If you wish to use some more fancy (e.g., differing)
 separators between flattened strings,
 call \code{\link{stri_join}(str, separators, collapse='')}.
 
@@ -48,3 +49,4 @@ stri_flatten(c(NA, "", "A", "", "B", NA, "C"), collapse=",", na_empty=TRUE, omit
 Other join: \code{\link{stri_dup}},
   \code{\link{stri_join_list}}, \code{\link{stri_join}}
 }
+\concept{join}

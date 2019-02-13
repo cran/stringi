@@ -1,5 +1,5 @@
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
 #'
 #' @details
 #' Unicode Normalization Forms are formally defined normalizations of Unicode
-#' strings which e.g. make possible to determine whether any two
+#' strings which, e.g., make possible to determine whether any two
 #' strings are equivalent.
 #' Essentially, the Unicode Normalization Algorithm puts all combining
 #' marks in a specified order, and uses rules for decomposition
@@ -65,7 +65,7 @@
 #'
 #' As usual in \pkg{stringi},
 #' if the input character vector is in the native encoding,
-#' it will be converted to UTF-8 automatically.
+#' it will be automatically converted to UTF-8.
 #'
 #' For more general text transforms refer to \code{\link{stri_trans_general}}.
 #'
@@ -75,7 +75,7 @@
 #' @return The \code{stri_trans_nf*} functions return a character vector
 #' of the same length as input (the output is always in UTF-8).
 #'
-#' On the other hand, \code{stri_trans_isnf*} return a logical vector.
+#' \code{stri_trans_isnf*} return a logical vector.
 #'
 #' @references
 #' \emph{Unicode Normalization Forms} -- Unicode Standard Annex #15,

@@ -23,7 +23,7 @@ Returns an integer vector with the following named elements:
 }
 \description{
 This function gives LaTeX-oriented statistics for a character vector,
-e.g. obtained by loading a text file with the
+e.g., obtained by loading a text file with the
 \code{\link{readLines}} function, where each text line
 is represented by a separate string.
 }
@@ -41,3 +41,4 @@ stri_stats_latex(s)
 \seealso{
 Other stats: \code{\link{stri_stats_general}}
 }
+\concept{stats}
