@@ -41,20 +41,32 @@ If \code{collapse} or \code{sep} has length greater than 1,
 then only the first string will be used.
 }
 \examples{
-stri_join_list(stri_extract_all_words(c("Lorem ipsum dolor sit amet.",
-"Get a life.")), sep=", ")
+stri_join_list(
+   stri_extract_all_words(c("Lorem ipsum dolor sit amet.",
+   "Spam spam bacon sausage and spam.")),
+sep=", ")
 
-stri_join_list(stri_extract_all_words(c("Lorem ipsum dolor sit amet.",
-"Get a life.")), sep=", ", collapse=". ")
+stri_join_list(
+   stri_extract_all_words(c("Lorem ipsum dolor sit amet.",
+   "Spam spam bacon sausage and spam.")),
+sep=", ", collapse=". ")
 
-stri_join_list(stri_extract_all_regex(c("R is OK.", "123 456", "Hey!"), "\\\\p{L}+"), " ")
+stri_join_list(
+   stri_extract_all_regex(
+      c("spam spam bacon", "123 456", "spam 789 sausage"), "\\\\p{L}+"
+   ),
+sep=",")
 
-stri_join_list(stri_extract_all_regex(c("R is OK.", "123 456", "Hey!"),
-"\\\\p{L}+", omit_no_match=TRUE), " ", " -- ")
+stri_join_list(
+   stri_extract_all_regex(
+      c("spam spam bacon", "123 456", "spam 789 sausage"), "\\\\p{L}+",
+      omit_no_match=TRUE
+   ),
+sep=",", collapse="; ")
 
 }
 \seealso{
-Other join: \code{\link{stri_dup}},
+Other join: \code{\link{\%s+\%}}, \code{\link{stri_dup}},
   \code{\link{stri_flatten}}, \code{\link{stri_join}}
 }
 \concept{join}

@@ -57,14 +57,14 @@
 #' and \code{\link{stri_extract_all}}.
 #'
 #' @param x a list of atomic vectors
-#' @param byrow single logical value; should the resulting matrix be
+#' @param byrow a single logical value; should the resulting matrix be
 #' transposed?
-#' @param fill single string, see Details
-#' @param n_min single integer value; minimal number of rows (\code{byrow==FALSE})
+#' @param fill a single string, see Details
+#' @param n_min a single integer value; minimal number of rows (\code{byrow==FALSE})
 #' or columns (otherwise) in the resulting matrix
 #'
 #' @return
-#' Always returns a character matrix.
+#' Returns a character matrix.
 #'
 #' @examples
 #' simplify2array(list(c("a", "b"), c("c", "d"), c("e", "f")))
@@ -84,15 +84,16 @@ stri_list2matrix <- function(x, byrow=FALSE, fill=NA_character_, n_min=0) {
 
 
 #' @title
-#' Replace NAs with empty strings
+#' Replace NAs with Empty Strings
 #'
 #' @description
 #' This function replaces all missing values with empty strings.
+#' See \code{\link{stri_replace_na}} for a generalization.
 #'
 #' @param x a character vector
 #'
 #' @return
-#' Always returns a character vector.
+#' Returns a character vector.
 #'
 #' @examples
 #' stri_na2empty(c("a", NA, "", "b"))
@@ -106,27 +107,97 @@ stri_na2empty <- function(x) {
 }
 
 #' @title
-#' Remove all empty strings from a character vector
+#' Remove All Empty Strings from a Character Vector
 #'
 #' @description
-#' This function removes all empty strings from a character vector.
+#' \code{stri_remove_empty} (alias \code{stri_omit_empty})
+#' removes all empty strings from a character vector,
+#' and, if \code{na_empty} is \code{TRUE}, also gets rid of all missing
+#' values.
+#'
+#' \code{stri_remove_empty_na} (alias \code{stri_omit_empty_na})
+#' removes both empty strings and missing values.
+#'
+#' \code{stri_remove_na} (alias \code{stri_omit_na})
+#' returns a version of \code{x} with missing values removed.
 #'
 #' @param x a character vector
 #' @param na_empty should missing values be treated as empty strings?
 #'
 #' @return
-#' Always returns a character vector.
+#' Returns a character vector.
 #'
 #' @examples
 #' stri_remove_empty(stri_na2empty(c("a", NA, "", "b")))
 #' stri_remove_empty(c("a", NA, "", "b"))
 #' stri_remove_empty(c("a", NA, "", "b"), TRUE)
 #'
+#' stri_omit_empty_na(c("a", NA, "", "b"))
+#'
 #' @family utils
+#' @rdname stri_remove_empty
 #' @export
 stri_remove_empty <- function(x, na_empty=FALSE) {
    x <- stri_enc_toutf8(x)
    if (identical(na_empty, TRUE))
-      x[is.na(x)] <- ""
-   x[!stri_isempty(x)]
+      x[!is.na(x) & !stri_isempty(x)]
+   else
+      x[!stri_isempty(x)]
 }
+
+#' @rdname stri_remove_empty
+#' @export
+stri_omit_empty <- stri_remove_empty
+
+#' @rdname stri_remove_empty
+#' @export
+stri_remove_empty_na <- function(x) stri_remove_empty(x, TRUE)
+
+#' @rdname stri_remove_empty
+#' @export
+stri_omit_empty_na <- stri_remove_empty_na
+
+#' @rdname stri_remove_empty
+#' @export
+stri_remove_na <- function(x) {
+   x <- stri_enc_toutf8(x)
+   x[!is.na(x)]
+}
+
+#' @rdname stri_remove_empty
+#' @export
+stri_omit_na <- stri_remove_na
+
+
+#' @title
+#' Replace Missing Values in a Character Vector
+#'
+#' @description
+#' This function gives a convenient way to replace each missing (\code{NA})
+#' value with a given string.
+#'
+#' @details
+#' This function is roughly equivalent to
+#' \code{str2 <- stri_enc_toutf8(str);
+#' str2[is.na(str2)] <- stri_enc_toutf8(replacement);
+#' str2}.
+#' It may be used, e.g., wherever the ``plain \R'' \code{NA} handling is
+#' desired, see Examples.
+#'
+#' @param str character vector or an object coercible to
+#' @param replacement single string
+#'
+#' @return Returns a character vector.
+#'
+#' @examples
+#' x <- c('test', NA)
+#' stri_paste(x, 1:2)                           # "test1" NA
+#' paste(x, 1:2)                                # "test 1" "NA 2"
+#' stri_paste(stri_replace_na(x), 1:2, sep=' ') # "test 1" "NA 2"
+#'
+#' @export
+#' @family utils
+stri_replace_na <- function(str, replacement="NA"){
+   .Call(C_stri_replace_na, str, replacement)
+}
+

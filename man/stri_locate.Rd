@@ -110,10 +110,14 @@ The functions \code{stri_locate_all_*} locate all the matches.
 give the first or the last matches, respectively.
 }
 \details{
-Vectorized over \code{str} and \code{pattern}.
+Vectorized over \code{str} and \code{pattern} (with recycling
+of the elements in the shorter vector if necessary). This allows to,
+for instance, search for one pattern in each given string,
+search for each pattern in one given string,
+and search for the i-th pattern within the i-th string.
 
 The matches may be extracted by calling
-the \code{\link{stri_sub}} function.
+\code{\link{stri_sub}} or \code{\link{stri_sub_all}}.
 Alternatively, you may call \code{\link{stri_extract}} directly.
 
 \code{stri_locate}, \code{stri_locate_all}, \code{stri_locate_first},
@@ -170,7 +174,7 @@ Other search_locate: \code{\link{stri_locate_all_boundaries}},
   \code{\link{stringi-search}}
 
 Other indexing: \code{\link{stri_locate_all_boundaries}},
-  \code{\link{stri_sub}}
+  \code{\link{stri_sub_all}}, \code{\link{stri_sub}}
 }
 \concept{indexing}
 \concept{search_locate}
