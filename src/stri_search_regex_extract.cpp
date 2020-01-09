@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
+ * Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,8 +85,11 @@ SEXP stri__extract_firstlast_regex(SEXP str, SEXP pattern, SEXP opts_regex, bool
 
       int m_start = -1;
       int m_end = -1;
+      int m_res;
       matcher->reset(str_text);
-      if ((int)matcher->find()) { // find first match
+      m_res = (int)matcher->find(status);
+      STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+      if (m_res) { // find first match
          m_start = (int)matcher->start(status); // The **native** position in the input string :-)
          STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
          m_end   = (int)matcher->end(status);
@@ -98,7 +101,10 @@ SEXP stri__extract_firstlast_regex(SEXP str, SEXP pattern, SEXP opts_regex, bool
       }
 
       if (!first) { // continue searching
-         while ((int)matcher->find()) {
+         while (1) {
+            m_res = (int)matcher->find(status);
+            STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+            if (!m_res) break;
             m_start = (int)matcher->start(status);
             m_end   = (int)matcher->end(status);
             STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
@@ -209,7 +215,12 @@ SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP omit_no_
       matcher->reset(str_text);
 
       deque< pair<R_len_t, R_len_t> > occurrences;
-      while ((int)matcher->find()) {
+      int m_res;
+      while (1) {
+         m_res = (int)matcher->find(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+         if (!m_res) break;
+
          occurrences.push_back(pair<R_len_t, R_len_t>(
             (R_len_t)matcher->start(status), (R_len_t)matcher->end(status)
          ));
@@ -240,13 +251,16 @@ SEXP stri_extract_all_regex(SEXP str, SEXP pattern, SEXP simplify, SEXP omit_no_
       str_text = NULL;
    }
 
-   if (LOGICAL(simplify)[0] == NA_LOGICAL) {
-      STRI__PROTECT(ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
-         stri__vector_NA_strings(1), Rf_ScalarInteger(0)))
-   }
-   else if (LOGICAL(simplify)[0]) {
-      STRI__PROTECT(ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
-         stri__vector_empty_strings(1), Rf_ScalarInteger(0)))
+   if (LOGICAL(simplify)[0] == NA_LOGICAL || LOGICAL(simplify)[0]) {
+      SEXP robj_TRUE, robj_zero, robj_na_strings, robj_empty_strings;
+      STRI__PROTECT(robj_TRUE = Rf_ScalarLogical(TRUE));
+      STRI__PROTECT(robj_zero = Rf_ScalarInteger(0));
+      STRI__PROTECT(robj_na_strings = stri__vector_NA_strings(1));
+      STRI__PROTECT(robj_empty_strings = stri__vector_empty_strings(1));
+      STRI__PROTECT(ret = stri_list2matrix(ret, robj_TRUE,
+                                           (LOGICAL(simplify)[0] == NA_LOGICAL)?robj_na_strings
+                                              :robj_empty_strings,
+                                               robj_zero));
    }
 
    STRI__UNPROTECT_ALL

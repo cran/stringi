@@ -146,8 +146,13 @@ SEXP stri_split_regex(SEXP str, SEXP pattern, SEXP n, SEXP omit_empty,
       deque< pair<R_len_t, R_len_t> > fields; // byte based-indices
       fields.push_back(pair<R_len_t, R_len_t>(0,0));
 
-      for (k=1; k < n_cur && (int)matcher->find(); ) {
+      for (k=1; k < n_cur; ) {
+         int m_res = (int)matcher->find(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+         if (!m_res) break;
+
          R_len_t s1 = (R_len_t)matcher->start(status);
+         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
          R_len_t s2 = (R_len_t)matcher->end(status);
          STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
 
@@ -199,10 +204,15 @@ SEXP stri_split_regex(SEXP str, SEXP pattern, SEXP n, SEXP omit_empty,
          if (n_tab[i] != NA_INTEGER && n_min < n_tab[i])
             n_min = n_tab[i];
       }
-      STRI__PROTECT(ret = stri_list2matrix(ret, Rf_ScalarLogical(TRUE),
-         (LOGICAL(simplify)[0] == NA_LOGICAL)?stri__vector_NA_strings(1)
-                                             :stri__vector_empty_strings(1),
-         Rf_ScalarInteger(n_min)))
+      SEXP robj_TRUE, robj_n_min, robj_na_strings, robj_empty_strings;
+      STRI__PROTECT(robj_TRUE = Rf_ScalarLogical(TRUE));
+      STRI__PROTECT(robj_n_min = Rf_ScalarInteger(n_min));
+      STRI__PROTECT(robj_na_strings = stri__vector_NA_strings(1));
+      STRI__PROTECT(robj_empty_strings = stri__vector_empty_strings(1));
+      STRI__PROTECT(ret = stri_list2matrix(ret, robj_TRUE,
+                                           (LOGICAL(simplify)[0] == NA_LOGICAL)?robj_na_strings
+                                              :robj_empty_strings,
+                                               robj_n_min))
    }
 
    STRI__UNPROTECT_ALL
