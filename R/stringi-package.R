@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -32,7 +34,7 @@
 #' @title THE String Processing Package
 #'
 #' @description
-#' \pkg{stringi} is THE \R package for fast, correct, consistent,
+#' \pkg{stringi} is THE R package for fast, correct, consistent,
 #' and convenient string/text manipulation.
 #' It gives predictable results on every platform, in each locale,
 #' and under any ``native'' character encoding.
@@ -40,7 +42,7 @@
 #' \bold{Keywords}: R, text processing, character strings,
 #' internationalization, localization, ICU, ICU4C, i18n, l10n, Unicode.
 #'
-#' \bold{Homepage}: \url{http://www.gagolewski.com/software/stringi/}
+#' \bold{Homepage}: \url{https://stringi.gagolewski.com/}
 #'
 #' \bold{License}: The BSD-3-clause license for the package code,
 #' the ICU license for the accompanying ICU4C distribution,
@@ -50,18 +52,18 @@
 #' @details
 #' Manual pages on general topics:
 #' \itemize{
-#' \item \link{stringi-encoding} -- character encoding issues, including
+#' \item \link{about_encoding} -- character encoding issues, including
 #'    information on encoding management in \pkg{stringi}, as well as
 #'    on encoding detection and conversion.
 #'
-#' \item \link{stringi-locale} -- locale issues, including locale
+#' \item \link{about_locale} -- locale issues, including locale
 #'    management and specification in \pkg{stringi}, and the list of
 #'    locale-sensitive operations. In particular, see
 #'    \code{\link{stri_opts_collator}} for a description of the string
 #'    collation algorithm, which is used for string comparing, ordering,
 #'    sorting, case-folding, and searching.
 #'
-#' \item \link{stringi-arguments} -- information on how \pkg{stringi}
+#' \item \link{about_arguments} -- information on how \pkg{stringi}
 #'    treats its functions' arguments.
 #' }
 #'
@@ -70,18 +72,18 @@
 #'
 #' Refer to the following:
 #' \itemize{
-#' \item \link{stringi-search} for string searching facilities;
+#' \item \link{about_search} for string searching facilities;
 #' these include pattern searching, matching, string splitting, and so on.
 #' The following independent search engines are provided:
 #' \itemize{
-#' \item \link{stringi-search-regex} -- with ICU (Java-like) regular expressions,
-#' \item \link{stringi-search-fixed} -- fast, locale-independent, byte-wise pattern
+#' \item \link{about_search_regex} -- with ICU (Java-like) regular expressions,
+#' \item \link{about_search_fixed} -- fast, locale-independent, byte-wise pattern
 #'    matching,
-#' \item \link{stringi-search-coll} -- locale-aware pattern matching
+#' \item \link{about_search_coll} -- locale-aware pattern matching
 #'    for natural language processing tasks,
-#' \item \link{stringi-search-charclass} -- seeking elements of
+#' \item \link{about_search_charclass} -- seeking elements of
 #'    particular character classes, like ``all whites-paces'' or ``all digits'',
-#' \item \link{stringi-search-boundaries} -- text boundary analysis.
+#' \item \link{about_search_boundaries} -- text boundary analysis.
 #' }
 #'
 #' \item \code{\link{stri_datetime_format}} for date/time formatting
@@ -100,12 +102,12 @@
 #'
 #' \item \code{\link{stri_length}} (among others) for determining the number
 #' of code points in a string. See also \code{\link{stri_count_boundaries}}
-#' for counting the number of \code{Unicode characters}
+#' for counting the number of Unicode characters
 #' and \code{\link{stri_width}} for approximating the width of a string.
 #'
 #' \item \code{\link{stri_trim}} (among others) for
 #' trimming characters from the beginning or/and end of a string,
-#' see also \link{stringi-search-charclass}, and \code{\link{stri_pad}}
+#' see also \link{about_search_charclass}, and \code{\link{stri_pad}}
 #' for padding strings so that they are of the same width.
 #' Additionally, \code{\link{stri_wrap}} wraps text into lines.
 #'
@@ -119,7 +121,7 @@
 #' \item \code{\link{stri_cmp}}, \code{\link{\%s<\%}}, \code{\link{stri_order}},
 #' \code{\link{stri_sort}}, \code{\link{stri_unique}}, and
 #' \code{\link{stri_duplicated}} for collation-based,
-#' locale-aware operations, see also \link{stringi-locale}.
+#' locale-aware operations, see also \link{about_locale}.
 #'
 #' \item \code{\link{stri_split_lines}} (among others)
 #' to split a string into text lines.
@@ -138,26 +140,27 @@
 #' Note that each man page provides many further links to other
 #' interesting facilities and topics.
 #'
-#' @name stringi-package
-#' @rdname stringi-package
-#' @aliases stringi
+#' @name about_stringi
+#' @rdname about_stringi
+#' @aliases about_stringi stringi stringi-package
+#'
 #' @docType package
 #' @author Marek Gagolewski,
-#' with contributions from Bartek Tartanus and others.
+#' with contributions from Bartek Tartanus and many others.
 #' ICU4C was developed by IBM and others.
 #' The Unicode Character Database is due to Unicode, Inc.;
 #' see the COPYRIGHTS file for more details.
 #' @references
-#' \emph{\pkg{stringi} Package homepage}, \url{http://www.gagolewski.com/software/stringi/}
+#' \emph{\pkg{stringi} Package homepage}, \url{https://stringi.gagolewski.com/}
 #'
-#' \emph{ICU -- International Components for Unicode}, \url{http://www.icu-project.org/}
+#' \emph{ICU -- International Components for Unicode}, \url{http://site.icu-project.org/}
 #'
-#' \emph{ICU4C API Documentation}, \url{http://www.icu-project.org/apiref/icu4c/}
+#' \emph{ICU4C API Documentation}, \url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/}
 #'
-#' \emph{The Unicode Consortium}, \url{http://www.unicode.org/}
+#' \emph{The Unicode Consortium}, \url{https://home.unicode.org/}
 #'
 #' \emph{UTF-8, a transformation format of ISO 10646} -- RFC 3629,
-#' \url{http://tools.ietf.org/html/rfc3629}
+#' \url{https://tools.ietf.org/html/rfc3629}
 #'
 #' @family stringi_general_topics
 #' @useDynLib stringi, .registration = TRUE

@@ -48,7 +48,7 @@ then a missing value will indicate that there are no words}
 see \code{\link{stri_opts_brkiter}};
 \code{NULL} for the default break iterator, i.e., \code{line_break}}
 
-\item{locale}{\code{NULL} or \code{""} for text boundary analysis following
+\item{locale}{\code{NULL} or \code{''} for text boundary analysis following
 the conventions of the default locale, or a single string with
 locale identifier, see \link{stringi-locale}}
 }
@@ -88,17 +88,20 @@ to locate the word boundaries, and all non-word characters
 (\code{UBRK_WORD_NONE} rule status) are ignored.
 }
 \examples{
-stri_extract_all_words("stringi: THE string processing package 123.48...")
+stri_extract_all_words('stringi: THE string processing package 123.48...')
 
 }
 \seealso{
 Other search_extract: 
+\code{\link{about_search}},
 \code{\link{stri_extract_all}()},
-\code{\link{stri_match_all}()},
-\code{\link{stringi-search}}
+\code{\link{stri_match_all}()}
 
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -106,25 +109,23 @@ Other locale_sensitive:
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 
 Other text_boundaries: 
+\code{\link{about_search_boundaries}},
+\code{\link{about_search}},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_brkiter}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_split_lines}()},
 \code{\link{stri_trans_tolower}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search}}
+\code{\link{stri_wrap}()}
 }
 \concept{locale_sensitive}
 \concept{search_extract}

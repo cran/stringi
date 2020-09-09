@@ -23,14 +23,14 @@ This function is roughly equivalent to
 \code{str2 <- stri_enc_toutf8(str);
 str2[is.na(str2)] <- stri_enc_toutf8(replacement);
 str2}.
-It may be used, e.g., wherever the ``plain \R'' \code{NA} handling is
+It may be used, e.g., wherever the 'plain R' \code{NA} handling is
 desired, see Examples.
 }
 \examples{
 x <- c('test', NA)
-stri_paste(x, 1:2)                           # "test1" NA
-paste(x, 1:2)                                # "test 1" "NA 2"
-stri_paste(stri_replace_na(x), 1:2, sep=' ') # "test 1" "NA 2"
+stri_paste(x, 1:2)                           # 'test1' NA
+paste(x, 1:2)                                # 'test 1' 'NA 2'
+stri_paste(stri_replace_na(x), 1:2, sep=' ') # 'test 1' 'NA 2'
 
 }
 \seealso{

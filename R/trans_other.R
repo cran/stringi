@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -58,9 +60,9 @@
 #' @export
 #' @family transform
 #' @examples
-#' stri_trans_char("id.123", ".", "_")
-#' stri_trans_char("babaab", "ab", "01")
-#' stri_trans_char("GCUACGGAGCUUCGGAGCUAG", "ACGT", "TGCA")
+#' stri_trans_char('id.123', '.', '_')
+#' stri_trans_char('babaab', 'ab', '01')
+#' stri_trans_char('GCUACGGAGCUUCGGAGCUAG', 'ACGT', 'TGCA')
 stri_trans_char <- function(str, pattern, replacement) {
-   .Call(C_stri_trans_char, str, pattern, replacement)
+    .Call(C_stri_trans_char, str, pattern, replacement)
 }

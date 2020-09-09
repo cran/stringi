@@ -8,11 +8,15 @@ stri_opts_regex(
   case_insensitive,
   comments,
   dotall,
+  dot_all = dotall,
   literal,
   multiline,
+  multi_line = multiline,
   unix_lines,
   uword,
   error_on_unknown_escapes,
+  time_limit = 0L,
+  stack_limit = 0L,
   ...
 )
 }
@@ -24,6 +28,8 @@ stri_opts_regex(
 \item{dotall}{logical;  if set, `\code{.}` matches line terminators,
 otherwise matching of `\code{.}`  stops at a line end [regex flag \code{(?s)}]}
 
+\item{dot_all}{alias of \code{dotall}}
+
 \item{literal}{logical; if set, treat the entire pattern as a literal string:
 metacharacters or escape sequences in the input sequence will be given no special meaning;
 note that in most cases you would rather use the \link{stringi-search-fixed}
@@ -33,6 +39,8 @@ facilities in this case}
 If set, recognize line terminators within a string, otherwise,
  match only at start and end of input string [regex flag \code{(?m)}]}
 
+\item{multi_line}{alias of \code{multiline}}
+
 \item{unix_lines}{logical; Unix-only line endings;
 when enabled, only \code{U+000a} is recognized as a
 line ending by `\code{.}`, `\code{$}`, and `\code{^}`.}
@@ -41,7 +49,7 @@ line ending by `\code{.}`, `\code{$}`, and `\code{^}`.}
 if set, uses the Unicode TR 29 definition of word boundaries;
 warning: Unicode word boundaries are quite different from traditional
 regex word boundaries. [regex flag \code{(?w)}]
-See \url{http://unicode.org/reports/tr29/#Word_Boundaries}}
+See \url{https://unicode.org/reports/tr29/#Word_Boundaries}}
 
 \item{error_on_unknown_escapes}{logical;
 whether to generate an error on unrecognized backslash escapes;
@@ -49,7 +57,17 @@ if set, fail with an error on patterns that contain backslash-escaped ASCII
 letters without a known special meaning;
 otherwise, these escaped letters represent themselves}
 
-\item{...}{any other arguments to this function are purposely ignored}
+\item{time_limit}{integer; processing time limit, in ~milliseconds (but not precisely so,
+depends on the CPU speed), for match operations;
+setting a limit is desirable if poorly written regexes are expected on input;
+0 for no limit}
+
+\item{stack_limit}{integer; maximal size, in bytes, of the heap storage available
+for the match backtracking stack; setting a limit is desirable if poorly
+written regexes are expected on input; 0 for no limit}
+
+\item{...}{[DEPRECATED] any other arguments passed to this function
+generate a warning; this argument will be removed in the future}
 }
 \value{
 Returns a named list object; missing settings are left with default values.
@@ -61,28 +79,28 @@ and other \link{stringi-search-regex} functions.
 }
 \details{
 Note that some regex settings may be changed using ICU regex flags
-inside regexes. For example, \code{"(?i)pattern"} performs
+inside regexes. For example, \code{'(?i)pattern'} performs
 a case-insensitive match of a given pattern,
 see the \pkg{ICU} User Guide entry on Regular Expressions
 in the References section or \link{stringi-search-regex}.
 }
 \examples{
-stri_detect_regex("ala", "ALA") # case-sensitive by default
-stri_detect_regex("ala", "ALA", opts_regex=stri_opts_regex(case_insensitive=TRUE))
-stri_detect_regex("ala", "ALA", case_insensitive=TRUE) # equivalent
-stri_detect_regex("ala", "(?i)ALA") # equivalent
+stri_detect_regex('ala', 'ALA') # case-sensitive by default
+stri_detect_regex('ala', 'ALA', opts_regex=stri_opts_regex(case_insensitive=TRUE))
+stri_detect_regex('ala', 'ALA', case_insensitive=TRUE) # equivalent
+stri_detect_regex('ala', '(?i)ALA') # equivalent
 }
 \references{
 \emph{\code{enum URegexpFlag}: Constants for Regular Expression Match Modes}
 -- ICU4C API Documentation,
-\url{http://www.icu-project.org/apiref/icu4c/uregex_8h.html}
+\url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uregex_8h.html}
 
 \emph{Regular Expressions} -- ICU User Guide,
 \url{http://userguide.icu-project.org/strings/regexp}
 }
 \seealso{
 Other search_regex: 
-\code{\link{stringi-search-regex}},
-\code{\link{stringi-search}}
+\code{\link{about_search_regex}},
+\code{\link{about_search}}
 }
 \concept{search_regex}

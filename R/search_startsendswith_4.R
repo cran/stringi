@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -68,7 +70,7 @@
 #'
 #' Note that testing for a pattern match at the start or end of a string
 #' has not been implemented separately for regex patterns.
-#' For that you may use the "\code{^}" and "\code{$}" meta-characters,
+#' For that you may use the '\code{^}' and '\code{$}' meta-characters,
 #' see \link{stringi-search-regex}.
 #'
 #' @param str character vector
@@ -76,6 +78,8 @@
 #' for more details refer to \link{stringi-search}
 #' @param from integer vector
 #' @param to integer vector
+#' @param negate single logical value; whether a no-match to a pattern
+#'     is rather of interest
 #' @param opts_collator,opts_fixed a named list used to tune up
 #' the search engine's settings; see \code{\link{stri_opts_collator}}
 #' and \code{\link{stri_opts_fixed}}, respectively; \code{NULL}
@@ -88,100 +92,114 @@
 #'
 #'
 #' @examples
-#' stri_startswith_charclass(" trim me! ", "\\p{WSpace}")
-#' stri_startswith_fixed(c("a1", "a2", "b3", "a4", "c5"), "a")
-#' stri_detect_regex(c("a1", "a2", "b3", "a4", "c5"), "^a")
-#' stri_startswith_fixed("ababa", "ba")
-#' stri_startswith_fixed("ababa", "ba", from=2)
-#' stri_startswith_coll(c("a1", "A2", "b3", "A4", "C5"), "a", strength=1)
-#' pat <- stri_paste("\u0635\u0644\u0649 \u0627\u0644\u0644\u0647 ",
-#'                   "\u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645XYZ")
-#' stri_endswith_coll("\ufdfa\ufdfa\ufdfaXYZ", pat, strength=1)
+#' stri_startswith_charclass(' trim me! ', '\\p{WSpace}')
+#' stri_startswith_fixed(c('a1', 'a2', 'b3', 'a4', 'c5'), 'a')
+#' stri_detect_regex(c('a1', 'a2', 'b3', 'a4', 'c5'), '^a')
+#' stri_startswith_fixed('ababa', 'ba')
+#' stri_startswith_fixed('ababa', 'ba', from=2)
+#' stri_startswith_coll(c('a1', 'A2', 'b3', 'A4', 'C5'), 'a', strength=1)
+#' pat <- stri_paste('\u0635\u0644\u0649 \u0627\u0644\u0644\u0647 ',
+#'                   '\u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645XYZ')
+#' stri_endswith_coll('\ufdfa\ufdfa\ufdfaXYZ', pat, strength=1)
 #'
 #' @family search_detect
 #' @export
 #' @rdname stri_startsendswith
-stri_startswith <- function(str, ..., fixed, coll, charclass) {
-   providedarg <- c("fixed" =!missing(fixed),
-                    "coll"  =!missing(coll),
-                    "charclass"=!missing(charclass))
+stri_startswith <- function(str, ..., fixed, coll, charclass)
+{
+    providedarg <- c(
+        fixed = !missing(fixed),
+        coll = !missing(coll),
+        charclass = !missing(charclass))
 
-   if (sum(providedarg) != 1)
-      stop("you have to specify either `fixed`, `coll`, or `charclass`")
+    if (sum(providedarg) != 1)
+        stop("you have to specify either `fixed`, `coll`, or `charclass`")
 
-   if (providedarg["fixed"])
-      stri_startswith_fixed(str, fixed, ...)
-   else if (providedarg["coll"])
-      stri_startswith_coll(str, coll, ...)
-   else if (providedarg["charclass"])
-      stri_startswith_charclass(str, charclass, ...)
+    if (providedarg["fixed"])
+        stri_startswith_fixed(str, fixed, ...)
+    else if (providedarg["coll"])
+        stri_startswith_coll(str, coll, ...)
+    else if (providedarg["charclass"])
+        stri_startswith_charclass(str, charclass, ...)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_endswith <- function(str, ..., fixed, coll, charclass) {
-   providedarg <- c("fixed" =!missing(fixed),
-                    "coll"  =!missing(coll),
-                    "charclass"=!missing(charclass))
+stri_endswith <- function(str, ..., fixed, coll, charclass)
+{
+    providedarg <- c(
+        fixed = !missing(fixed),
+        coll = !missing(coll),
+        charclass = !missing(charclass))
 
-   if (sum(providedarg) != 1)
-      stop("you have to specify either `fixed`, `coll`, or `charclass`")
+    if (sum(providedarg) != 1)
+        stop("you have to specify either `fixed`, `coll`, or `charclass`")
 
-   if (providedarg["fixed"])
-      stri_endswith_fixed(str, fixed, ...)
-   else if (providedarg["coll"])
-      stri_endswith_coll(str, coll, ...)
-   else if (providedarg["charclass"])
-      stri_endswith_charclass(str, charclass, ...)
+    if (providedarg["fixed"])
+        stri_endswith_fixed(str, fixed, ...)
+    else if (providedarg["coll"])
+        stri_endswith_coll(str, coll, ...)
+    else if (providedarg["charclass"])
+        stri_endswith_charclass(str, charclass, ...)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_startswith_fixed <- function(str, pattern, from=1L, ..., opts_fixed=NULL) {
-   if (!missing(...))
-       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
-   .Call(C_stri_startswith_fixed, str, pattern, from, opts_fixed)
+stri_startswith_fixed <- function(str, pattern, from = 1L,
+    negate = FALSE, ..., opts_fixed = NULL)
+{
+    if (!missing(...))
+        opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+    .Call(C_stri_startswith_fixed, str, pattern, from, negate, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_endswith_fixed <- function(str, pattern, to=-1L, ..., opts_fixed=NULL) {
-   if (!missing(...))
-       opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
-   .Call(C_stri_endswith_fixed, str, pattern, to, opts_fixed)
+stri_endswith_fixed <- function(str, pattern, to = -1L,
+    negate = FALSE, ..., opts_fixed = NULL)
+{
+    if (!missing(...))
+        opts_fixed <- do.call(stri_opts_fixed, as.list(c(opts_fixed, ...)))
+    .Call(C_stri_endswith_fixed, str, pattern, to, negate, opts_fixed)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_startswith_charclass <- function(str, pattern, from=1L) {
-   .Call(C_stri_startswith_charclass, str, pattern, from)
+stri_startswith_charclass <- function(str, pattern, from = 1L, negate = FALSE)
+{
+    .Call(C_stri_startswith_charclass, str, pattern, from, negate)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_endswith_charclass <- function(str, pattern, to=-1L) {
-   .Call(C_stri_endswith_charclass, str, pattern, to)
+stri_endswith_charclass <- function(str, pattern, to = -1L, negate = FALSE)
+{
+    .Call(C_stri_endswith_charclass, str, pattern, to, negate)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_startswith_coll <- function(str, pattern, from=1L, ..., opts_collator=NULL) {
-   if (!missing(...))
-       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
-   .Call(C_stri_startswith_coll, str, pattern, from, opts_collator)
+stri_startswith_coll <- function(str, pattern, from = 1L,
+    negate = FALSE, ..., opts_collator = NULL)
+{
+    if (!missing(...))
+        opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+    .Call(C_stri_startswith_coll, str, pattern, from, negate, opts_collator)
 }
 
 
 #' @export
 #' @rdname stri_startsendswith
-stri_endswith_coll <- function(str, pattern, to=-1L, ..., opts_collator=NULL) {
-   if (!missing(...))
-       opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
-   .Call(C_stri_endswith_coll, str, pattern, to, opts_collator)
+stri_endswith_coll <- function(str, pattern, to = -1L,
+    negate = FALSE, ..., opts_collator = NULL)
+{
+    if (!missing(...))
+        opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
+    .Call(C_stri_endswith_coll, str, pattern, to, negate, opts_collator)
 }

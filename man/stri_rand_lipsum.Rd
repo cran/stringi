@@ -4,16 +4,18 @@
 \alias{stri_rand_lipsum}
 \title{A Lorem Ipsum Generator}
 \usage{
-stri_rand_lipsum(nparagraphs, start_lipsum = TRUE)
+stri_rand_lipsum(n_paragraphs, start_lipsum = TRUE, nparagraphs = n_paragraphs)
 }
 \arguments{
-\item{nparagraphs}{single integer, number of paragraphs to generate}
+\item{n_paragraphs}{single integer, number of paragraphs to generate}
 
 \item{start_lipsum}{single logical value; should the resulting
 text start with \emph{Lorem ipsum dolor sit amet}?}
+
+\item{nparagraphs}{deprecated alias of \code{n_paragraphs}}
 }
 \value{
-Returns a character vector of length \code{nparagraphs}.
+Returns a character vector of length \code{n_paragraphs}.
 }
 \description{
 Generates (pseudo)random \emph{lorem ipsum} text consisting
@@ -21,7 +23,7 @@ of a given number of text paragraphs.
 }
 \details{
 \emph{Lorem ipsum} is a dummy text often used as a source
-of data for string processing and displaying/layouting exercises.
+of data for string processing and displaying/lay-outing exercises.
 
 The current implementation is very simple:
 words are selected randomly from a Zipf distribution
@@ -33,8 +35,8 @@ No Markov chain modeling, just i.i.d. word selection.
 \examples{
 cat(sapply(
    stri_wrap(stri_rand_lipsum(10), 80, simplify=FALSE),
-   stri_flatten, collapse="\n"), sep="\n\n")
-cat(stri_rand_lipsum(10), sep="\n\n")
+   stri_flatten, collapse='\n'), sep='\n\n')
+cat(stri_rand_lipsum(10), sep='\n\n')
 
 }
 \seealso{

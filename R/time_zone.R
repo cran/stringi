@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -77,7 +79,7 @@
 #'
 #' @references
 #' \emph{TimeZone} class -- ICU API Documentation,
-#' \url{http://www.icu-project.org/apiref/icu4c/classicu_1_1TimeZone.html}
+#' \url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/classicu_1_1TimeZone.html}
 #'
 #' \emph{ICU 4.8 Time Zone Names}.
 #' \url{http://site.icu-project.org/design/formatting/timezone/icu-4-8-time-zone-names}
@@ -93,8 +95,8 @@
 #' stri_timezone_list(offset=1)
 #' stri_timezone_list(offset=5.5)
 #' stri_timezone_list(offset=5.75)
-#' stri_timezone_list(region="PL")
-#' stri_timezone_list(region="US", offset=-10)
+#' stri_timezone_list(region='PL')
+#' stri_timezone_list(region='US', offset=-10)
 #'
 #' # Fetch info on all time zones
 #' do.call(rbind.data.frame,
@@ -103,8 +105,9 @@
 #' @family datetime
 #' @family timezone
 #' @export
-stri_timezone_list <- function(region=NA_character_, offset=NA_integer_) {
-   .Call(C_stri_timezone_list, region, offset)
+stri_timezone_list <- function(region = NA_character_, offset = NA_integer_)
+{
+    .Call(C_stri_timezone_list, region, offset)
 }
 
 
@@ -137,11 +140,11 @@ stri_timezone_list <- function(region=NA_character_, offset=NA_integer_) {
 #'
 #' @references
 #' \emph{TimeZone} class -- ICU API Documentation,
-#' \url{http://www.icu-project.org/apiref/icu4c/classicu_1_1TimeZone.html}
+#' \url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/classicu_1_1TimeZone.html}
 #'
 #' @examples
 #' \dontrun{
-#' oldtz <- stri_timezone_set("Europe/Warsaw")
+#' oldtz <- stri_timezone_set('Europe/Warsaw')
 #' # ... many time zone-dependent operations
 #' stri_timezone_set(oldtz) # restore previous default time zone
 #' }
@@ -151,14 +154,16 @@ stri_timezone_list <- function(region=NA_character_, offset=NA_integer_) {
 #' @family timezone
 #' @rdname stri_timezone_set
 #' @export
-stri_timezone_get <- function() {
-   stri_timezone_info()$ID
+stri_timezone_get <- function()
+{
+    stri_timezone_info()$ID
 }
 
 
 #' @rdname stri_timezone_set
 #' @export
-stri_timezone_set <- function(tz) {
+stri_timezone_set <- function(tz)
+{
     previous <- stri_timezone_get()
     .Call(C_stri_timezone_set, tz)
     invisible(previous)
@@ -178,13 +183,13 @@ stri_timezone_set <- function(tz) {
 #' For more information on time zone representation in \pkg{ICU},
 #' see \code{\link{stri_timezone_list}}.
 #'
-#' @param tz \code{NULL} or \code{""} for default time zone,
+#' @param tz \code{NULL} or \code{''} for default time zone,
 #' or a single string with time zone ID otherwise
 #' @param display_type single string;
-#' one of \code{"short"}, \code{"long"}, \code{"generic_short"},
-#' \code{"generic_long"}, \code{"gmt_short"}, \code{"gmt_long"},
-#' \code{"common"}, \code{"generic_location"}
-#' @param locale \code{NULL} or \code{""} for default locale,
+#' one of \code{'short'}, \code{'long'}, \code{'generic_short'},
+#' \code{'generic_long'}, \code{'gmt_short'}, \code{'gmt_long'},
+#' \code{'common'}, \code{'generic_location'}
+#' @param locale \code{NULL} or \code{''} for default locale,
 #' or a single string with locale identifier
 #'
 #' @return
@@ -192,7 +197,8 @@ stri_timezone_set <- function(tz) {
 #' \enumerate{
 #' \item \code{ID} (time zone identifier),
 #' \item \code{Name} (localized human-readable time zone name),
-#' \item \code{Name.Daylight} (localized human-readable time zone name when DST is used, if available),
+#' \item \code{Name.Daylight} (localized human-readable time zone
+#'       name when DST is used, if available),
 #' \item \code{Name.Windows} (Windows time zone ID, if available),
 #' \item \code{RawOffset} (raw GMT offset, in hours, before taking
 #' daylight savings into account), and
@@ -202,15 +208,16 @@ stri_timezone_set <- function(tz) {
 #'
 #' @examples
 #' stri_timezone_info()
-#' stri_timezone_info(locale="sk_SK")
-#' sapply(c("short", "long", "generic_short", "generic_long",
-#'          "gmt_short", "gmt_long", "common", "generic_location"),
-#'   function(e) stri_timezone_info("Europe/London", display_type=e))
+#' stri_timezone_info(locale='sk_SK')
+#' sapply(c('short', 'long', 'generic_short', 'generic_long',
+#'          'gmt_short', 'gmt_long', 'common', 'generic_location'),
+#'   function(e) stri_timezone_info('Europe/London', display_type=e))
 #'
 #' @family datetime
 #' @family timezone
 #' @export
-stri_timezone_info <- function(tz=NULL, locale=NULL, display_type="long") {
-   .Call(C_stri_timezone_info, tz, locale, display_type)
-   ### TO DO: when DST starts???
+stri_timezone_info <- function(tz = NULL, locale = NULL, display_type = "long")
+{
+    .Call(C_stri_timezone_info, tz, locale, display_type)
+    ### TO DO: when does DST start???
 }

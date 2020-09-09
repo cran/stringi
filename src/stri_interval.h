@@ -1,5 +1,5 @@
-/* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
+/* This file is part of the 'stringi' project.
+ * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,19 +38,19 @@
  * @version 0.3-1 (Marek Gagolewski, 2014-11-01)
  */
 template<class T> struct StriInterval {
-   int a;
-   int b;
-   T data;
+    int a;
+    int b;
+    T data;
 
-   StriInterval(int _a, int _b, const T& _data) {
-      this->a = _a;
-      this->b = _b;
-      this->data = _data;
-   }
+    StriInterval(int _a, int _b, const T& _data) {
+        this->a = _a;
+        this->b = _b;
+        this->data = _data;
+    }
 };
 
 template<class T> bool operator<(const StriInterval<T>& i1, const StriInterval<T>& i2) {
-   return (i1.a < i2.a);
+    return (i1.a < i2.a);
 }
 
 #endif

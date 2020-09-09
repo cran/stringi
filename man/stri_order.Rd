@@ -28,16 +28,16 @@ for default collation options}
 The function yields an integer vector that gives the sort order.
 }
 \description{
-This functions finds a permutation which rearranges the
+This function finds a permutation which rearranges the
 strings in a given character vector into the ascending or descending
- locale-dependent lexicographic order.
+locale-dependent lexicographic order.
 }
 \details{
 For more information on \pkg{ICU}'s Collator and how to tune it up
 in \pkg{stringi}, refer to \code{\link{stri_opts_collator}}.
 
 As usual in \pkg{stringi}, non-character inputs are coerced to strings,
-see an example below for a perhaps non-intitive behavior of lexicographic
+see an example below for a perhaps non-intuitive behavior of lexicographic
 sorting on numeric inputs.
 
 
@@ -48,8 +48,8 @@ which performs up to \eqn{N*log^2(N)} element comparisons,
 where \eqn{N} is the length of \code{str}.
 }
 \examples{
-stri_order(c("hladny", "chladny"), locale="pl_PL")
-stri_order(c("hladny", "chladny"), locale="sk_SK")
+stri_order(c('hladny', 'chladny'), locale='pl_PL')
+stri_order(c('hladny', 'chladny'), locale='sk_SK')
 
 stri_order(c(1, 100, 2, 101, 11, 10))
 stri_order(c(1, 100, 2, 101, 11, 10), numeric=TRUE)
@@ -61,6 +61,9 @@ stri_order(c(1, 100, 2, 101, 11, 10), numeric=TRUE)
 \seealso{
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -68,13 +71,11 @@ Other locale_sensitive:
 \code{\link{stri_extract_all_boundaries}()},
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 }
 \concept{locale_sensitive}

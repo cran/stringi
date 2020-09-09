@@ -30,7 +30,7 @@ stri_locate_first_words(str, locale = NULL)
 \item{str}{character vector or an object coercible to}
 
 \item{omit_no_match}{single logical value; if \code{FALSE},
-then 2 missing values will indicate that there are no text boundaries}
+then two missing values will indicate that there are no text boundaries}
 
 \item{...}{additional settings for \code{opts_brkiter}}
 
@@ -38,7 +38,7 @@ then 2 missing values will indicate that there are no text boundaries}
 see \code{\link{stri_opts_brkiter}};
 \code{NULL} for default break iterator, i.e., \code{line_break}}
 
-\item{locale}{\code{NULL} or \code{""} for text boundary analysis following
+\item{locale}{\code{NULL} or \code{''} for text boundary analysis following
 the conventions of the default locale, or a single string with
 locale identifier, see \link{stringi-locale}}
 }
@@ -77,24 +77,24 @@ just like in \code{\link{stri_extract_all_words}} and \code{\link{stri_count_wor
 to locate the word boundaries, and all non-word characters
 (\code{UBRK_WORD_NONE} rule status) are ignored.
 This is function is equivalent to a call to
-\code{stri_locate_*_boundaries(str, type="word", skip_word_none=TRUE, locale=locale)}
+\code{stri_locate_*_boundaries(str, type='word', skip_word_none=TRUE, locale=locale)}
 }
 \examples{
-test <- "The\u00a0above-mentioned    features are very useful. Kudos to their developers."
-stri_locate_all_boundaries(test, type="line")
-stri_locate_all_boundaries(test, type="word")
-stri_locate_all_boundaries(test, type="sentence")
-stri_locate_all_boundaries(test, type="character")
+test <- 'The\u00a0above-mentioned    features are very useful. Spam, spam, eggs, bacon, and spam.'
+stri_locate_all_boundaries(test, type='line')
+stri_locate_all_boundaries(test, type='word')
+stri_locate_all_boundaries(test, type='sentence')
+stri_locate_all_boundaries(test, type='character')
 stri_locate_all_words(test)
 
-stri_extract_all_boundaries("Mr. Jones and Mrs. Brown are very happy.
-So am I, Prof. Smith.", type="sentence", locale="en_US@ss=standard") # ICU >= 56 only
+stri_extract_all_boundaries('Mr. Jones and Mrs. Brown are very happy.
+So am I, Prof. Smith.', type='sentence', locale='en_US@ss=standard') # ICU >= 56 only
 
 }
 \seealso{
 Other search_locate: 
-\code{\link{stri_locate_all}()},
-\code{\link{stringi-search}}
+\code{\link{about_search}},
+\code{\link{stri_locate_all}()}
 
 Other indexing: 
 \code{\link{stri_locate_all}()},
@@ -103,6 +103,9 @@ Other indexing:
 
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -110,25 +113,23 @@ Other locale_sensitive:
 \code{\link{stri_extract_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 
 Other text_boundaries: 
+\code{\link{about_search_boundaries}},
+\code{\link{about_search}},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_extract_all_boundaries}()},
 \code{\link{stri_opts_brkiter}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_split_lines}()},
 \code{\link{stri_trans_tolower}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search}}
+\code{\link{stri_wrap}()}
 }
 \concept{indexing}
 \concept{locale_sensitive}

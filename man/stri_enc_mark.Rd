@@ -38,8 +38,8 @@ or in the system's default (a.k.a. \code{unknown} in \code{\link{Encoding}})
 encoding.
 
 Intuitively, the default encoding should be equivalent to
-the one you use on stdin (e.g., your "keyboard").
-In \code{stringi} we assume that such an encoding
+the one you use on \code{stdin} (e.g., your 'keyboard').
+In \pkg{stringi} we assume that such an encoding
 is equivalent to the one returned by \code{\link{stri_enc_get}}.
 It is automatically detected by \pkg{ICU}
 to match -- by default -- the encoding part of the \code{LC_CTYPE} category
@@ -47,9 +47,9 @@ as given by \code{\link{Sys.getlocale}}.
 }
 \seealso{
 Other encoding_management: 
+\code{\link{about_encoding}},
 \code{\link{stri_enc_info}()},
 \code{\link{stri_enc_list}()},
-\code{\link{stri_enc_set}()},
-\code{\link{stringi-encoding}}
+\code{\link{stri_enc_set}()}
 }
 \concept{encoding_management}

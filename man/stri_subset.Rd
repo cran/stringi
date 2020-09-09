@@ -82,8 +82,7 @@ for the defaults}
 The \code{stri_subset} functions return a character vector.
 As usual, the output encoding is always UTF-8.
 
-The \code{stri_subset<-} function modifies the \code{str} object
-``in-place''.
+The \code{stri_subset<-} function modifies the \code{str} object 'in-place'.
 }
 \description{
 These functions return or modify a sub-vector where there is a match
@@ -104,19 +103,19 @@ or \code{stri_subset_charclass},
 depending on the argument used.
 }
 \examples{
-stri_subset_regex(c("stringi R", "123", "ID456", ""), "^[0-9]+$")
+stri_subset_regex(c('stringi R', '123', 'ID456', ''), '^[0-9]+$')
 
-x <- c("stringi R", "123", "ID456", "")
-stri_subset_regex(x, "[^0-9]+|^$") <- NA
+x <- c('stringi R', '123', 'ID456', '')
+stri_subset_regex(x, '[^0-9]+|^$') <- NA
 print(x)
 
-x <- c("stringi R", "123", "ID456", "")
-stri_subset_regex(x, "^[0-9]+$", negate=TRUE) <- NA
+x <- c('stringi R', '123', 'ID456', '')
+stri_subset_regex(x, '^[0-9]+$', negate=TRUE) <- NA
 print(x)
 
 }
 \seealso{
 Other search_subset: 
-\code{\link{stringi-search}}
+\code{\link{about_search}}
 }
 \concept{search_subset}

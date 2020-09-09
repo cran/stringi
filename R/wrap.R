@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -90,6 +92,7 @@
 #'        (values in [2, 3] are recommended)
 #' @param simplify single logical value, see Value
 #' @param normalize single logical value, see Details
+#' @param normalise alias of \code{normalize}
 #' @param indent single non-negative integer; gives the indentation of the
 #'  first line in each paragraph
 #' @param exdent single non-negative integer; specifies the indentation
@@ -99,7 +102,7 @@
 #' @param whitespace_only single logical value; allow breaks only at white-spaces?
 #' if \code{FALSE}, \pkg{ICU}'s line break iterator is used to split text
 #' into words, which is suitable for natural language processing
-#' @param locale \code{NULL} or \code{""} for text boundary analysis following
+#' @param locale \code{NULL} or \code{''} for text boundary analysis following
 #' the conventions of the default locale, or a single string with
 #' locale identifier, see \link{stringi-locale}
 #' @param use_length single logical value; should the number of code
@@ -114,37 +117,42 @@
 #' @family text_boundaries
 #' @examples
 #' s <- stri_paste(
-#'    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Proin ",
-#'    "nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel ",
-#'    "lorem. Etiam pellentesque aliquet tellus.")
-#' cat(stri_wrap(s, 20, 0.0), sep="\n") # greedy
-#' cat(stri_wrap(s, 20, 2.0), sep="\n") # dynamic
-#' cat(stri_pad(stri_wrap(s), side='both'), sep="\n")
+#'    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Proin ',
+#'    'nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel ',
+#'    'lorem. Etiam pellentesque aliquet tellus.')
+#' cat(stri_wrap(s, 20, 0.0), sep='\n') # greedy
+#' cat(stri_wrap(s, 20, 2.0), sep='\n') # dynamic
+#' cat(stri_pad(stri_wrap(s), side='both'), sep='\n')
 #'
 #' @export
 #' @references
 #' D.E. Knuth, M.F. Plass,
 #' Breaking paragraphs into lines, \emph{Software: Practice and Experience} 11(11),
 #' 1981, pp. 1119--1184
-stri_wrap <- function(str, width=floor(0.9*getOption("width")),
-   cost_exponent=2.0, simplify=TRUE, normalize=TRUE, indent=0, exdent=0,
-   prefix="", initial=prefix, whitespace_only=FALSE, use_length=FALSE, locale=NULL)
+stri_wrap <- function(str, width = floor(0.9 * getOption("width")),
+    cost_exponent = 2,
+    simplify = TRUE, normalize = TRUE, normalise = normalize,
+    indent = 0, exdent = 0, prefix = "", initial = prefix,
+    whitespace_only = FALSE, use_length = FALSE, locale = NULL)
 {
-   simplify <- as.logical(simplify)
+    simplify <- as.logical(simplify)
 
-   normalize <- as.logical(normalize)
-   if (normalize)  # this will give an informative warning or error if sth is wrong
-   {
-      str <- sapply(stri_split_lines(str), function(s) stri_flatten(s, collapse=' '))
-      str <- stri_trim(stri_replace_all_charclass(str, "[\\u0020\\r\\n\\t]", " ", merge=TRUE))
-      str <- stri_trans_nfc(str)
-   }
+    if (!missing(normalise))
+        normalize <- normalise
+    normalize <- as.logical(normalize)
+    if (normalize) {
+        # this will give an informative warning or error if sth is wrong
+        str <- sapply(stri_split_lines(str), function(s) stri_flatten(s, collapse = " "))
+        str <- stri_trim(stri_replace_all_charclass(str, "[\\u0020\\r\\n\\t]", " ",
+            merge = TRUE))
+        str <- stri_trans_nfc(str)
+    }
 
-   ret <- .Call(C_stri_wrap, str, width, cost_exponent,
-      indent, exdent, prefix, initial, whitespace_only, use_length, locale)
+    ret <- .Call(C_stri_wrap, str, width, cost_exponent, indent, exdent, prefix,
+        initial, whitespace_only, use_length, locale)
 
-   if (simplify) # this will give an informative warning or error if sth is wrong
-      as.character(unlist(ret))
-   else
-      ret
+    if (simplify) {
+        # this will give an informative warning or error if sth is wrong
+        as.character(unlist(ret))
+    } else ret
 }

@@ -41,7 +41,7 @@ to the length of the longest argument.
 
 If any of the arguments in `\code{...}` is a vector of length 0
 (not to be confused with vectors of empty strings)
-and \code{ignore_null=FALSE}, then
+and \code{ignore_null} is \code{FALSE}, then
 you will get a 0-length character vector in result.
 
 If \code{collapse} or \code{sep} has length greater than 1,
@@ -50,7 +50,7 @@ then only the first string will be used.
 In case where there are missing values in any of the input vectors,
 \code{NA} is set to the corresponding element.
 Note that this behavior is different from \code{\link{paste}},
-which treats missing values as ordinary strings like \code{"NA"}.
+which treats missing values as ordinary strings like \code{'NA'}.
 Moreover, as usual in \pkg{stringi}, the resulting strings are
 always in UTF-8.
 }

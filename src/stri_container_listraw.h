@@ -1,5 +1,5 @@
-/* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
+/* This file is part of the 'stringi' project.
+ * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,46 +50,46 @@
  */
 class StriContainerListRaw : public StriContainerBase {
 
-   private:
+private:
 
-      String8* data;
-
-
-   public:
-
-      StriContainerListRaw();
-      StriContainerListRaw(SEXP rlist);
-      StriContainerListRaw(StriContainerListRaw& container);
-      ~StriContainerListRaw();
-      StriContainerListRaw& operator=(StriContainerListRaw& container);
+    String8* data;
 
 
-      /** check if the vectorized ith element is NA
-       * @param i index
-       * @return true if is NA
-       */
-      inline bool isNA(R_len_t i) const {
+public:
+
+    StriContainerListRaw();
+    StriContainerListRaw(SEXP rlist);
+    StriContainerListRaw(StriContainerListRaw& container);
+    ~StriContainerListRaw();
+    StriContainerListRaw& operator=(StriContainerListRaw& container);
+
+
+    /** check if the vectorized ith element is NA
+     * @param i index
+     * @return true if is NA
+     */
+    inline bool isNA(R_len_t i) const {
 #ifndef NDEBUG
-         if (i < 0 || i >= nrecycle)
+        if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerListRaw::isNA(): INDEX OUT OF BOUNDS");
 #endif
-         return (data[i%n].isNA());
-      }
+        return (data[i%n].isNA());
+    }
 
 
-      /** get the vectorized ith element
-       * @param i index
-       * @return string, read only
-       */
-      const String8& get(R_len_t i) const {
+    /** get the vectorized ith element
+     * @param i index
+     * @return string, read only
+     */
+    const String8& get(R_len_t i) const {
 #ifndef NDEBUG
-         if (i < 0 || i >= nrecycle)
+        if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerListRaw::get(): INDEX OUT OF BOUNDS");
-         if (data[i%n].isNA())
+        if (data[i%n].isNA())
             throw StriException("StriContainerListRaw::get(): isNA");
 #endif
-         return data[i%n];
-      }
+        return data[i%n];
+    }
 };
 
 #endif

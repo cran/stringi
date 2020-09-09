@@ -25,9 +25,9 @@ stri_opts_brkiter(
 or a custom set of ICU break iteration rules.
 see \link{stringi-search-boundaries}}
 
-\item{locale}{single string, \code{NULL} or \code{""} for default locale}
+\item{locale}{single string, \code{NULL} or \code{''} for default locale}
 
-\item{skip_word_none}{logical; perform no action for "words" that
+\item{skip_word_none}{logical; perform no action for 'words' that
 do not fit into any other categories}
 
 \item{skip_word_number}{logical; perform no action for words that
@@ -49,15 +49,16 @@ i.e., positions where a line break is acceptable but not required}
 or mandatory line breaks}
 
 \item{skip_sentence_term}{logical; perform no action for sentences
-ending with a sentence terminator ("\code{.}", "\code{,}", "\code{?}",
-"\code{!}"), possibly followed by a hard separator
+ending with a sentence terminator ('\code{.}', '\code{,}', '\code{?}',
+'\code{!}'), possibly followed by a hard separator
 (\code{CR}, \code{LF}, \code{PS}, etc.)}
 
 \item{skip_sentence_sep}{logical; perform no action for sentences
 that do not contain an ending sentence terminator, but are ended
 by a hard separator or end of input}
 
-\item{...}{any other arguments to this function are purposely ignored}
+\item{...}{[DEPRECATED] any other arguments passed to this function
+generate a warning; this argument will be removed in the future}
 }
 \value{
 Returns a named list object.
@@ -81,21 +82,21 @@ to the ICU User Guide on Boundary Analysis.
 }
 \references{
 \emph{\code{ubrk.h} File Reference} -- ICU4C API Documentation,
-\url{http://icu-project.org/apiref/icu4c/ubrk_8h.html}
+\url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ubrk_8h.html}
 
 \emph{Boundary Analysis} -- ICU User Guide,
 \url{http://userguide.icu-project.org/boundaryanalysis}
 }
 \seealso{
 Other text_boundaries: 
+\code{\link{about_search_boundaries}},
+\code{\link{about_search}},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_extract_all_boundaries}()},
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_split_lines}()},
 \code{\link{stri_trans_tolower}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search}}
+\code{\link{stri_wrap}()}
 }
 \concept{text_boundaries}

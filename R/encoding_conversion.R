@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -34,33 +36,31 @@
 #'
 #' @description
 #' These functions convert strings between encodings.
-#' They aim to replace \R's \code{\link{iconv}}.
-#' They are not only faster, but also much more portable - they
-#' work in the same manner on all platforms.
+#' They aim to serve as a more portable and faster replacement
+#' for \R's own \code{\link{iconv}}.
 #'
 #' @details
 #' \code{stri_conv} is an alias for \code{stri_encode}.
 #'
-#'
-#' Please refer to \code{\link{stri_enc_list}} for the list
+#' Refer to \code{\link{stri_enc_list}} for the list
 #' of supported encodings and \link{stringi-encoding}
 #' for a general discussion.
 #'
-#' If \code{str} is a character vector
-#' and \code{from} is either missing, \code{""}, or \code{NULL},
-#' then the declared encodings are used
+#' If \code{from} is either missing, \code{''}, or \code{NULL},
+#' and if \code{str} is a character vector
+#' then the marked encodings are used
 #' (see \code{\link{stri_enc_mark}}) -- in such a case \code{bytes}-declared
 #' strings are disallowed.
-#' Otherwise, the internal encoding declarations are ignored and
-#' a converter selected via \code{from} is used.
-#'
-#' If \code{str} is a \code{raw}-type vector
+#' Otherwise, i.e., if \code{str} is a \code{raw}-type vector
 #' or a list of raw vectors,
 #' we assume that the input encoding is the current default encoding
 #' as given by \code{\link{stri_enc_get}}.
 #'
+#' However, if \code{from} is given explicitly,
+#' the internal encoding declarations are always ignored.
+#'
 #' For \code{to_raw=FALSE}, the output
-#' strings have always marked encodings according to the target converter
+#' strings always have the encodings marked according to the target converter
 #' used (as specified by \code{to}) and the current default Encoding
 #' (\code{ASCII}, \code{latin1}, \code{UTF-8}, \code{native},
 #' or \code{bytes} in all other cases).
@@ -73,23 +73,30 @@
 #' (e.g., set \code{UTF-16} or \code{UTF-32} which automatically
 #' adds the BOMs).
 #'
-#' Note that \code{stri_encode(as.raw(data), "encodingname")}
+#' Note that \code{stri_encode(as.raw(data), 'encodingname')}
 #' is a clever substitute for \code{\link{rawToChar}}.
 #'
 #' In the current version of \pkg{stringi}, if an incorrect code point is found
-#' on input, it is replaced by the default (for that target encoding)
-#' substitute character. Also, in such a case a warning is generated.
+#' on input, it is replaced with the default (for that target encoding)
+#' 'missing/erroneous' character (with a warning), e.g.,
+#' the SUBSTITUTE character (U+001A) or the REPLACEMENT one (U+FFFD).
+#' Occurrences thereof can be located in the output string to diagnose
+#' the problematic sequences, e.g., by calling:
+#' \code{stri_locate_all_regex(converted_string, '[\\ufffd\\u001a]'}.
+#'
+#' Because of the way this function is currently implemented,
+#' maximal size of a single string to be converted cannot exceed ~0.67 GB.
 #'
 #'
 #' @param str a character vector, a raw vector, or
 #' a list of \code{raw} vectors to be converted
 #' @param from input encoding:
-#'       \code{NULL} or \code{""} for the default encoding
+#'       \code{NULL} or \code{''} for the default encoding
 #'       or internal encoding marks' usage (see Details);
 #'       otherwise, a single string with encoding name,
 #'       see \code{\link{stri_enc_list}}
 #' @param to target encoding:
-#'       \code{NULL} or \code{""} for default encoding
+#'       \code{NULL} or \code{''} for default encoding
 #'       (see \code{\link{stri_enc_get}}),
 #'       or a single string with encoding name
 #' @param to_raw a single logical value; indicates whether a list of raw vectors
@@ -109,8 +116,8 @@
 #' @family encoding_conversion
 #' @rdname stri_encode
 #' @export
-stri_encode <- function(str, from=NULL, to=NULL, to_raw=FALSE) {
-   .Call(C_stri_encode, str, from, to, to_raw)
+stri_encode <- function(str, from = NULL, to = NULL, to_raw = FALSE) {
+    .Call(C_stri_encode, str, from, to, to_raw)
 }
 
 
@@ -148,8 +155,9 @@ stri_conv <- stri_encode
 #'
 #' @family encoding_conversion
 #' @export
-stri_enc_toutf32 <- function(str) {
-   .Call(C_stri_enc_toutf32, str)
+stri_enc_toutf32 <- function(str)
+{
+    .Call(C_stri_enc_toutf32, str)
 }
 
 
@@ -187,8 +195,9 @@ stri_enc_toutf32 <- function(str) {
 #'
 #' @family encoding_conversion
 #' @export
-stri_enc_fromutf32 <- function(vec) {
-   .Call(C_stri_enc_fromutf32, vec)
+stri_enc_fromutf32 <- function(vec)
+{
+    .Call(C_stri_enc_fromutf32, vec)
 }
 
 
@@ -236,8 +245,9 @@ stri_enc_fromutf32 <- function(vec) {
 #'
 #' @family encoding_conversion
 #' @export
-stri_enc_toutf8 <- function(str, is_unknown_8bit=FALSE, validate=FALSE) {
-   .Call(C_stri_enc_toutf8, str, is_unknown_8bit, validate)
+stri_enc_toutf8 <- function(str, is_unknown_8bit = FALSE, validate = FALSE)
+{
+    .Call(C_stri_enc_toutf8, str, is_unknown_8bit, validate)
 }
 
 
@@ -262,8 +272,9 @@ stri_enc_toutf8 <- function(str, is_unknown_8bit=FALSE, validate=FALSE) {
 #'
 #' @family encoding_conversion
 #' @export
-stri_enc_tonative <- function(str) {
-   stri_encode(str, NULL, NULL)
+stri_enc_tonative <- function(str)
+{
+    stri_encode(str, NULL, NULL)
 }
 
 
@@ -293,6 +304,7 @@ stri_enc_tonative <- function(str) {
 #'
 #' @family encoding_conversion
 #' @export
-stri_enc_toascii <- function(str) {
-   .Call(C_stri_enc_toascii, str)
+stri_enc_toascii <- function(str)
+{
+    .Call(C_stri_enc_toascii, str)
 }

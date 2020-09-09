@@ -25,11 +25,11 @@ stri_datetime_parse(
 
 \item{format}{single string, see Details; see also \code{\link{stri_datetime_fstr}}}
 
-\item{tz}{\code{NULL} or \code{""} for the default time zone
+\item{tz}{\code{NULL} or \code{''} for the default time zone
 or a single string with a timezone identifier,
 see \code{\link{stri_timezone_list}}}
 
-\item{locale}{\code{NULL} or \code{""} for default locale,
+\item{locale}{\code{NULL} or \code{''} for default locale,
 or a single string with locale identifier; a non-Gregorian calendar
 may be specified by setting the \code{@calendar=name} keyword}
 
@@ -44,7 +44,7 @@ may be specified by setting the \code{@calendar=name} keyword}
 }
 \description{
 These functions convert a given date/time object
-to a character vector, or conversely.
+to a character vector, or vice versa.
 }
 \details{
 Vectorized over \code{time} or \code{str}.
@@ -198,10 +198,10 @@ uuuu-MM-dd'T'HH:mm:ssZ \tab 2015-12-31T23:59:59+0100 (the ISO 8601 guideline) \c
 }
 }
 \examples{
-stri_datetime_parse(c("2015-02-28", "2015-02-29"), "yyyy-MM-dd")
-stri_datetime_parse(c("2015-02-28", "2015-02-29"), "yyyy-MM-dd", lenient=TRUE)
-stri_datetime_parse("19 lipca 2015", "date_long", locale="pl_PL")
-stri_datetime_format(stri_datetime_now(), "datetime_relative_medium")
+stri_datetime_parse(c('2015-02-28', '2015-02-29'), 'yyyy-MM-dd')
+stri_datetime_parse(c('2015-02-28', '2015-02-29'), 'yyyy-MM-dd', lenient=TRUE)
+stri_datetime_parse('19 lipca 2015', 'date_long', locale='pl_PL')
+stri_datetime_format(stri_datetime_now(), 'datetime_relative_medium')
 
 }
 \references{

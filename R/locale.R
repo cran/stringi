@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -33,7 +35,7 @@
 #' Locales and \pkg{stringi}
 #'
 #' @description
-#' In this section we explain how we deal with locales in \pkg{stringi}.
+#' In this section we explain how we specify locales in \pkg{stringi}.
 #' Locale is a fundamental concept in \pkg{ICU}.
 #' It identifies a specific user community, i.e., a group of users
 #' who have similar culture and language expectations
@@ -56,20 +58,20 @@
 #' Locales are identified by character strings
 #' of the form \code{Language} code,
 #' \code{Language_Country} code, or \code{Language_Country_Variant}
-#' code, e.g., "en_US".
+#' code, e.g., 'en_US'.
 #'
 #' The two-letter \code{Language} code uses the ISO-639-1 standard,
-#' e.g., "en" stands for English, "pl" -- Polish, "fr" -- French,
-#' and "de" for German.
+#' e.g., 'en' stands for English, 'pl' -- Polish, 'fr' -- French,
+#' and 'de' for German.
 #'
 #' \code{Country} is a two-letter code following the ISO-3166 standard.
 #' This is to reflect different language conventions within the same language,
-#' for example in US-English ("en_US") and Australian-English ("en_AU").
+#' for example in US-English ('en_US') and Australian-English ('en_AU').
 #'
 #' Differences may also appear in language conventions used within
 #' the same country. For example, the Euro currency may be used in several European
 #' countries while the individual country's currency is still in circulation.
-#' In such a case, \pkg{ICU} \code{Variant} "_EURO" could be used for selecting
+#' In such a case, \pkg{ICU} \code{Variant} '_EURO' could be used for selecting
 #' locales that support the Euro currency.
 #'
 #' The final (optional) element of a locale is a list of
@@ -77,7 +79,7 @@
 #' Their order is not significant. Unknown keywords are ignored.
 #' The handling of keywords depends on the specific services that
 #' utilize them. Currently, the following keywords are recognized:
-#' \code{calendar}, \code{colation}, \code{currency}, and \code{numbers},
+#' \code{calendar}, \code{collation}, \code{currency}, and \code{numbers},
 #' e.g., \code{fr@@collation=phonebook;}\code{calendar=islamic-civil} is a valid
 #' French locale specifier together with keyword arguments. For
 #' more information, refer to the ICU user guide.
@@ -120,11 +122,12 @@
 #' \emph{Locale} -- ICU User Guide, \url{http://userguide.icu-project.org/locale}
 #'
 #' \emph{ISO 639: Language Codes},
-#' \url{http://www.iso.org/iso/home/standards/language_codes.htm}
+#' \url{https://www.iso.org/iso-639-language-codes.html}
 #'
-#' \emph{ISO 3166: Country Codes}, \url{http://www.iso.org/iso/country_codes}
-#' @name stringi-locale
-#' @rdname stringi-locale
+#' \emph{ISO 3166: Country Codes}, \url{https://www.iso.org/iso-3166-country-codes.html}
+#' @name about_locale
+#' @rdname about_locale
+#' @aliases about_locale locale stringi-locale
 #' @family locale_management
 #' @family locale_sensitive
 #' @family stringi_general_topics

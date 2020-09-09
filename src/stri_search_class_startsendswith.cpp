@@ -1,5 +1,5 @@
-/* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
+/* This file is part of the 'stringi' project.
+ * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,60 +48,67 @@
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 1.4.7 (Marek Gagolewski, 2020-08-24)
+ *    #345: `negate` arg added
  */
-SEXP stri_startswith_charclass(SEXP str, SEXP pattern, SEXP from)
+SEXP stri_startswith_charclass(SEXP str, SEXP pattern, SEXP from, SEXP negate)
 {
-   PROTECT(str = stri_prepare_arg_string(str, "str"));
-   PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
-   PROTECT(from = stri_prepare_arg_integer(from, "from"));
+    bool negate_1 = stri__prepare_arg_logical_1_notNA(negate, "negate");
+    PROTECT(str = stri_prepare_arg_string(str, "str"));
+    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
+    PROTECT(from = stri_prepare_arg_integer(from, "from"));
 
-   STRI__ERROR_HANDLER_BEGIN(3)
-   int vectorize_length = stri__recycling_rule(true, 3,
-      LENGTH(str), LENGTH(pattern), LENGTH(from));
-   StriContainerUTF8_indexable str_cont(str, vectorize_length);
-   StriContainerCharClass pattern_cont(pattern, vectorize_length);
-   StriContainerInteger from_cont(from, vectorize_length);
+    STRI__ERROR_HANDLER_BEGIN(3)
+    int vectorize_length = stri__recycling_rule(true, 3,
+                           LENGTH(str), LENGTH(pattern), LENGTH(from));
+    StriContainerUTF8_indexable str_cont(str, vectorize_length);
+    StriContainerCharClass pattern_cont(pattern, vectorize_length);
+    StriContainerInteger from_cont(from, vectorize_length);
 
-   SEXP ret;
-   STRI__PROTECT(ret = Rf_allocVector(LGLSXP, vectorize_length));
-   int* ret_tab = LOGICAL(ret);
+    SEXP ret;
+    STRI__PROTECT(ret = Rf_allocVector(LGLSXP, vectorize_length));
+    int* ret_tab = LOGICAL(ret);
 
-   for (R_len_t i = pattern_cont.vectorize_init();
-         i != pattern_cont.vectorize_end();
-         i = pattern_cont.vectorize_next(i))
-   {
-      if (str_cont.isNA(i) || pattern_cont.isNA(i) || from_cont.isNA(i)) {
-         ret_tab[i] = NA_LOGICAL;
-         continue;
-      }
+    for (R_len_t i = pattern_cont.vectorize_init();
+            i != pattern_cont.vectorize_end();
+            i = pattern_cont.vectorize_next(i))
+    {
+        if (str_cont.isNA(i) || pattern_cont.isNA(i) || from_cont.isNA(i)) {
+            ret_tab[i] = NA_LOGICAL;
+            continue;
+        }
 
-      R_len_t from_cur = from_cont.get(i);
-      if (from_cur == 1)
-         from_cur = 0; /* most commonly used case */
-      else if (from_cur >= 0)
-         from_cur = str_cont.UChar32_to_UTF8_index_fwd(i, from_cur-1);
-      else
-         from_cur = str_cont.UChar32_to_UTF8_index_back(i, -from_cur);
-      // now surely from_cur >= 0 && from_cur <= cur_n
+        R_len_t from_cur = from_cont.get(i);
+        if (from_cur == 1)
+            from_cur = 0; /* most commonly used case */
+        else if (from_cur >= 0)
+            from_cur = str_cont.UChar32_to_UTF8_index_fwd(i, from_cur-1);
+        else
+            from_cur = str_cont.UChar32_to_UTF8_index_back(i, -from_cur);
+        // now surely from_cur >= 0 && from_cur <= cur_n
 
-      const char* str_cur_s = str_cont.get(i).c_str();
-      R_len_t     str_cur_n = str_cont.get(i).length();
-      const UnicodeSet* pattern_cur = &pattern_cont.get(i);
+        const char* str_cur_s = str_cont.get(i).c_str();
+        R_len_t     str_cur_n = str_cont.get(i).length();
+        const UnicodeSet* pattern_cur = &pattern_cont.get(i);
 
-      if (from_cur > str_cur_n)
-         ret_tab[i] = FALSE;
-      else {
-         UChar32 chr = 0;
-         U8_NEXT(str_cur_s, from_cur, str_cur_n, chr);
-         if (chr < 0) // invalid utf-8 sequence
-            throw StriException(MSG__INVALID_UTF8);
-         ret_tab[i] = pattern_cur->contains(chr);
-      }
-   }
+        if (from_cur > str_cur_n)
+            ret_tab[i] = negate_1;
+        else {
+            UChar32 chr = 0;
+            U8_NEXT(str_cur_s, from_cur, str_cur_n, chr);
+            if (chr < 0) // invalid utf-8 sequence
+                throw StriException(MSG__INVALID_UTF8);
+            ret_tab[i] = pattern_cur->contains(chr);
 
-   STRI__UNPROTECT_ALL
-   return ret;
-   STRI__ERROR_HANDLER_END( ;/* do nothing special on error */ )
+            if (negate_1)
+                ret_tab[i] = !ret_tab[i];
+        }
+    }
+
+    STRI__UNPROTECT_ALL
+    return ret;
+    STRI__ERROR_HANDLER_END( ;/* do nothing special on error */ )
 }
 
 
@@ -117,58 +124,65 @@ SEXP stri_startswith_charclass(SEXP str, SEXP pattern, SEXP from)
  *
  * @version 0.3-1 (Marek Gagolewski, 2014-11-04)
  *    Issue #112: str_prepare_arg* retvals were not PROTECTed from gc
+ *
+ * @version 1.4.7 (Marek Gagolewski, 2020-08-24)
+ *    #345: `negate` arg added
  */
-SEXP stri_endswith_charclass(SEXP str, SEXP pattern, SEXP to)
+SEXP stri_endswith_charclass(SEXP str, SEXP pattern, SEXP to, SEXP negate)
 {
-   PROTECT(str = stri_prepare_arg_string(str, "str"));
-   PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
-   PROTECT(to = stri_prepare_arg_integer(to, "to"));
+    bool negate_1 = stri__prepare_arg_logical_1_notNA(negate, "negate");
+    PROTECT(str = stri_prepare_arg_string(str, "str"));
+    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
+    PROTECT(to = stri_prepare_arg_integer(to, "to"));
 
-   STRI__ERROR_HANDLER_BEGIN(3)
-   int vectorize_length = stri__recycling_rule(true, 3,
-      LENGTH(str), LENGTH(pattern), LENGTH(to));
-   StriContainerUTF8_indexable str_cont(str, vectorize_length);
-   StriContainerCharClass pattern_cont(pattern, vectorize_length);
-   StriContainerInteger to_cont(to, vectorize_length);
+    STRI__ERROR_HANDLER_BEGIN(3)
+    int vectorize_length = stri__recycling_rule(true, 3,
+                           LENGTH(str), LENGTH(pattern), LENGTH(to));
+    StriContainerUTF8_indexable str_cont(str, vectorize_length);
+    StriContainerCharClass pattern_cont(pattern, vectorize_length);
+    StriContainerInteger to_cont(to, vectorize_length);
 
-   SEXP ret;
-   STRI__PROTECT(ret = Rf_allocVector(LGLSXP, vectorize_length));
-   int* ret_tab = LOGICAL(ret);
+    SEXP ret;
+    STRI__PROTECT(ret = Rf_allocVector(LGLSXP, vectorize_length));
+    int* ret_tab = LOGICAL(ret);
 
-   for (R_len_t i = pattern_cont.vectorize_init();
-         i != pattern_cont.vectorize_end();
-         i = pattern_cont.vectorize_next(i))
-   {
-      if (str_cont.isNA(i) || pattern_cont.isNA(i) || to_cont.isNA(i)) {
-         ret_tab[i] = NA_LOGICAL;
-         continue;
-      }
+    for (R_len_t i = pattern_cont.vectorize_init();
+            i != pattern_cont.vectorize_end();
+            i = pattern_cont.vectorize_next(i))
+    {
+        if (str_cont.isNA(i) || pattern_cont.isNA(i) || to_cont.isNA(i)) {
+            ret_tab[i] = NA_LOGICAL;
+            continue;
+        }
 
-      const char* str_cur_s = str_cont.get(i).c_str();
-      R_len_t     str_cur_n = str_cont.get(i).length();
-      const UnicodeSet* pattern_cur = &pattern_cont.get(i);
+        const char* str_cur_s = str_cont.get(i).c_str();
+        R_len_t     str_cur_n = str_cont.get(i).length();
+        const UnicodeSet* pattern_cur = &pattern_cont.get(i);
 
-      R_len_t to_cur = to_cont.get(i);
-      if (to_cur == -1)
-         to_cur = str_cur_n; /* most commonly used case */
-      else if (to_cur >= 0)
-         to_cur = str_cont.UChar32_to_UTF8_index_fwd(i, to_cur);
-      else
-         to_cur = str_cont.UChar32_to_UTF8_index_back(i, -to_cur-1);
-      // now surely to_cur >= 0 && to_cur <= cur_n
+        R_len_t to_cur = to_cont.get(i);
+        if (to_cur == -1)
+            to_cur = str_cur_n; /* most commonly used case */
+        else if (to_cur >= 0)
+            to_cur = str_cont.UChar32_to_UTF8_index_fwd(i, to_cur);
+        else
+            to_cur = str_cont.UChar32_to_UTF8_index_back(i, -to_cur-1);
+        // now surely to_cur >= 0 && to_cur <= cur_n
 
-      if (to_cur <= 0)
-         ret_tab[i] = FALSE;
-      else {
-         UChar32 chr = 0;
-         U8_PREV(str_cur_s, 0, to_cur, chr);
-         if (chr < 0) // invalid utf-8 sequence
-            throw StriException(MSG__INVALID_UTF8);
-         ret_tab[i] = pattern_cur->contains(chr);
-      }
-   }
+        if (to_cur <= 0)
+            ret_tab[i] = negate_1;
+        else {
+            UChar32 chr = 0;
+            U8_PREV(str_cur_s, 0, to_cur, chr);
+            if (chr < 0) // invalid utf-8 sequence
+                throw StriException(MSG__INVALID_UTF8);
+            ret_tab[i] = pattern_cur->contains(chr);
 
-   STRI__UNPROTECT_ALL
-   return ret;
-   STRI__ERROR_HANDLER_END( ;/* do nothing special on error */ )
+            if (negate_1)
+                ret_tab[i] = !ret_tab[i];
+        }
+    }
+
+    STRI__UNPROTECT_ALL
+    return ret;
+    STRI__ERROR_HANDLER_END( ;/* do nothing special on error */ )
 }

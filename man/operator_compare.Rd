@@ -2,6 +2,9 @@
 % Please edit documentation in R/compare.R
 \name{\%s<\%}
 \alias{\%s<\%}
+\alias{operator_compare}
+\alias{oper_comparison}
+\alias{oper_compare}
 \alias{\%s<=\%}
 \alias{\%s>\%}
 \alias{\%s>=\%}
@@ -61,7 +64,7 @@ As usual, the elements of shorter vectors are recycled if necessary.
 }
 \description{
 Relational operators for comparing corresponding strings in
-two character vectors, with a typical \R look-and-feel.
+two character vectors, with a typical R look-and-feel.
 }
 \details{
 These functions call \code{\link{stri_cmp_le}} or its
@@ -75,12 +78,15 @@ As a consequence, they are vectorized over \code{e1} and \code{e2}.
 code point-based comparison.
 }
 \examples{
-"a" \%stri<\% "b"
-c("a", "b", "c") \%stri>=\% "b"
+'a' \%stri<\% 'b'
+c('a', 'b', 'c') \%stri>=\% 'b'
 
 }
 \seealso{
 Other locale_sensitive: 
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -89,13 +95,11 @@ Other locale_sensitive:
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 }
 \concept{locale_sensitive}

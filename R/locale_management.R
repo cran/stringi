@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -33,7 +35,7 @@
 #' List Available Locales
 #'
 #' @description
-#' Creates a character vector with all known locale identifies.
+#' Creates a character vector with all available locale identifies.
 #'
 #' @details
 #' Note that some of the services may be unavailable in some locales.
@@ -48,8 +50,9 @@
 #'
 #' @family locale_management
 #' @export
-stri_locale_list <- function() {
-   .Call(C_stri_locale_list)
+stri_locale_list <- function()
+{
+    .Call(C_stri_locale_list)
 }
 
 
@@ -73,7 +76,7 @@ stri_locale_list <- function() {
 #'
 #' @param locale single string of the form \code{Language},
 #' \code{Language_Country}, or \code{Language_Country_Variant}, e.g.,
-#' \code{"en_US"}, see \code{\link{stri_locale_list}}.
+#' \code{'en_US'}, see \code{\link{stri_locale_list}}.
 #'
 #' @return
 #' \code{stri_locale_set} returns a string with
@@ -81,13 +84,13 @@ stri_locale_list <- function() {
 #'
 #' \code{stri_locale_get} returns a string of the form \code{Language},
 #' \code{Language_Country}, or \code{Language_Country_Variant},
-#' e.g., \code{"en_US"}.
+#' e.g., \code{'en_US'}.
 #'
 #' @family locale_management
 #' @rdname stri_locale_set
 #' @examples
 #' \dontrun{
-#' oldloc <- stri_locale_set("pt_BR")
+#' oldloc <- stri_locale_set('pt_BR')
 #' # ... some locale-dependent operations
 #' # ... note that you may always modify a locale per-call
 #' # ... changing the default locale is convenient if you perform
@@ -95,21 +98,23 @@ stri_locale_list <- function() {
 #' stri_locale_set(oldloc) # restore the previous default locale
 #' }
 #' @export
-stri_locale_set <- function(locale) {
-   previous <- stri_locale_get()
-   .Call(C_stri_locale_set, locale)
+stri_locale_set <- function(locale)
+{
+    previous <- stri_locale_get()
+    .Call(C_stri_locale_set, locale)
 
-   # We call stri_info, because it generates some warnings,
-   # in case any problems are found:
-   message(stri_paste('You are now working with ', stri_info(short=TRUE)))
-   invisible(previous)
+    # We call stri_info, because it generates some warnings,
+    # in case any problems are found:
+    message(stri_paste("You are now working with ", stri_info(short = TRUE)))
+    invisible(previous)
 }
 
 
 #' @rdname stri_locale_set
 #' @export
-stri_locale_get <- function() {
-   stri_locale_info(NULL)$Name
+stri_locale_get <- function()
+{
+    stri_locale_info(NULL)$Name
 }
 
 
@@ -128,12 +133,12 @@ stri_locale_get <- function() {
 #'
 #' This function does not do anything really complicated. In many
 #' cases it is similar to a call to
-#' \code{\link{as.list}(\link{stri_split_fixed}(locale, "_", 3L)[[1]])},
+#' \code{\link{as.list}(\link{stri_split_fixed}(locale, '_', 3L)[[1]])},
 #' with \code{locale} case mapped.
 #' It may be used, however, to get insight on how ICU understands a given
 #' locale identifier.
 #'
-#' @param locale \code{NULL} or \code{""} for default locale,
+#' @param locale \code{NULL} or \code{''} for default locale,
 #' or a single string with locale identifier.
 #'
 #' @return
@@ -142,11 +147,12 @@ stri_locale_get <- function() {
 #' \code{Name}, being their underscore separated combination.
 #'
 #' @examples
-#' stri_locale_info("pl_PL")
-#' stri_locale_info("Pl_pL") # the same result
+#' stri_locale_info('pl_PL')
+#' stri_locale_info('Pl_pL') # the same result
 #'
 #' @family locale_management
 #' @export
-stri_locale_info <- function(locale=NULL) {
-   .Call(C_stri_locale_info, locale)
+stri_locale_info <- function(locale = NULL)
+{
+    .Call(C_stri_locale_info, locale)
 }

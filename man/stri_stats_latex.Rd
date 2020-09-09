@@ -28,13 +28,14 @@ e.g., obtained by loading a text file with the
 is represented by a separate string.
 }
 \details{
-We use a slightly modified LaTeX Word Count algorithm taken from Kile 2.1.3,
-see \url{http://kile.sourceforge.net/team.php} for original contributors.
+We use a slightly modified LaTeX Word Count algorithm implemented in
+Kile 2.1.3, see
+\url{https://kile.sourceforge.io/team.php} for the original contributors.
 }
 \examples{
-s <- c("Lorem \\\\textbf{ipsum} dolor sit \\\\textit{amet}, consectetur adipisicing elit.",
-       "\\\\begin{small}Proin nibh augue,\\\\end{small} suscipit a, scelerisque sed, lacinia in, mi.",
-       "")
+s <- c('Lorem \\\\textbf{ipsum} dolor sit \\\\textit{amet}, consectetur adipisicing elit.',
+       '\\\\begin{small}Proin nibh augue,\\\\end{small} suscipit a, scelerisque sed, lacinia in, mi.',
+       '')
 stri_stats_latex(s)
 
 }

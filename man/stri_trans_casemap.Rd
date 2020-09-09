@@ -15,7 +15,7 @@ stri_trans_totitle(str, ..., opts_brkiter = NULL)
 \arguments{
 \item{str}{character vector}
 
-\item{locale}{\code{NULL} or \code{""} for case mapping following
+\item{locale}{\code{NULL} or \code{''} for case mapping following
 the conventions of the default locale, or a single string with
 locale identifier, see \link{stringi-locale}.}
 
@@ -52,19 +52,19 @@ and the rest will be transformed to lower case.
 With the break iterator of type \code{sentence}, the first letter
 of each sentence will be capitalized only.
 Note that according the \pkg{ICU} User Guide,
-the string \code{"one. two. three."} consists of one sentence.
+the string \code{'one. two. three.'} consists of one sentence.
 
 For more general (but not locale dependent)
 text transforms refer to \code{\link{stri_trans_general}}.
 }
 \examples{
-stri_trans_toupper("\u00DF", "de_DE") # small German Eszett / scharfes S
-stri_cmp_eq(stri_trans_toupper("i", "en_US"), stri_trans_toupper("i", "tr_TR"))
+stri_trans_toupper('\u00DF', 'de_DE') # small German Eszett / scharfes S
+stri_cmp_eq(stri_trans_toupper('i', 'en_US'), stri_trans_toupper('i', 'tr_TR'))
 stri_trans_toupper(c('abc', '123', '\u0105\u0104'))
 stri_trans_tolower(c('AbC', '123', '\u0105\u0104'))
 stri_trans_totitle(c('AbC', '123', '\u0105\u0104'))
-stri_trans_totitle("GOOD-OLD cOOkiE mOnSTeR IS watCHinG You. Here HE comes!") # word boundary
-stri_trans_totitle("GOOD-OLD cOOkiE mOnSTeR IS watCHinG You. Here HE comes!", type="sentence")
+stri_trans_totitle('cOOkiE mOnSTeR likes COOKIES. Here HE comes!') # word boundary
+stri_trans_totitle('cOOkiE mOnSTeR likes COOKIES. Here HE comes!', type='sentence')
 }
 \references{
 \emph{Case Mappings} -- ICU User Guide,
@@ -73,6 +73,9 @@ stri_trans_totitle("GOOD-OLD cOOkiE mOnSTeR IS watCHinG You. Here HE comes!", ty
 \seealso{
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -81,13 +84,11 @@ Other locale_sensitive:
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 
 Other transform: 
 \code{\link{stri_trans_char}()},
@@ -96,15 +97,15 @@ Other transform:
 \code{\link{stri_trans_nfc}()}
 
 Other text_boundaries: 
+\code{\link{about_search_boundaries}},
+\code{\link{about_search}},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_extract_all_boundaries}()},
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_brkiter}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_split_lines}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search}}
+\code{\link{stri_wrap}()}
 }
 \concept{locale_sensitive}
 \concept{text_boundaries}

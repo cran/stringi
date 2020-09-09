@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -30,7 +32,7 @@
 
 
 #' @title
-#' Check If a Data Stream Is Possibly in UTF16 or UTF32
+#' Check If a Data Stream Is Possibly in UTF-16 or UTF-32
 #'
 #' @description
 #' These functions detect whether a given byte stream is
@@ -55,29 +57,33 @@
 #' @rdname stri_enc_isutf16
 #' @family encoding_detection
 #' @export
-stri_enc_isutf16be <- function(str) {
-   .Call(C_stri_enc_isutf16be, str)
+stri_enc_isutf16be <- function(str)
+{
+    .Call(C_stri_enc_isutf16be, str)
 }
 
 
 #' @rdname stri_enc_isutf16
 #' @export
-stri_enc_isutf16le <- function(str) {
-   .Call(C_stri_enc_isutf16le, str)
+stri_enc_isutf16le <- function(str)
+{
+    .Call(C_stri_enc_isutf16le, str)
 }
 
 
 #' @rdname stri_enc_isutf16
 #' @export
-stri_enc_isutf32be <- function(str) {
-   .Call(C_stri_enc_isutf32be, str)
+stri_enc_isutf32be <- function(str)
+{
+    .Call(C_stri_enc_isutf32be, str)
 }
 
 
 #' @rdname stri_enc_isutf16
 #' @export
-stri_enc_isutf32le <- function(str) {
-   .Call(C_stri_enc_isutf32le, str)
+stri_enc_isutf32le <- function(str)
+{
+    .Call(C_stri_enc_isutf32le, str)
 }
 
 
@@ -100,12 +106,13 @@ stri_enc_isutf32le <- function(str) {
 #'
 #' @examples
 #' stri_enc_isascii(letters[1:3])
-#' stri_enc_isascii("\u0105\u0104")
+#' stri_enc_isascii('\u0105\u0104')
 #'
 #' @family encoding_detection
 #' @export
-stri_enc_isascii <- function(str) {
-   .Call(C_stri_enc_isascii, str)
+stri_enc_isascii <- function(str)
+{
+    .Call(C_stri_enc_isascii, str)
 }
 
 
@@ -119,8 +126,8 @@ stri_enc_isascii <- function(str) {
 #' @details
 #' \code{FALSE} means that a string is certainly not valid UTF-8.
 #' However, false positives are possible. For instance,
-#' \code{(c4,85)} represents ("Polish a with ogonek") in UTF-8
-#' as well as ("A umlaut", "Ellipsis") in WINDOWS-1250.
+#' \code{(c4,85)} represents ('a with ogonek') in UTF-8
+#' as well as ('A umlaut', 'Ellipsis') in WINDOWS-1250.
 #' Also note that UTF-8, as well as most 8-bit encodings, extend ASCII
 #' (note that \code{\link{stri_enc_isascii}} implies that
 #' \code{\link{stri_enc_isutf8}}).
@@ -142,13 +149,14 @@ stri_enc_isascii <- function(str) {
 #'
 #' @examples
 #' stri_enc_isutf8(letters[1:3])
-#' stri_enc_isutf8("\u0105\u0104")
-#' stri_enc_isutf8("\u1234\u0222")
+#' stri_enc_isutf8('\u0105\u0104')
+#' stri_enc_isutf8('\u1234\u0222')
 #'
 #' @family encoding_detection
 #' @export
-stri_enc_isutf8 <- function(str) {
-   .Call(C_stri_enc_isutf8, str)
+stri_enc_isutf8 <- function(str)
+{
+    .Call(C_stri_enc_isutf8, str)
 }
 
 
@@ -162,6 +170,11 @@ stri_enc_isutf8 <- function(str) {
 #'
 #' @details
 #' Vectorized over \code{str} and \code{filter_angle_brackets}.
+#'
+#' For a character vector input, merging all text lines
+#' via \code{\link{stri_flatten}(str, collapse='\n')}
+#' might be needed if \code{str} has been obtained via a call to
+#' \code{readLines} and in fact represents an image of a single text file.
 #'
 #' This is, at best, an imprecise operation using statistics and heuristics.
 #' Because of this, detection works best if you supply at least a few hundred
@@ -225,14 +238,12 @@ stri_enc_isutf8 <- function(str) {
 #' IBM424 \tab Hebrew \cr
 #' }
 #'
-#' If you have some initial guess at language and encoding, try with
-#' \code{\link{stri_enc_detect2}}.
 #'
 #' @param str character vector, a raw vector, or
 #' a list of \code{raw} vectors
 #'
 #' @param filter_angle_brackets logical; If filtering is enabled,
-#' text within angle brackets ("<" and ">") will be removed before detection,
+#' text within angle brackets ('<' and '>') will be removed before detection,
 #' which will remove most HTML or XML markup.
 #'
 #' @return Returns a list of length equal to the length of \code{str}.
@@ -249,7 +260,7 @@ stri_enc_isutf8 <- function(str) {
 #'
 #' @examples
 #' \dontrun{
-#' f <- rawToChar(readBin("test.txt", "raw", 100000))
+#' f <- rawToChar(readBin('test.txt', 'raw', 100000))
 #' stri_enc_detect(f)
 #' }
 #'
@@ -259,14 +270,15 @@ stri_enc_isutf8 <- function(str) {
 #'
 #' @family encoding_detection
 #' @export
-stri_enc_detect <- function(str, filter_angle_brackets=FALSE) {
-   lapply(.Call(C_stri_enc_detect, str, filter_angle_brackets),
-          as.data.frame, stringsAsFactors=FALSE)
+stri_enc_detect <- function(str, filter_angle_brackets = FALSE)
+{
+    lapply(.Call(C_stri_enc_detect, str, filter_angle_brackets),
+        as.data.frame, stringsAsFactors = FALSE)
 }
 
 
 #' @title
-#' Detect Locale-Sensitive Character Encoding
+#' [DEPRECATED] Detect Locale-Sensitive Character Encoding
 #'
 #' @description
 #' This function tries to detect character encoding
@@ -298,13 +310,10 @@ stri_enc_detect <- function(str, filter_angle_brackets=FALSE) {
 #'
 #' If you have no initial guess on the language and encoding, try with
 #' \code{\link{stri_enc_detect}} (uses \pkg{ICU} facilities).
-#' However, it turns out that (empirically) \code{stri_enc_detect2}
-#' works better than the \pkg{ICU}-based one if UTF-* text
-#' is provided. Try it yourself.
 #'
 #' @param str character vector, a raw vector, or
 #' a list of \code{raw} vectors
-#' @param locale \code{NULL} or \code{""}
+#' @param locale \code{NULL} or \code{''}
 #' for default locale,
 #' \code{NA} for just checking the UTF-* family,
 #' or a single string with locale identifier.
@@ -325,8 +334,8 @@ stri_enc_detect <- function(str, filter_angle_brackets=FALSE) {
 #' @family locale_sensitive
 #' @family encoding_detection
 #' @export
-stri_enc_detect2 <- function(str, locale=NULL) {
-   suppressWarnings(lapply(
-      .Call(C_stri_enc_detect2, str, locale),
-      as.data.frame, stringsAsFactors=FALSE))
+stri_enc_detect2 <- function(str, locale = NULL)
+{
+    suppressWarnings(lapply(.Call(C_stri_enc_detect2, str, locale), as.data.frame,
+        stringsAsFactors = FALSE))
 }

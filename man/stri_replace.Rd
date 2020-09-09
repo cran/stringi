@@ -41,7 +41,8 @@ stri_replace_all_charclass(
   pattern,
   replacement,
   merge = FALSE,
-  vectorize_all = TRUE
+  vectorize_all = TRUE,
+  vectorise_all = vectorize_all
 )
 
 stri_replace_first_charclass(str, pattern, replacement)
@@ -53,6 +54,7 @@ stri_replace_all_coll(
   pattern,
   replacement,
   vectorize_all = TRUE,
+  vectorise_all = vectorize_all,
   ...,
   opts_collator = NULL
 )
@@ -66,6 +68,7 @@ stri_replace_all_fixed(
   pattern,
   replacement,
   vectorize_all = TRUE,
+  vectorise_all = vectorize_all,
   ...,
   opts_fixed = NULL
 )
@@ -79,6 +82,7 @@ stri_replace_all_regex(
   pattern,
   replacement,
   vectorize_all = TRUE,
+  vectorise_all = vectorize_all,
   ...,
   opts_regex = NULL
 )
@@ -97,7 +101,7 @@ including additional settings for \code{opts_collator}, \code{opts_regex},
 \code{opts_fixed}, and so on}
 
 \item{mode}{single string;
-one of: \code{"first"} (the default), \code{"all"}, \code{"last"}}
+one of: \code{'first'} (the default), \code{'all'}, \code{'last'}}
 
 \item{pattern, regex, fixed, coll, charclass}{character vector;
 search patterns; for more details refer to \link{stringi-search}}
@@ -110,6 +114,8 @@ should consecutive matches be merged into one string;
 should each occurrence of a pattern in every string
 be replaced by a corresponding replacement string?;
 \code{stri_replace_all_*} only}
+
+\item{vectorise_all}{alias of \code{vectorize_all}}
 
 \item{opts_collator, opts_fixed, opts_regex}{a named list used to tune up
 the search engine's settings; see
@@ -157,45 +163,45 @@ If you wish to remove white-spaces from the start or end
 of a string, see \code{\link{stri_trim}}.
 }
 \examples{
-stri_replace_all_charclass("aaaa", "[a]", "b", merge=c(TRUE, FALSE))
+stri_replace_all_charclass('aaaa', '[a]', 'b', merge=c(TRUE, FALSE))
 
-stri_replace_all_charclass("a\nb\tc   d", "\\\\p{WHITE_SPACE}", " ")
-stri_replace_all_charclass("a\nb\tc   d", "\\\\p{WHITE_SPACE}", " ", merge=TRUE)
+stri_replace_all_charclass('a\nb\tc   d', '\\\\p{WHITE_SPACE}', ' ')
+stri_replace_all_charclass('a\nb\tc   d', '\\\\p{WHITE_SPACE}', ' ', merge=TRUE)
 
-s <- "Lorem ipsum dolor sit amet, consectetur adipisicing elit."
-stri_replace_all_fixed(s, " ", "#")
-stri_replace_all_fixed(s, "o", "0")
+s <- 'Lorem ipsum dolor sit amet, consectetur adipisicing elit.'
+stri_replace_all_fixed(s, ' ', '#')
+stri_replace_all_fixed(s, 'o', '0')
 
-stri_replace_all_fixed(c("1", "NULL", "3"), "NULL", NA)
+stri_replace_all_fixed(c('1', 'NULL', '3'), 'NULL', NA)
 
-stri_replace_all_regex(s, " .*? ", "#")
-stri_replace_all_regex(s, "(el|s)it", "1234")
+stri_replace_all_regex(s, ' .*? ', '#')
+stri_replace_all_regex(s, '(el|s)it', '1234')
 stri_replace_all_regex('abaca', 'a', c('!', '*'))
 stri_replace_all_regex('123|456|789', '(\\\\p{N}).(\\\\p{N})', '$2-$1')
-stri_replace_all_regex(c("stringi R", "REXAMINE", "123"), '( R|R.)', ' r ')
+stri_replace_all_regex(c('stringi R', 'REXAMINE', '123'), '( R|R.)', ' r ')
 
 \dontrun{
 # named capture groups available since ICU 55
-stri_replace_all_regex("words 123 and numbers 456",
-   "(?<numbers>[0-9]+)", "!${numbers}!")
+stri_replace_all_regex('words 123 and numbers 456',
+   '(?<numbers>[0-9]+)', '!${numbers}!')
 }
 
 # Compare the results:
-stri_replace_all_fixed("The quick brown fox jumped over the lazy dog.",
-     c("quick", "brown", "fox"), c("slow",  "black", "bear"), vectorize_all=TRUE)
-stri_replace_all_fixed("The quick brown fox jumped over the lazy dog.",
-     c("quick", "brown", "fox"), c("slow",  "black", "bear"), vectorize_all=FALSE)
+stri_replace_all_fixed('The quick brown fox jumped over the lazy dog.',
+     c('quick', 'brown', 'fox'), c('slow',  'black', 'bear'), vectorize_all=TRUE)
+stri_replace_all_fixed('The quick brown fox jumped over the lazy dog.',
+     c('quick', 'brown', 'fox'), c('slow',  'black', 'bear'), vectorize_all=FALSE)
 
 # Compare the results:
-stri_replace_all_fixed("The quicker brown fox jumped over the lazy dog.",
-     c("quick", "brown", "fox"), c("slow",  "black", "bear"), vectorize_all=FALSE)
-stri_replace_all_regex("The quicker brown fox jumped over the lazy dog.",
-     "\\\\b"\%s+\%c("quick", "brown", "fox")\%s+\%"\\\\b", c("slow",  "black", "bear"), vectorize_all=FALSE)
+stri_replace_all_fixed('The quicker brown fox jumped over the lazy dog.',
+     c('quick', 'brown', 'fox'), c('slow',  'black', 'bear'), vectorize_all=FALSE)
+stri_replace_all_regex('The quicker brown fox jumped over the lazy dog.',
+     '\\\\b'\%s+\%c('quick', 'brown', 'fox')\%s+\%'\\\\b', c('slow',  'black', 'bear'), vectorize_all=FALSE)
 
 }
 \seealso{
 Other search_replace: 
-\code{\link{stri_trim_both}()},
-\code{\link{stringi-search}}
+\code{\link{about_search}},
+\code{\link{stri_trim_both}()}
 }
 \concept{search_replace}

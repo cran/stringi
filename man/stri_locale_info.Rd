@@ -7,7 +7,7 @@
 stri_locale_info(locale = NULL)
 }
 \arguments{
-\item{locale}{\code{NULL} or \code{""} for default locale,
+\item{locale}{\code{NULL} or \code{''} for default locale,
 or a single string with locale identifier.}
 }
 \value{
@@ -27,20 +27,20 @@ See \link{stringi-locale} for discussion.
 
 This function does not do anything really complicated. In many
 cases it is similar to a call to
-\code{\link{as.list}(\link{stri_split_fixed}(locale, "_", 3L)[[1]])},
+\code{\link{as.list}(\link{stri_split_fixed}(locale, '_', 3L)[[1]])},
 with \code{locale} case mapped.
 It may be used, however, to get insight on how ICU understands a given
 locale identifier.
 }
 \examples{
-stri_locale_info("pl_PL")
-stri_locale_info("Pl_pL") # the same result
+stri_locale_info('pl_PL')
+stri_locale_info('Pl_pL') # the same result
 
 }
 \seealso{
 Other locale_management: 
+\code{\link{about_locale}},
 \code{\link{stri_locale_list}()},
-\code{\link{stri_locale_set}()},
-\code{\link{stringi-locale}}
+\code{\link{stri_locale_set}()}
 }
 \concept{locale_management}

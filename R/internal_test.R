@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -38,8 +40,9 @@
 #
 # @param str character vector
 # @return who cares
-.stri_test_Rmark <- function(str) {
-   invisible(.Call(C_stri_test_Rmark, str))
+.stri_test_Rmark <- function(str)
+{
+    invisible(.Call(C_stri_test_Rmark, str))
 }
 
 
@@ -47,8 +50,9 @@
 #
 # @param str character vector
 # @return who cares
-.stri_test_StriContainerUTF16 <- function(str) {
-   .Call(C_stri_test_UnicodeContainer16, str)
+.stri_test_StriContainerUTF16 <- function(str)
+{
+    .Call(C_stri_test_UnicodeContainer16, str)
 }
 
 
@@ -56,8 +60,9 @@
 #
 # @param str character vector
 # @return who cares
-.stri_test_StriContainerUTF8 <- function(str) {
-   .Call(C_stri_test_UnicodeContainer8, str)
+.stri_test_StriContainerUTF8 <- function(str)
+{
+    .Call(C_stri_test_UnicodeContainer8, str)
 }
 
 
@@ -65,6 +70,7 @@
 #
 # @param str some object
 # @return \code{str}
-.stri_test_returnasis <- function(x) {
-   .Call(C_stri_test_returnasis, x)
+.stri_test_returnasis <- function(x)
+{
+    .Call(C_stri_test_returnasis, x)
 }

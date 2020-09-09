@@ -2,6 +2,7 @@
 % Please edit documentation in R/opts.R
 \name{stri_opts_collator}
 \alias{stri_opts_collator}
+\alias{stri_coll}
 \title{Generate a List with Collator Settings}
 \usage{
 stri_opts_collator(
@@ -12,17 +13,31 @@ stri_opts_collator(
   uppercase_first = NA,
   case_level = FALSE,
   normalization = FALSE,
+  normalisation = normalization,
+  numeric = FALSE,
+  ...
+)
+
+stri_coll(
+  locale = NULL,
+  strength = 3L,
+  alternate_shifted = FALSE,
+  french = FALSE,
+  uppercase_first = NA,
+  case_level = FALSE,
+  normalization = FALSE,
+  normalisation = normalization,
   numeric = FALSE,
   ...
 )
 }
 \arguments{
 \item{locale}{single string, \code{NULL} or
-\code{""} for default locale}
+\code{''} for default locale}
 
 \item{strength}{single integer in \{1,2,3,4\}, which defines collation strength;
-\code{1} for the most permissive collation rules, \code{4} for the most
-strict ones}
+\code{1} for the most permissive collation rules, \code{4} for the strictest
+ones}
 
 \item{alternate_shifted}{single logical value; \code{FALSE}
 treats all the code points with non-ignorable primary weights in the same way,
@@ -45,12 +60,15 @@ then incremental check is performed to see whether the input data is in
 the FCD form. If the data is not in the FCD form, incremental NFD
 normalization is performed}
 
+\item{normalisation}{alias of \code{normalization}}
+
 \item{numeric}{single logical value;
 when turned on, this attribute generates a collation key for
 the numeric value of substrings of digits;
 this is a way to get '100' to sort AFTER '2'}
 
-\item{...}{any other arguments to this function are purposely ignored}
+\item{...}{[DEPRECATED] any other arguments passed to this function
+generate a warning; this argument will be removed in the future}
 }
 \value{
 Returns a named list object; missing settings are left with default values.
@@ -66,23 +84,16 @@ and other \link{stringi-search-coll} functions.
 \pkg{ICU}'s \emph{collator} performs a locale-aware, natural-language
 alike string comparison.
 This is a more reliable way of establishing relationships between
-string than that provided by base \R, and definitely
-one that is more complex and appropriate than ordinary byte-comparison.
-
-A note on collation \code{strength}:
-generally, \code{strength} set to 4 is
-the least permissive.
-Set to 2 to ignore case differences.
-Set to 1 to also ignore diacritical differences.
-
-The strings are Unicode-normalized before the comparison.
+strings than the one provided by base \R, and definitely
+one that is more complex and appropriate than ordinary bytewise
+comparison.
 }
 \examples{
-stri_cmp("number100", "number2")
-stri_cmp("number100", "number2", opts_collator=stri_opts_collator(numeric=TRUE))
-stri_cmp("number100", "number2", numeric=TRUE) # equivalent
-stri_cmp("above mentioned", "above-mentioned")
-stri_cmp("above mentioned", "above-mentioned", alternate_shifted=TRUE)
+stri_cmp('number100', 'number2')
+stri_cmp('number100', 'number2', opts_collator=stri_opts_collator(numeric=TRUE))
+stri_cmp('number100', 'number2', numeric=TRUE) # equivalent
+stri_cmp('above mentioned', 'above-mentioned')
+stri_cmp('above mentioned', 'above-mentioned', alternate_shifted=TRUE)
 }
 \references{
 \emph{Collation} -- ICU User Guide,
@@ -92,11 +103,14 @@ stri_cmp("above mentioned", "above-mentioned", alternate_shifted=TRUE)
 \url{http://userguide.icu-project.org/collation/architecture}
 
 \emph{\code{icu::Collator} Class Reference} -- ICU4C API Documentation,
-\url{http://www.icu-project.org/apiref/icu4c/classicu_1_1Collator.html}
+\url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/classicu_1_1Collator.html}
 }
 \seealso{
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -104,18 +118,16 @@ Other locale_sensitive:
 \code{\link{stri_extract_all_boundaries}()},
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 
 Other search_coll: 
-\code{\link{stringi-search-coll}},
-\code{\link{stringi-search}}
+\code{\link{about_search_coll}},
+\code{\link{about_search}}
 }
 \concept{locale_sensitive}
 \concept{search_coll}

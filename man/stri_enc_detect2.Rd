@@ -2,7 +2,7 @@
 % Please edit documentation in R/encoding_detection.R
 \name{stri_enc_detect2}
 \alias{stri_enc_detect2}
-\title{Detect Locale-Sensitive Character Encoding}
+\title{[DEPRECATED] Detect Locale-Sensitive Character Encoding}
 \usage{
 stri_enc_detect2(str, locale = NULL)
 }
@@ -10,7 +10,7 @@ stri_enc_detect2(str, locale = NULL)
 \item{str}{character vector, a raw vector, or
 a list of \code{raw} vectors}
 
-\item{locale}{\code{NULL} or \code{""}
+\item{locale}{\code{NULL} or \code{''}
 for default locale,
 \code{NA} for just checking the UTF-* family,
 or a single string with locale identifier.}
@@ -57,13 +57,13 @@ bytes of character data that is in a single language.
 
 If you have no initial guess on the language and encoding, try with
 \code{\link{stri_enc_detect}} (uses \pkg{ICU} facilities).
-However, it turns out that (empirically) \code{stri_enc_detect2}
-works better than the \pkg{ICU}-based one if UTF-* text
-is provided. Try it yourself.
 }
 \seealso{
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -71,21 +71,19 @@ Other locale_sensitive:
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 
 Other encoding_detection: 
+\code{\link{about_encoding}},
 \code{\link{stri_enc_detect}()},
 \code{\link{stri_enc_isascii}()},
 \code{\link{stri_enc_isutf16be}()},
-\code{\link{stri_enc_isutf8}()},
-\code{\link{stringi-encoding}}
+\code{\link{stri_enc_isutf8}()}
 }
 \concept{encoding_detection}
 \concept{locale_sensitive}

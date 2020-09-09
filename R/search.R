@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -40,18 +42,18 @@
 #' in \pkg{stringi}.
 #' \itemize{
 #'    \item \code{stri_*_regex} -- \pkg{ICU}'s regular expressions (regexes),
-#'         see \link{stringi-search-regex},
+#'         see \link{about_search_regex},
 #'    \item \code{stri_*_fixed} -- locale-independent byte-wise pattern matching,
-#'        see \link{stringi-search-fixed},
+#'        see \link{about_search_fixed},
 #'    \item \code{stri_*_coll} -- \pkg{ICU}'s \code{StringSearch},
 #'        locale-sensitive, Collator-based pattern search,
 #'        useful for natural language processing tasks,
-#'        see \link{stringi-search-coll},
+#'        see \link{about_search_coll},
 #'    \item \code{stri_*_charclass} -- character classes search,
 #'       e.g., Unicode General Categories or Binary Properties,
-#'        see \link{stringi-search-charclass},
+#'        see \link{about_search_charclass},
 #'    \item \code{stri_*_boundaries} -- text boundary analysis,
-#'       see \link{stringi-search-boundaries}
+#'       see \link{about_search_boundaries}
 #' }
 #'
 #' Each search engine is able to perform many search-based operations.
@@ -79,8 +81,9 @@
 #'    with strings that match a given pattern, see, e.g., \code{\link{stri_subset}}.
 #' }
 #'
-#' @name stringi-search
-#' @rdname stringi-search
+#' @name about_search
+#' @rdname about_search
+#' @aliases about_search search stringi-search
 #' @family text_boundaries
 #' @family search_regex
 #' @family search_fixed
@@ -136,9 +139,9 @@ invisible(NULL)
 #' \item{\code{*}}{Match 0 or more times. Match as many times as possible.}
 #' \item{\code{+}}{Match 1 or more times. Match as many times as possible.}
 #' \item{\code{?}}{Match zero or one times. Prefer one.}
-#' \item{\code{{n}}}{Match exactly n times.}
-#' \item{\code{{n,}}}{Match at least n times. Match as many times as possible.}
-#' \item{\code{{n,m}}}{Match between n and m times.
+#' \item{\code{{n}} }{Match exactly n times.}
+#' \item{\code{{n,}} }{Match at least n times. Match as many times as possible.}
+#' \item{\code{{n,m}} }{Match between n and m times.
 #' Match as many times as possible, but not more than m.}
 #' \item{\code{*?}}{Match 0 or more times. Match as few times as possible.}
 #' \item{\code{+?}}{Match 1 or more times. Match as few times as possible.}
@@ -227,10 +230,10 @@ invisible(NULL)
 #'    [Since ICU 55]}
 #' \item{\code{\\k<name>}}{Named Capture Back Reference. [Since ICU 55]}
 #' \item{\code{\\n}}{Match a LINE FEED, \code{\\u000A}.}
-#' \item{\code{\\N{UNICODE CHARACTER NAME}}}{Match the named character.}
-#' \item{\code{\\p{UNICODE PROPERTY NAME}}}{Match any character with the
+#' \item{\code{\\N{UNICODE CHARACTER NAME}} }{Match the named character.}
+#' \item{\code{\\p{UNICODE PROPERTY NAME}} }{Match any character with the
 #'    specified Unicode Property.}
-#' \item{\code{\\P{UNICODE PROPERTY NAME}}}{Match any character not having
+#' \item{\code{\\P{UNICODE PROPERTY NAME}} }{Match any character not having
 #'    the specified Unicode Property.}
 #' \item{\code{\\Q}}{Quotes all following characters until \code{\\E}.}
 #' \item{\code{\\r}}{Match a CARRIAGE RETURN, \code{\\u000D}.}
@@ -245,7 +248,7 @@ invisible(NULL)
 #' \item{\code{\\w}}{Match a word character. Word characters are
 #'    \code{[\\p{Alphabetic}\\p{Mark}\\p{Decimal_Number}\\p{Connector_Punctuation}\\u200c\\u200d]}.}
 #' \item{\code{\\W}}{Match a non-word character.}
-#' \item{\code{\\x{hhhh}}}{Match the character with hex value hhhh.
+#' \item{\code{\\x{hhhh}} }{Match the character with hex value hhhh.
 #' From one to six hex digits may be supplied.}
 #' \item{\code{\\xhh}}{Match the character with two digit hex value hh }
 #' \item{\code{\\X}}{Match a Grapheme Cluster.}
@@ -272,7 +275,7 @@ invisible(NULL)
 #' }
 #'
 #' For information on how to define character classes
-#' in regexes, refer to \link{stringi-search-charclass}.
+#' in regexes, refer to \link{about_search_charclass}.
 #'
 #' @section Regex Functions in \pkg{stringi}:
 #'
@@ -282,7 +285,7 @@ invisible(NULL)
 #' On a syntax error, a quite informative failure message is shown.
 #'
 #' If you wish to search for a fixed pattern,
-#' refer to \link{stringi-search-coll} or \link{stringi-search-fixed}.
+#' refer to \link{about_search_coll} or \link{about_search_fixed}.
 #' They allow to perform a locale-aware text lookup,
 #' or a very fast exact-byte search, respectively.
 #'
@@ -295,13 +298,14 @@ invisible(NULL)
 #' J.E.F. Friedl, \emph{Mastering Regular Expressions}, O'Reilly, 2002
 #'
 #' \emph{Unicode Regular Expressions} -- Unicode Technical Standard #18,
-#' \url{http://www.unicode.org/reports/tr18/}
+#' \url{https://www.unicode.org/reports/tr18/}
 #'
 #' \emph{Unicode Regular Expressions} -- Regex tutorial,
-#' \url{http://www.regular-expressions.info/unicode.html}
+#' \url{https://www.regular-expressions.info/unicode.html}
 #'
-#' @name stringi-search-regex
-#' @rdname stringi-search-regex
+#' @name about_search_regex
+#' @rdname about_search_regex
+#' @aliases about_search_regex search_regex stringi-search-regex
 #' @family search_regex
 #' @family stringi_general_topics
 invisible(NULL)
@@ -334,13 +338,14 @@ invisible(NULL)
 #' \item ignorable punctuation;
 #' \item ignorable case,
 #' }
-#' see also \link{stringi-search-coll}.
+#' see also \link{about_search_coll}.
 #'
 #' Note that the conversion of input data
 #' to Unicode is done as usual.
 #'
-#' @name stringi-search-fixed
-#' @rdname stringi-search-fixed
+#' @name about_search_fixed
+#' @rdname about_search_fixed
+#' @aliases about_search_fixed search_fixed stringi-search-fixed
 #' @family search_fixed
 #' @family stringi_general_topics
 invisible(NULL)
@@ -383,10 +388,11 @@ invisible(NULL)
 #'  \url{http://userguide.icu-project.org/collation/icu-string-search-service}
 #'
 #' L. Werner, \emph{Efficient Text Searching in Java}, 1999,
-#' \url{http://icu-project.org/docs/papers/efficient_text_searching_in_java.html}
+#' \url{https://icu-project.org/docs/papers/efficient_text_searching_in_java.html}
 #'
-#' @name stringi-search-coll
-#' @rdname stringi-search-coll
+#' @name about_search_coll
+#' @rdname about_search_coll
+#' @aliases about_search_coll search_coll stringi-search-coll
 #' @family search_coll
 #' @family locale_sensitive
 #' @family stringi_general_topics
@@ -406,7 +412,7 @@ invisible(NULL)
 #' @details
 #' All \code{stri_*_charclass} functions in \pkg{stringi} perform
 #' a single character (i.e., Unicode code point) search-based operations.
-#' You may obtain the same results using \link{stringi-search-regex}.
+#' You may obtain the same results using \link{about_search_regex}.
 #' However, these very functions aim to be faster.
 #'
 #' Character classes are defined using \pkg{ICU}'s \code{UnicodeSet}
@@ -469,17 +475,16 @@ invisible(NULL)
 #' \item{\code{[\\u0000-\\U0010ffff]}}{Range -- match all characters.}
 #' \item{\code{[\\p{Letter}]} or \code{[\\p{General_Category=Letter}]} or \code{[\\p{L}]}}{
 #'    Characters with Unicode Category = Letter. All forms shown are equivalent.}
-#' \item{\code{[\\P{Letter}]}}{Negated property.
-#'    (Upper case \code{\\P}) Match everything except Letters.}
+#' \item{\code{[\\P{Letter}]}}{Negated property
+#'    (Note the upper case \code{\\P}) -- match everything except Letters.}
 #' \item{\code{[\\p{numeric_value=9}]}}{Match all numbers with a numeric value of 9.
 #'    Any Unicode Property may be used in set expressions.}
-#' \item{\code{[\\p{Letter}&&\\p{script=cyrillic}]}}{Logical AND
-#'    or intersection -- match the set of all Cyrillic letters.}
-#' \item{\code{[\\p{Letter}--\\p{script=latin}]}}{Subtraction --
+#' \item{\code{[\\p{Letter}&\\p{script=cyrillic}]}}{Set
+#'     intersection -- match the set of all Cyrillic letters.}
+#' \item{\code{[\\p{Letter}-\\p{script=latin}]}}{Set difference --
 #'    match all non-Latin letters.}
-#' \item{\code{[[a-z][A-Z][0-9]]} or \code{[a-zA-Z0-9]}}{Implicit Logical
-#'    OR or Union of Sets -- the examples match ASCII letters and digits.
-#'    The two forms are equivalent.}
+#' \item{\code{[[a-z][A-Z][0-9]]} or \code{[a-zA-Z0-9]}}{Implicit union of
+#'    sets -- match ASCII letters and digits (the two forms are equivalent).}
 #' \item{\code{[:script=Greek:]}}{Alternate POSIX-like syntax for properties --
 #'    equivalent to \code{\\p{script=Greek}}.}
 #' }
@@ -587,7 +592,7 @@ invisible(NULL)
 #'                              e.g., a length and iteration mark.}
 #'   \item{\code{HEX_DIGIT}      }{a character commonly
 #'                             used for hexadecimal numbers,
-#'                             cf. also \code{ASCII_HEX_DIGIT}.}
+#'                             see also \code{ASCII_HEX_DIGIT}.}
 #'   \item{\code{HYPHEN}}{a dash used to mark connections between
 #'               pieces of words, plus the Katakana middle dot.}
 #'   \item{\code{ID_CONTINUE}}{a character that can continue an identifier,
@@ -596,30 +601,30 @@ invisible(NULL)
 #'                  \code{Lu}+\code{Ll}+\code{Lt}+\code{Lm}+\code{Lo}+\code{Nl}.}
 #'   \item{\code{IDEOGRAPHIC}}{a CJKV (Chinese-Japanese-Korean-Vietnamese)
 #'                ideograph.}
-#'   \item{\code{LOWERCASE}}{}
-#'   \item{\code{MATH}}{}
-#'   \item{\code{NONCHARACTER_CODE_POINT}}{}
-#'   \item{\code{QUOTATION_MARK}}{}
+#'   \item{\code{LOWERCASE}}{...}
+#'   \item{\code{MATH}}{...}
+#'   \item{\code{NONCHARACTER_CODE_POINT}}{...}
+#'   \item{\code{QUOTATION_MARK}}{...}
 #'   \item{\code{SOFT_DOTTED}}{a character with a ``soft dot'', like i or j,
 #' such that an accent placed on this character causes the dot to disappear.}
 #'   \item{\code{TERMINAL_PUNCTUATION}}{a punctuation character that generally
 #' marks the end of textual units.}
-#'   \item{\code{UPPERCASE}}{}
+#'   \item{\code{UPPERCASE}}{...}
 #'   \item{\code{WHITE_SPACE}}{a space character or TAB or CR or LF or ZWSP or ZWNBSP.}
-#'   \item{\code{CASE_SENSITIVE}}{}
-#'   \item{\code{POSIX_ALNUM}}{}
-#'   \item{\code{POSIX_BLANK}}{}
-#'   \item{\code{POSIX_GRAPH}}{}
-#'   \item{\code{POSIX_PRINT}}{}
-#'   \item{\code{POSIX_XDIGIT}}{}
-#'   \item{\code{CASED}}{}
-#'   \item{\code{CASE_IGNORABLE}}{}
-#'   \item{\code{CHANGES_WHEN_LOWERCASED}}{}
-#'   \item{\code{CHANGES_WHEN_UPPERCASED}}{}
-#'   \item{\code{CHANGES_WHEN_TITLECASED}}{}
-#'   \item{\code{CHANGES_WHEN_CASEFOLDED}}{}
-#'   \item{\code{CHANGES_WHEN_CASEMAPPED}}{}
-#'   \item{\code{CHANGES_WHEN_NFKC_CASEFOLDED}}{}
+#'   \item{\code{CASE_SENSITIVE}}{...}
+#'   \item{\code{POSIX_ALNUM}}{...}
+#'   \item{\code{POSIX_BLANK}}{...}
+#'   \item{\code{POSIX_GRAPH}}{...}
+#'   \item{\code{POSIX_PRINT}}{...}
+#'   \item{\code{POSIX_XDIGIT}}{...}
+#'   \item{\code{CASED}}{...}
+#'   \item{\code{CASE_IGNORABLE}}{...}
+#'   \item{\code{CHANGES_WHEN_LOWERCASED}}{...}
+#'   \item{\code{CHANGES_WHEN_UPPERCASED}}{...}
+#'   \item{\code{CHANGES_WHEN_TITLECASED}}{...}
+#'   \item{\code{CHANGES_WHEN_CASEFOLDED}}{...}
+#'   \item{\code{CHANGES_WHEN_CASEMAPPED}}{...}
+#'   \item{\code{CHANGES_WHEN_NFKC_CASEFOLDED}}{...}
 #'   \item{\code{EMOJI}}{Since ICU 57}
 #'   \item{\code{EMOJI_PRESENTATION}}{Since ICU 57}
 #'   \item{\code{EMOJI_MODIFIER}}{Since ICU 57}
@@ -650,7 +655,7 @@ invisible(NULL)
 #'
 #' @references
 #' \emph{The Unicode Character Database} -- Unicode Standard Annex #44,
-#' \url{http://www.unicode.org/reports/tr44/}
+#' \url{https://www.unicode.org/reports/tr44/}
 #'
 #' \emph{UnicodeSet} -- ICU User Guide,
 #' \url{http://userguide.icu-project.org/strings/unicodeset}
@@ -661,13 +666,14 @@ invisible(NULL)
 #' \emph{C/POSIX Migration} -- ICU User Guide,
 #' \url{http://userguide.icu-project.org/posix}
 #'
-#' \emph{Unicode Script Data}, \url{http://www.unicode.org/Public/UNIDATA/Scripts.txt}
+#' \emph{Unicode Script Data}, \url{https://www.unicode.org/Public/UNIDATA/Scripts.txt}
 #'
 #' \emph{icu::Unicodeset Class Reference} -- ICU4C API Documentation,
-#' \url{http://www.icu-project.org/apiref/icu4c/classicu_1_1UnicodeSet.html}
+#' \url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/classicu_1_1UnicodeSet.html}
 #'
-#' @name stringi-search-charclass
-#' @rdname stringi-search-charclass
+#' @name about_search_charclass
+#' @rdname about_search_charclass
+#' @aliases about_search_charclass search_charclass stringi-search-charclass
 #' @family search_charclass
 #' @family stringi_general_topics
 invisible(NULL)
@@ -726,8 +732,9 @@ invisible(NULL)
 #' \emph{Boundary Analysis} -- ICU User Guide,
 #' \url{http://userguide.icu-project.org/boundaryanalysis}
 #'
-#' @name stringi-search-boundaries
-#' @rdname stringi-search-boundaries
+#' @name about_search_boundaries
+#' @rdname about_search_boundaries
+#' @aliases about_search_boundaries search_boundaries stringi-search-boundaries
 #' @family locale_sensitive
 #' @family text_boundaries
 #' @family stringi_general_topics

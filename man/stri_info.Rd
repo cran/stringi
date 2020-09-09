@@ -11,7 +11,7 @@ stri_info(short = FALSE)
 in a concise form; defaults to \code{TRUE}}
 }
 \value{
-If \code{short==TRUE}, then a single string providing
+If \code{short} is \code{TRUE}, then a single string providing
 information on the default character encoding, locale, and Unicode
 as well as \pkg{ICU} version is returned.
 
@@ -22,7 +22,7 @@ by the \pkg{ICU} library;
 \item \code{ICU.version} -- \pkg{ICU} library version used;
 \item \code{Locale} -- contains information on default locale,
 as returned by \code{\link{stri_locale_info}};
-\item \code{Charset.internal} -- fixed at \code{c("UTF-8", "UTF-16")};
+\item \code{Charset.internal} -- fixed at \code{c('UTF-8', 'UTF-16')};
 \item \code{Charset.native} -- information on the default encoding,
 as returned by \code{\link{stri_enc_info}};
 \item \code{ICU.system} -- logical; \code{TRUE} indicates that

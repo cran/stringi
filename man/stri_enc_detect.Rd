@@ -11,7 +11,7 @@ stri_enc_detect(str, filter_angle_brackets = FALSE)
 a list of \code{raw} vectors}
 
 \item{filter_angle_brackets}{logical; If filtering is enabled,
-text within angle brackets ("<" and ">") will be removed before detection,
+text within angle brackets ('<' and '>') will be removed before detection,
 which will remove most HTML or XML markup.}
 }
 \value{
@@ -33,6 +33,11 @@ or encoding, of character data in an unknown format.
 }
 \details{
 Vectorized over \code{str} and \code{filter_angle_brackets}.
+
+For a character vector input, merging all text lines
+via \code{\link{stri_flatten}(str, collapse='\n')}
+might be needed if \code{str} has been obtained via a call to
+\code{readLines} and in fact represents an image of a single text file.
 
 This is, at best, an imprecise operation using statistics and heuristics.
 Because of this, detection works best if you supply at least a few hundred
@@ -95,13 +100,10 @@ KOI8-R \tab Russian \cr
 IBM420 \tab Arabic \cr
 IBM424 \tab Hebrew \cr
 }
-
-If you have some initial guess at language and encoding, try with
-\code{\link{stri_enc_detect2}}.
 }
 \examples{
 \dontrun{
-f <- rawToChar(readBin("test.txt", "raw", 100000))
+f <- rawToChar(readBin('test.txt', 'raw', 100000))
 stri_enc_detect(f)
 }
 
@@ -112,10 +114,10 @@ stri_enc_detect(f)
 }
 \seealso{
 Other encoding_detection: 
+\code{\link{about_encoding}},
 \code{\link{stri_enc_detect2}()},
 \code{\link{stri_enc_isascii}()},
 \code{\link{stri_enc_isutf16be}()},
-\code{\link{stri_enc_isutf8}()},
-\code{\link{stringi-encoding}}
+\code{\link{stri_enc_isutf8}()}
 }
 \concept{encoding_detection}

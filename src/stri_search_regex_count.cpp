@@ -1,5 +1,5 @@
-/* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+/* This file is part of the 'stringi' project.
+ * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,46 +59,50 @@
  *
  * @version 1.0-2 (Marek Gagolewski, 2016-01-29)
  *    Issue #214: allow a regex pattern like `.*`  to match an empty string
+ *
+ * @version 1.4.7 (Marek Gagolewski, 2020-08-24)
+ *    Use StriContainerRegexPattern::getRegexOptions
  */
 SEXP stri_count_regex(SEXP str, SEXP pattern, SEXP opts_regex)
 {
-   PROTECT(str = stri_prepare_arg_string(str, "str"));
-   PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
-   R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
+    PROTECT(str = stri_prepare_arg_string(str, "str"));
+    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
+    R_len_t vectorize_length = stri__recycling_rule(true, 2, LENGTH(str), LENGTH(pattern));
 
-   uint32_t pattern_flags = StriContainerRegexPattern::getRegexFlags(opts_regex);
+    StriRegexMatcherOptions pattern_opts =
+        StriContainerRegexPattern::getRegexOptions(opts_regex);
 
-   STRI__ERROR_HANDLER_BEGIN(2)
-   StriContainerUTF16 str_cont(str, vectorize_length);
-   StriContainerRegexPattern pattern_cont(pattern, vectorize_length, pattern_flags);
+    STRI__ERROR_HANDLER_BEGIN(2)
+    StriContainerUTF16 str_cont(str, vectorize_length);
+    StriContainerRegexPattern pattern_cont(pattern, vectorize_length, pattern_opts);
 
-   SEXP ret;
-   STRI__PROTECT(ret = Rf_allocVector(INTSXP, vectorize_length));
-   int* ret_tab = INTEGER(ret);
+    SEXP ret;
+    STRI__PROTECT(ret = Rf_allocVector(INTSXP, vectorize_length));
+    int* ret_tab = INTEGER(ret);
 
-   for (R_len_t i = pattern_cont.vectorize_init();
-         i != pattern_cont.vectorize_end();
-         i = pattern_cont.vectorize_next(i))
-   {
-      STRI__CONTINUE_ON_EMPTY_OR_NA_PATTERN(str_cont, pattern_cont,
-         ret_tab[i] = NA_INTEGER)
+    for (R_len_t i = pattern_cont.vectorize_init();
+            i != pattern_cont.vectorize_end();
+            i = pattern_cont.vectorize_next(i))
+    {
+        STRI__CONTINUE_ON_EMPTY_OR_NA_PATTERN(str_cont, pattern_cont,
+                                              ret_tab[i] = NA_INTEGER)
 
-      // see search_regex_detect for UText implementation (often slower)
-      RegexMatcher *matcher = pattern_cont.getMatcher(i); // will be deleted automatically
-      matcher->reset(str_cont.get(i));
-      UErrorCode status = U_ZERO_ERROR;
-      int count = 0;
-      while (1) {
-         int m_res = (bool)matcher->find(status);
-         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
-         if (!m_res) break;
+        // see search_regex_detect for UText implementation (often slower)
+        RegexMatcher *matcher = pattern_cont.getMatcher(i); // will be deleted automatically
+        matcher->reset(str_cont.get(i));
+        UErrorCode status = U_ZERO_ERROR;
+        int count = 0;
+        while (1) {
+            int m_res = (bool)matcher->find(status);
+            STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
+            if (!m_res) break;
 
-         ++count;
-      }
-      ret_tab[i] = count;
-   }
+            ++count;
+        }
+        ret_tab[i] = count;
+    }
 
-   STRI__UNPROTECT_ALL
-   return ret;
-   STRI__ERROR_HANDLER_END(;/* nothing special to be done on error */)
+    STRI__UNPROTECT_ALL
+    return ret;
+    STRI__ERROR_HANDLER_END(;/* nothing special to be done on error */)
 }

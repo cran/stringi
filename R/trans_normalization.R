@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -79,91 +81,101 @@
 #'
 #' @references
 #' \emph{Unicode Normalization Forms} -- Unicode Standard Annex #15,
-#'    \url{http://unicode.org/reports/tr15}
+#'    \url{https://unicode.org/reports/tr15/}
 #'
 #' \emph{Unicode Format for Network Interchange}
-#' -- RFC\#5198, \url{http://tools.ietf.org/rfc/rfc5198.txt}
+#' -- RFC\#5198, \url{https://tools.ietf.org/rfc/rfc5198.txt}
 #'
 #' \emph{Character Model for the World Wide Web 1.0: Normalization}
-#' -- W3C Working Draft, \url{http://www.w3.org/TR/charmod-norm/}
+#' -- W3C Working Draft, \url{https://www.w3.org/TR/charmod-norm/}
 #'
 #' \emph{Normalization} -- ICU User Guide,
 #'    \url{http://userguide.icu-project.org/transforms/normalization}
 #'    (technical details)
 #'
 #' \emph{Unicode Equivalence} -- Wikipedia,
-#' \url{http://en.wikipedia.org/wiki/Unicode_equivalence}
+#' \url{https://en.wikipedia.org/wiki/Unicode_equivalence}
 #'
 #' @examples
-#' stri_trans_nfd("\u0105") # Polish a with ogonek -> a, ogonek
-#' stri_trans_nfkc("\ufdfa") # 1 codepoint -> 18 codepoints
+#' stri_trans_nfd('\u0105') # a with ogonek -> a, ogonek
+#' stri_trans_nfkc('\ufdfa') # 1 codepoint -> 18 codepoints
 #'
 #' @export
 #' @rdname stri_trans_nf
 #' @family transform
-stri_trans_nfc <- function(str) {
-   .Call(C_stri_trans_nfc, str)
+stri_trans_nfc <- function(str)
+{
+    .Call(C_stri_trans_nfc, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_nfd <- function(str) {
-   .Call(C_stri_trans_nfd, str)
+stri_trans_nfd <- function(str)
+{
+    .Call(C_stri_trans_nfd, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_nfkd <- function(str) {
-   .Call(C_stri_trans_nfkd, str)
+stri_trans_nfkd <- function(str)
+{
+    .Call(C_stri_trans_nfkd, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_nfkc <- function(str) {
-   .Call(C_stri_trans_nfkc, str)
+stri_trans_nfkc <- function(str)
+{
+    .Call(C_stri_trans_nfkc, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_nfkc_casefold <- function(str) {
-   .Call(C_stri_trans_nfkc_casefold, str)
+stri_trans_nfkc_casefold <- function(str)
+{
+    .Call(C_stri_trans_nfkc_casefold, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_isnfc <- function(str) {
-   .Call(C_stri_trans_isnfc, str)
+stri_trans_isnfc <- function(str)
+{
+    .Call(C_stri_trans_isnfc, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_isnfd <- function(str) {
-   .Call(C_stri_trans_isnfd, str)
+stri_trans_isnfd <- function(str)
+{
+    .Call(C_stri_trans_isnfd, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_isnfkd <- function(str) {
-   .Call(C_stri_trans_isnfkd, str)
+stri_trans_isnfkd <- function(str)
+{
+    .Call(C_stri_trans_isnfkd, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_isnfkc <- function(str) {
-   .Call(C_stri_trans_isnfkc, str)
+stri_trans_isnfkc <- function(str)
+{
+    .Call(C_stri_trans_isnfkc, str)
 }
 
 
 #' @rdname stri_trans_nf
 #' @export
-stri_trans_isnfkc_casefold <- function(str) {
-   .Call(C_stri_trans_isnfkc_casefold, str)
+stri_trans_isnfkc_casefold <- function(str)
+{
+    .Call(C_stri_trans_isnfkc_casefold, str)
 }

@@ -1,5 +1,5 @@
-/* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+/* This file is part of the 'stringi' project.
+ * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,22 +58,22 @@
  */
 class StriContainerUStringSearch : public StriContainerUTF16 {
 
-   private:
+private:
 
-      UCollator* col; ///< collator, owned by creator
-      UStringSearch* lastMatcher; ///< recently used \code{UStringSearch}
-      R_len_t lastMatcherIndex;  ///< used by vectorize_getMatcher
+    UCollator* col; ///< collator, owned by creator
+    UStringSearch* lastMatcher; ///< recently used UStringSearch
+    R_len_t lastMatcherIndex;  ///< used by vectorize_getMatcher
 
 
-   public:
+public:
 
-      StriContainerUStringSearch();
-      StriContainerUStringSearch(SEXP rstr, R_len_t nrecycle, UCollator* col);
-      StriContainerUStringSearch(StriContainerUStringSearch& container);
-      ~StriContainerUStringSearch();
-      StriContainerUStringSearch& operator=(StriContainerUStringSearch& container);
-      UStringSearch* getMatcher(R_len_t i, const UnicodeString& searchStr);
-      UStringSearch* getMatcher(R_len_t i, const UChar* searchStr, int32_t searchStr_len);
+    StriContainerUStringSearch();
+    StriContainerUStringSearch(SEXP rstr, R_len_t nrecycle, UCollator* col);
+    StriContainerUStringSearch(StriContainerUStringSearch& container);
+    ~StriContainerUStringSearch();
+    StriContainerUStringSearch& operator=(StriContainerUStringSearch& container);
+    UStringSearch* getMatcher(R_len_t i, const UnicodeString& searchStr);
+    UStringSearch* getMatcher(R_len_t i, const UChar* searchStr, int32_t searchStr_len);
 };
 
 #endif

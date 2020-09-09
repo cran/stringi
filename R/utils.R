@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -62,24 +64,30 @@
 #' @param fill a single string, see Details
 #' @param n_min a single integer value; minimal number of rows (\code{byrow==FALSE})
 #' or columns (otherwise) in the resulting matrix
+#' @param by_row alias of \code{byrow}
 #'
 #' @return
 #' Returns a character matrix.
 #'
 #' @examples
-#' simplify2array(list(c("a", "b"), c("c", "d"), c("e", "f")))
-#' stri_list2matrix(list(c("a", "b"), c("c", "d"), c("e", "f")))
-#' stri_list2matrix(list(c("a", "b"), c("c", "d"), c("e", "f")), byrow=TRUE)
+#' simplify2array(list(c('a', 'b'), c('c', 'd'), c('e', 'f')))
+#' stri_list2matrix(list(c('a', 'b'), c('c', 'd'), c('e', 'f')))
+#' stri_list2matrix(list(c('a', 'b'), c('c', 'd'), c('e', 'f')), byrow=TRUE)
 #'
-#' simplify2array(list("a", c("b", "c")))
-#' stri_list2matrix(list("a", c("b", "c")))
-#' stri_list2matrix(list("a", c("b", "c")), fill="")
-#' stri_list2matrix(list("a", c("b", "c")), fill="", n_min=5)
+#' simplify2array(list('a', c('b', 'c')))
+#' stri_list2matrix(list('a', c('b', 'c')))
+#' stri_list2matrix(list('a', c('b', 'c')), fill='')
+#' stri_list2matrix(list('a', c('b', 'c')), fill='', n_min=5)
 #'
 #' @family utils
 #' @export
-stri_list2matrix <- function(x, byrow=FALSE, fill=NA_character_, n_min=0) {
-   .Call(C_stri_list2matrix, x, byrow, stri_enc_toutf8(fill), n_min)
+stri_list2matrix <- function(x,
+    byrow = FALSE, fill = NA_character_, n_min = 0, by_row = byrow)
+{
+    if (!missing(by_row))
+        byrow <- by_row
+
+    .Call(C_stri_list2matrix, x, byrow, stri_enc_toutf8(fill), n_min)
 }
 
 
@@ -96,15 +104,17 @@ stri_list2matrix <- function(x, byrow=FALSE, fill=NA_character_, n_min=0) {
 #' Returns a character vector.
 #'
 #' @examples
-#' stri_na2empty(c("a", NA, "", "b"))
+#' stri_na2empty(c('a', NA, '', 'b'))
 #'
 #' @family utils
 #' @export
-stri_na2empty <- function(x) {
-   x <- stri_enc_toutf8(x)
-   x[is.na(x)] <- ""
-   x
+stri_na2empty <- function(x)
+{
+    x <- stri_enc_toutf8(x)
+    x[is.na(x)] <- ""
+    x
 }
+
 
 #' @title
 #' Remove All Empty Strings from a Character Vector
@@ -128,41 +138,51 @@ stri_na2empty <- function(x) {
 #' Returns a character vector.
 #'
 #' @examples
-#' stri_remove_empty(stri_na2empty(c("a", NA, "", "b")))
-#' stri_remove_empty(c("a", NA, "", "b"))
-#' stri_remove_empty(c("a", NA, "", "b"), TRUE)
+#' stri_remove_empty(stri_na2empty(c('a', NA, '', 'b')))
+#' stri_remove_empty(c('a', NA, '', 'b'))
+#' stri_remove_empty(c('a', NA, '', 'b'), TRUE)
 #'
-#' stri_omit_empty_na(c("a", NA, "", "b"))
+#' stri_omit_empty_na(c('a', NA, '', 'b'))
 #'
 #' @family utils
 #' @rdname stri_remove_empty
 #' @export
-stri_remove_empty <- function(x, na_empty=FALSE) {
-   x <- stri_enc_toutf8(x)
-   if (identical(na_empty, TRUE))
-      x[!is.na(x) & !stri_isempty(x)]
-   else
-      x[!stri_isempty(x)]
+stri_remove_empty <- function(x, na_empty = FALSE)
+{
+    x <- stri_enc_toutf8(x)
+    if (identical(na_empty, TRUE))
+        x[!is.na(x) & !stri_isempty(x)]
+    else
+        x[!stri_isempty(x)]
 }
+
 
 #' @rdname stri_remove_empty
 #' @export
 stri_omit_empty <- stri_remove_empty
 
+
 #' @rdname stri_remove_empty
 #' @export
-stri_remove_empty_na <- function(x) stri_remove_empty(x, TRUE)
+stri_remove_empty_na <- function(x)
+{
+    stri_remove_empty(x, TRUE)
+}
+
 
 #' @rdname stri_remove_empty
 #' @export
 stri_omit_empty_na <- stri_remove_empty_na
 
+
 #' @rdname stri_remove_empty
 #' @export
-stri_remove_na <- function(x) {
-   x <- stri_enc_toutf8(x)
-   x[!is.na(x)]
+stri_remove_na <- function(x)
+{
+    x <- stri_enc_toutf8(x)
+    x[!is.na(x)]
 }
+
 
 #' @rdname stri_remove_empty
 #' @export
@@ -181,7 +201,7 @@ stri_omit_na <- stri_remove_na
 #' \code{str2 <- stri_enc_toutf8(str);
 #' str2[is.na(str2)] <- stri_enc_toutf8(replacement);
 #' str2}.
-#' It may be used, e.g., wherever the ``plain \R'' \code{NA} handling is
+#' It may be used, e.g., wherever the 'plain R' \code{NA} handling is
 #' desired, see Examples.
 #'
 #' @param str character vector or an object coercible to
@@ -191,13 +211,83 @@ stri_omit_na <- stri_remove_na
 #'
 #' @examples
 #' x <- c('test', NA)
-#' stri_paste(x, 1:2)                           # "test1" NA
-#' paste(x, 1:2)                                # "test 1" "NA 2"
-#' stri_paste(stri_replace_na(x), 1:2, sep=' ') # "test 1" "NA 2"
+#' stri_paste(x, 1:2)                           # 'test1' NA
+#' paste(x, 1:2)                                # 'test 1' 'NA 2'
+#' stri_paste(stri_replace_na(x), 1:2, sep=' ') # 'test 1' 'NA 2'
 #'
 #' @export
 #' @family utils
-stri_replace_na <- function(str, replacement="NA"){
-   .Call(C_stri_replace_na, str, replacement)
+stri_replace_na <- function(str, replacement = "NA")
+{
+    .Call(C_stri_replace_na, str, replacement)
 }
 
+
+
+#' @title
+#' C-Style Formatting with sprintf as a Binary Operator
+#'
+#' @description
+#' Provides access to base R's \code{\link{sprintf}} in form of a binary
+#' operator in a way similar to Python's \code{\%} overloaded for strings.
+#'
+#' @details
+#' Vectorized over \code{e2}.
+#'
+#' \code{e1 \%s$\% atomic_vector} is equivalent to
+#' \code{e1 \%s$\% list(atomic_vector)}.
+#'
+#'
+#' @param e1 a single format string, see \code{\link{sprintf}} for syntax
+#' @param e2 a list of arguments to be passed to \code{\link{sprintf}}
+#' or a single atomic vector
+#'
+#' @return
+#' Returns a character vector.
+#'
+#'
+#' @examples
+#' "value='%d'" %s$% 3
+#' "value='%d'" %s$% 1:3
+#' "%s='%d'" %s$% list("value", 3)
+#' "%s='%d'" %s$% list("value", 1:3)
+#' "%s='%d'" %s$% list(c("a", "b", "c"), 1)
+#' "%s='%d'" %s$% list(c("a", "b", "c"), 1:3)
+#'
+#' @rdname operator_dollar
+#' @aliases operator_dollar oper_dollar
+#'
+#' @usage
+#' e1 \%s$\% e2
+#'
+#' @export
+`%s$%` <- function(e1, e2)
+{
+    stopifnot(is.character(e1), length(e1) == 1, !is.na(e1))
+
+
+
+    if (!is.list(e2))
+        e2 <- list(e2)
+
+    # this is stringi, assure UTF-8 output and proper NA handling!
+
+    for (i in seq_along(e2)) {
+        if (is.character(e2[[i]])) {
+            e2[[i]] <- stri_enc_toutf8(e2[[i]])
+        }
+    }
+
+    ret <- stri_enc_toutf8(do.call(sprintf, as.list(c(e1, e2))))
+    which_na <- do.call(stri_paste, e2)
+    ret[is.na(which_na)] <- NA_character_
+
+    ret
+}
+
+
+#' @usage
+#' e1 \%stri$\% e2
+#' @rdname operator_dollar
+#' @export
+`%stri$%` <- `%s$%`

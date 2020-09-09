@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -84,17 +86,18 @@
 #' @export
 #'
 #' @examples
-#' stri_trans_general("gro\u00df", "latin-ascii")
-#' stri_trans_general("stringi", "latin-greek")
-#' stri_trans_general("stringi", "latin-cyrillic")
-#' stri_trans_general("stringi", "upper") # see stri_trans_toupper
-#' stri_trans_general("\u0104", "nfd; lower") # compound id; see stri_trans_nfd
-#' stri_trans_general("tato nie wraca ranki wieczory", "pl-pl_FONIPA")
-#' stri_trans_general("\u2620", "any-name") # character name
-#' stri_trans_general("\\N{latin small letter a}", "name-any") # decode name
-#' stri_trans_general("\u2620", "hex") # to hex
-stri_trans_general <- function(str, id) {
-   .Call(C_stri_trans_general, str, id)
+#' stri_trans_general('gro\u00df', 'latin-ascii')
+#' stri_trans_general('stringi', 'latin-greek')
+#' stri_trans_general('stringi', 'latin-cyrillic')
+#' stri_trans_general('stringi', 'upper') # see stri_trans_toupper
+#' stri_trans_general('\u0104', 'nfd; lower') # compound id; see stri_trans_nfd
+#' stri_trans_general('tato nie wraca ranki wieczory', 'pl-pl_FONIPA')
+#' stri_trans_general('\u2620', 'any-name') # character name
+#' stri_trans_general('\\N{latin small letter a}', 'name-any') # decode name
+#' stri_trans_general('\u2620', 'hex') # to hex
+stri_trans_general <- function(str, id)
+{
+    .Call(C_stri_trans_general, str, id)
 }
 
 
@@ -114,6 +117,7 @@ stri_trans_general <- function(str, id) {
 #'
 #' @family transform
 #' @export
-stri_trans_list <- function() {
-   .Call(C_stri_trans_list)
+stri_trans_list <- function()
+{
+    .Call(C_stri_trans_list)
 }

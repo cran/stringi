@@ -11,7 +11,7 @@ Returns a character vector with locale identifiers
 that are known to \pkg{ICU}.
 }
 \description{
-Creates a character vector with all known locale identifies.
+Creates a character vector with all available locale identifies.
 }
 \details{
 Note that some of the services may be unavailable in some locales.
@@ -22,8 +22,8 @@ See \link{stringi-locale} for more information.
 }
 \seealso{
 Other locale_management: 
+\code{\link{about_locale}},
 \code{\link{stri_locale_info}()},
-\code{\link{stri_locale_set}()},
-\code{\link{stringi-locale}}
+\code{\link{stri_locale_set}()}
 }
 \concept{locale_management}

@@ -5,16 +5,30 @@
 \alias{stri_duplicated_any}
 \title{Determine Duplicated Elements}
 \usage{
-stri_duplicated(str, fromLast = FALSE, ..., opts_collator = NULL)
+stri_duplicated(
+  str,
+  from_last = FALSE,
+  fromLast = from_last,
+  ...,
+  opts_collator = NULL
+)
 
-stri_duplicated_any(str, fromLast = FALSE, ..., opts_collator = NULL)
+stri_duplicated_any(
+  str,
+  from_last = FALSE,
+  fromLast = from_last,
+  ...,
+  opts_collator = NULL
+)
 }
 \arguments{
 \item{str}{a character vector}
 
-\item{fromLast}{a single logical value;
+\item{from_last}{a single logical value;
 indicates whether search should be performed from the last to the
 first string}
+
+\item{fromLast}{[DEPRECATED] alias of \code{from_last}}
 
 \item{...}{additional settings for \code{opts_collator}}
 
@@ -53,17 +67,17 @@ See also \code{\link{stri_unique}} for extracting unique elements.
 }
 \examples{
 # In the following examples, we have 3 duplicated values,
-# "a" - 2 times, NA - 1 time
-stri_duplicated(c("a", "b", "a", NA, "a", NA))
-stri_duplicated(c("a", "b", "a", NA, "a", NA), fromLast=TRUE)
-stri_duplicated_any(c("a", "b", "a", NA, "a", NA))
+# 'a' - 2 times, NA - 1 time
+stri_duplicated(c('a', 'b', 'a', NA, 'a', NA))
+stri_duplicated(c('a', 'b', 'a', NA, 'a', NA), from_last=TRUE)
+stri_duplicated_any(c('a', 'b', 'a', NA, 'a', NA))
 
 # compare the results:
-stri_duplicated(c("\u0105", stri_trans_nfkd("\u0105")))
-duplicated(c("\u0105", stri_trans_nfkd("\u0105")))
+stri_duplicated(c('\u0105', stri_trans_nfkd('\u0105')))
+duplicated(c('\u0105', stri_trans_nfkd('\u0105')))
 
-stri_duplicated(c("gro\u00df", "GROSS", "Gro\u00df", "Gross"), strength=1)
-duplicated(c("gro\u00df", "GROSS", "Gro\u00df", "Gross"))
+stri_duplicated(c('gro\u00df', 'GROSS', 'Gro\u00df', 'Gross'), strength=1)
+duplicated(c('gro\u00df', 'GROSS', 'Gro\u00df', 'Gross'))
 
 }
 \references{
@@ -73,6 +87,9 @@ duplicated(c("gro\u00df", "GROSS", "Gro\u00df", "Gross"))
 \seealso{
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_enc_detect2}()},
@@ -80,31 +97,11 @@ Other locale_sensitive:
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
-
-Other locale_sensitive: 
-\code{\link{\%s<\%}()},
-\code{\link{stri_compare}()},
-\code{\link{stri_count_boundaries}()},
-\code{\link{stri_enc_detect2}()},
-\code{\link{stri_extract_all_boundaries}()},
-\code{\link{stri_locate_all_boundaries}()},
-\code{\link{stri_opts_collator}()},
-\code{\link{stri_order}()},
-\code{\link{stri_sort}()},
-\code{\link{stri_split_boundaries}()},
-\code{\link{stri_trans_tolower}()},
-\code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 }
 \concept{locale_sensitive}

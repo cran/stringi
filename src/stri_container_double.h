@@ -1,5 +1,5 @@
-/* This file is part of the 'stringi' package for R.
- * Copyright (c) 2013-2017, Marek Gagolewski and other contributors.
+/* This file is part of the 'stringi' project.
+ * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,60 +43,60 @@
  */
 class StriContainerDouble : public StriContainerBase {
 
-   private:
+private:
 
-      double* data;
+    double* data;
 
-   public:
+public:
 
-      StriContainerDouble() : StriContainerBase()
-      {
-         data = NULL;
-      }
+    StriContainerDouble() : StriContainerBase()
+    {
+        data = NULL;
+    }
 
-      StriContainerDouble(SEXP rvec, R_len_t _nrecycle)
-      {
-         this->data = NULL;
+    StriContainerDouble(SEXP rvec, R_len_t _nrecycle)
+    {
+        this->data = NULL;
 #ifndef NDEBUG
-         if (!isReal(rvec))
+        if (!isReal(rvec))
             throw StriException("DEBUG: !isReal in StriContainerDouble");
 #endif
-         R_len_t ndata = LENGTH(rvec);
-         this->init_Base(ndata, _nrecycle, true);
-         this->data = REAL(rvec);
-      }
+        R_len_t ndata = LENGTH(rvec);
+        this->init_Base(ndata, _nrecycle, true);
+        this->data = REAL(rvec);
+    }
 
-      //  StriContainerDouble(StriContainerDouble& container); // default-shallow
-      // ~StriContainerDouble(); // default-shallow
-      //  StriContainerDouble& operator=(StriContainerDouble& container); // default-shallow
+    //  StriContainerDouble(StriContainerDouble& container); // default-shallow
+    // ~StriContainerDouble(); // default-shallow
+    //  StriContainerDouble& operator=(StriContainerDouble& container); // default-shallow
 
 
-      /** check if the vectorized ith element is NA
-       * @param i index
-       * @return true if is NA
-       */
-      inline bool isNA(R_len_t i) const {
+    /** check if the vectorized ith element is NA
+     * @param i index
+     * @return true if is NA
+     */
+    inline bool isNA(R_len_t i) const {
 #ifndef NDEBUG
-         if (i < 0 || i >= nrecycle)
+        if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerDouble::isNA(): INDEX OUT OF BOUNDS");
 #endif
-         return (ISNA(data[i%n]));
-      }
+        return (ISNA(data[i%n]));
+    }
 
 
-      /** get the vectorized ith element
-       * @param i index
-       * @return double
-       */
-      inline double get(R_len_t i) const {
+    /** get the vectorized ith element
+     * @param i index
+     * @return double
+     */
+    inline double get(R_len_t i) const {
 #ifndef NDEBUG
-         if (i < 0 || i >= nrecycle)
+        if (i < 0 || i >= nrecycle)
             throw StriException("StriContainerDouble::get(): INDEX OUT OF BOUNDS");
-         if (ISNA(data[i%n]))
+        if (ISNA(data[i%n]))
             throw StriException("StriContainerDouble::get(): isNA");
 #endif
-         return (data[i%n]);
-      }
+        return (data[i%n]);
+    }
 };
 
 #endif

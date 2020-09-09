@@ -2,7 +2,7 @@
 % Please edit documentation in R/time_format.R
 \name{stri_datetime_fstr}
 \alias{stri_datetime_fstr}
-\title{Convert \code{strptime}-style Format Strings}
+\title{Convert strptime-Style Format Strings}
 \usage{
 stri_datetime_fstr(x)
 }
@@ -31,7 +31,7 @@ support the  functionality requested using the format-strings API
 or there are some inconsistencies between base R and \pkg{ICU}.
 }
 \examples{
-stri_datetime_fstr("\%Y-\%m-\%d \%H:\%M:\%S")
+stri_datetime_fstr('\%Y-\%m-\%d \%H:\%M:\%S')
 
 }
 \seealso{

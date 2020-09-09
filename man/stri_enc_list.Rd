@@ -28,14 +28,14 @@ Gives the list of encodings that are supported by \pkg{ICU}.
 Apart from given encoding identifiers and their aliases,
 some other specifiers might be additionally available.
 This is due to the fact that \pkg{ICU} tries to normalize
-converter names. For instance, \code{"UTF8"} is also valid,
+converter names. For instance, \code{'UTF8'} is also valid,
 see \link{stringi-encoding} for more information.
 }
 \seealso{
 Other encoding_management: 
+\code{\link{about_encoding}},
 \code{\link{stri_enc_info}()},
 \code{\link{stri_enc_mark}()},
-\code{\link{stri_enc_set}()},
-\code{\link{stringi-encoding}}
+\code{\link{stri_enc_set}()}
 }
 \concept{encoding_management}

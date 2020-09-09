@@ -29,7 +29,7 @@ The result is a sorted version of \code{str},
 i.e., a character vector.
 }
 \description{
-The function sorts a character vector according to the locale-dependent
+This function sorts a character vector according to the locale-dependent
 lexicographic order.
 }
 \details{
@@ -45,8 +45,8 @@ which performs up to \eqn{N*log^2(N)} element comparisons,
 where \eqn{N} is the length of \code{str}.
 }
 \examples{
-stri_sort(c("hladny", "chladny"), locale="pl_PL")
-stri_sort(c("hladny", "chladny"), locale="sk_SK")
+stri_sort(c('hladny', 'chladny'), locale='pl_PL')
+stri_sort(c('hladny', 'chladny'), locale='sk_SK')
 stri_sort(sample(LETTERS))
 stri_sort(c(1, 100, 2, 101, 11, 10))
 stri_sort(c(1, 100, 2, 101, 11, 10), numeric=TRUE)
@@ -58,6 +58,9 @@ stri_sort(c(1, 100, 2, 101, 11, 10), numeric=TRUE)
 \seealso{
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
+\code{\link{about_locale}},
+\code{\link{about_search_boundaries}},
+\code{\link{about_search_coll}},
 \code{\link{stri_compare}()},
 \code{\link{stri_count_boundaries}()},
 \code{\link{stri_duplicated}()},
@@ -66,12 +69,10 @@ Other locale_sensitive:
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_sort_key}()},
 \code{\link{stri_split_boundaries}()},
 \code{\link{stri_trans_tolower}()},
 \code{\link{stri_unique}()},
-\code{\link{stri_wrap}()},
-\code{\link{stringi-locale}},
-\code{\link{stringi-search-boundaries}},
-\code{\link{stringi-search-coll}}
+\code{\link{stri_wrap}()}
 }
 \concept{locale_sensitive}

@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -36,7 +38,7 @@
 #' This manual page explains how \pkg{stringi} deals with character
 #' strings in various encodings.
 #'
-#' In particular you should note that:
+#' In particular we should note that:
 #' \itemize{
 #'    \item \R lets strings in ASCII, UTF-8, and your platform's
 #'    native encoding coexist. A character vector printed on the console
@@ -55,20 +57,20 @@
 #' }
 #'
 #' @details
-#' "Hundreds of encodings have been developed over the years, each for small
+#' 'Hundreds of encodings have been developed over the years, each for small
 #' groups of languages and for special purposes. As a result,
 #' the interpretation of text, input, sorting, display, and storage
 #' depends on the knowledge of all the different types of character sets
 #' and their encodings. Programs have been written to handle either
 #' one single encoding at a time and switch between them, or to convert
-#' between external and internal encodings."
+#' between external and internal encodings.'
 #'
-#' "Unicode provides a single character set that covers the major
+#' 'Unicode provides a single character set that covers the major
 #' languages of the world, and a small number of machine-friendly encoding
 #' forms and schemes to fit the needs of existing applications and protocols.
 #' It is designed for best interoperability with both ASCII and ISO-8859-1
 #' (the most widely used character sets) to make it easier for Unicode to be
-#' used in almost all applications and protocols" (see the ICU User Guide).
+#' used in almost all applications and protocols' (see the ICU User Guide).
 #'
 #' The Unicode Standard determines the way to map any possible character
 #' to a numeric value -- a so-called code point. Such code points, however,
@@ -124,7 +126,7 @@
 #'
 #' Data in memory are just bytes (small integer
 #' values) -- an en\emph{coding} is a way to represent characters with such
-#' numbers, it is a semantic "key" to understand a given byte sequence.
+#' numbers, it is a semantic 'key' to understand a given byte sequence.
 #' For example, in ISO-8859-2 (Central European), the value 177 represents
 #' Polish ``a with ogonek'', and in ISO-8859-1 (Western European),
 #' the same value denotes the ``plus-minus'' sign. Thus, a character encoding
@@ -142,7 +144,7 @@
 #' \itemize{
 #' \item \code{UTF-8};
 #' \item \code{latin1}, i.e., either ISO-8859-1 (Western European on
-#' Linux, macOS, and other Unixes) or WINDOWS-1252 (Windows);
+#' Linux, OS X, and other Unixes) or WINDOWS-1252 (Windows);
 #' \item \code{bytes} -- for strings that
 #'     should be manipulated as sequences of bytes.
 #' }
@@ -153,7 +155,7 @@
 #' \item \code{native} (a.k.a. \code{unknown} in \code{\link{Encoding}};
 #' quite a misleading name: no explicit encoding mark) -- for
 #' strings that are assumed to be in your platform's native (default) encoding.
-#' This can represent UTF-8 if you are an macOS user,
+#' This can represent UTF-8 if you are an OS X user,
 #' or some 8-bit Windows code page, for example.
 #' The native encoding used by \R may be determined by examining
 #' the LC_CTYPE category, see \code{\link{Sys.getlocale}}.
@@ -170,7 +172,7 @@
 #' changed if the automatic encoding detection process fails on \pkg{stringi}
 #' load).
 #'
-#' Functions which allow \code{"bytes"} encoding markings are very rare in
+#' Functions which allow \code{'bytes'} encoding markings are very rare in
 #' \pkg{stringi}, and were carefully selected. These are:
 #' \code{\link{stri_enc_toutf8}} (with argument \code{is_unknown_8bit=TRUE}),
 #' \code{\link{stri_enc_toascii}}, and \code{\link{stri_encode}}.
@@ -192,7 +194,7 @@
 #' and \pkg{ICU} tries to normalize the encoding specifiers.
 #' Leading zeroes are ignored in sequences of digits (if further digits follow),
 #' and all non-alphanumeric characters are ignored. Thus the strings
-#' "UTF-8", "utf_8", "u*Tf08" and "Utf 8" are equivalent.
+#' 'UTF-8', 'utf_8', 'u*Tf08' and 'Utf 8' are equivalent.
 #'
 #' The \code{\link{stri_encode}} function
 #' allows you to convert between any given encodings
@@ -222,8 +224,9 @@
 #' Check out \code{\link{stri_enc_detect}} (among others) for a useful
 #' function in this category.
 #'
-#' @name stringi-encoding
-#' @rdname stringi-encoding
+#' @name about_encoding
+#' @rdname about_encoding
+#' @aliases about_encoding stringi-encoding encoding
 #' @family stringi_general_topics
 #' @family encoding_management
 #' @family encoding_detection
@@ -239,5 +242,5 @@
 #' \emph{Converters} -- ICU User Guide,
 #' \url{http://userguide.icu-project.org/conversion/converters}  (technical details)
 #'
-#' \emph{UTF-8, UTF-16, UTF-32 & BOM} -- ICU FAQ, \url{http://www.unicode.org/faq/utf_bom.html}
+#' \emph{UTF-8, UTF-16, UTF-32 & BOM} -- ICU FAQ, \url{https://www.unicode.org/faq/utf_bom.html}
 invisible(NULL)

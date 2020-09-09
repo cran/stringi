@@ -1,5 +1,7 @@
+# kate: default-dictionary en_US
+
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2019, Marek Gagolewski and other contributors.
+## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -17,7 +19,7 @@
 ## this software without specific prior written permission.
 ##
 ## THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-## "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+## 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
 ## BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 ## FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 ## HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -58,16 +60,17 @@
 #'    \item ... (Other stuff that may appear in future releases of \pkg{stringi}).
 #' }
 #' @examples
-#' s <- c("Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-#'        "nibh augue, suscipit a, scelerisque sed, lacinia in, mi.",
-#'        "Cras vel lorem. Etiam pellentesque aliquet tellus.",
-#'        "")
+#' s <- c('Lorem ipsum dolor sit amet, consectetur adipisicing elit.',
+#'        'nibh augue, suscipit a, scelerisque sed, lacinia in, mi.',
+#'        'Cras vel lorem. Etiam pellentesque aliquet tellus.',
+#'        '')
 #' stri_stats_general(s)
 #'
 #' @family stats
 #' @export
-stri_stats_general <- function(str) {
-   .Call(C_stri_stats_general, str)
+stri_stats_general <- function(str)
+{
+    .Call(C_stri_stats_general, str)
 }
 
 
@@ -81,8 +84,9 @@ stri_stats_general <- function(str) {
 #' is represented by a separate string.
 #'
 #' @details
-#' We use a slightly modified LaTeX Word Count algorithm taken from Kile 2.1.3,
-#' see \url{http://kile.sourceforge.net/team.php} for original contributors.
+#' We use a slightly modified LaTeX Word Count algorithm implemented in
+#' Kile 2.1.3, see
+#' \url{https://kile.sourceforge.io/team.php} for the original contributors.
 #'
 #'
 #'
@@ -98,13 +102,14 @@ stri_stats_general <- function(str) {
 #'    \item ... (Other stuff that may appear in future releases of \pkg{stringi}).
 #' }
 #' @examples
-#' s <- c("Lorem \\textbf{ipsum} dolor sit \\textit{amet}, consectetur adipisicing elit.",
-#'        "\\begin{small}Proin nibh augue,\\end{small} suscipit a, scelerisque sed, lacinia in, mi.",
-#'        "")
+#' s <- c('Lorem \\textbf{ipsum} dolor sit \\textit{amet}, consectetur adipisicing elit.',
+#'        '\\begin{small}Proin nibh augue,\\end{small} suscipit a, scelerisque sed, lacinia in, mi.',
+#'        '')
 #' stri_stats_latex(s)
 #'
 #' @family stats
 #' @export
-stri_stats_latex <- function(str) {
-   .Call(C_stri_stats_latex, str)
+stri_stats_latex <- function(str)
+{
+    .Call(C_stri_stats_latex, str)
 }
