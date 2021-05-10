@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -79,8 +79,7 @@ stri_escape_unicode <- function(str)
 #'
 #' The following ASCII standard escapes are recognized:
 #' \code{\\a}, \code{\\b}, \code{\\t}, \code{\\n}, \code{\\v}, \code{\\?},
-#' \code{\\e},
-#' \code{\\f}, \code{\\r}, \code{\"}, \code{\'}, \code{\\\\}.
+#' \code{\\e}, \code{\\f}, \code{\\r}, \code{\"}, \code{\'}, \code{\\\\}.
 #'
 #' Moreover, the function understands the following ones:
 #' \code{\\uXXXX} (4 hex digits),

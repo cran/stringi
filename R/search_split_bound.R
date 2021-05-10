@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -113,9 +113,8 @@ stri_split_lines1 <- function(str) {
 #'
 #' If \code{n} is negative (the default), then all text pieces are extracted.
 #'
-#' Otherwise, if \code{tokens_only} is \code{FALSE} (this is the default,
-#' for compatibility with the \pkg{stringr} package), then \code{n-1}
-#' tokens are extracted (if possible) and the \code{n}-th string
+#' Otherwise, if \code{tokens_only} is \code{FALSE} (which is the default),
+#' then \code{n-1} tokens are extracted (if possible) and the \code{n}-th string
 #' gives the (non-split) remainder (see Examples).
 #' On the other hand, if \code{tokens_only} is \code{TRUE},
 #' then only full tokens (up to \code{n} pieces) are extracted.

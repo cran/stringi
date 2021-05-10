@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
+ * Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -154,6 +154,7 @@ const R_CallMethodDef cCallMethods[] = {
     STRI__MK_CALL("C_stri_match_all_regex",              stri_match_all_regex,            5),
     STRI__MK_CALL("C_stri_numbytes",                     stri_numbytes,                   1),
     STRI__MK_CALL("C_stri_order",                        stri_order,                      4),
+    STRI__MK_CALL("C_stri_rank",                         stri_rank,                       2),
     STRI__MK_CALL("C_stri_sort",                         stri_sort,                       4),
     STRI__MK_CALL("C_stri_sort_key",                     stri_sort_key,                   2),
     STRI__MK_CALL("C_stri_pad",                          stri_pad,                        5),
@@ -231,6 +232,7 @@ const R_CallMethodDef cCallMethods[] = {
     STRI__MK_CALL("C_stri_trans_totitle",                stri_trans_totitle,              2),
     STRI__MK_CALL("C_stri_trans_tolower",                stri_trans_tolower,              2),
     STRI__MK_CALL("C_stri_trans_toupper",                stri_trans_toupper,              2),
+    STRI__MK_CALL("C_stri_trans_casefold",               stri_trans_casefold,             1),
     STRI__MK_CALL("C_stri_trim_both",                    stri_trim_both,                  2),
     STRI__MK_CALL("C_stri_trim_left",                    stri_trim_left,                  2),
     STRI__MK_CALL("C_stri_trim_right",                   stri_trim_right,                 2),

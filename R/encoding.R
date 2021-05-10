@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -133,7 +133,7 @@
 #' is a translation scheme: we need to communicate with \R somehow,
 #' relying on how it represents strings.
 #'
-#' Basically, \R has a very simple encoding marking mechanism,
+#' Overall, \R has a very simple encoding marking mechanism,
 #' see \code{\link{stri_enc_mark}}. There is an implicit assumption
 #' that your platform's default (native) encoding always extends
 #' ASCII -- \pkg{stringi} checks that whenever your native encoding

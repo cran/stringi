@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
+ * Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@ SEXP stri_cmp_neq(SEXP e1, SEXP e2);
 // sort.cpp
 SEXP stri_sort(SEXP str, SEXP decreasing=Rf_ScalarLogical(FALSE),
                SEXP na_last=Rf_ScalarLogical(NA_LOGICAL), SEXP opts_collator=R_NilValue);
+SEXP stri_rank(SEXP str, SEXP opts_collator=R_NilValue);
 SEXP stri_order(SEXP str, SEXP decreasing=Rf_ScalarLogical(FALSE),
                 SEXP na_last=Rf_ScalarLogical(TRUE), SEXP opts_collator=R_NilValue);
 SEXP stri_sort_key(SEXP str, SEXP opts_collator=R_NilValue);
@@ -164,6 +165,7 @@ SEXP stri_trans_char(SEXP str, SEXP pattern, SEXP replacement);
 SEXP stri_trans_totitle(SEXP str, SEXP opts_brkiter=R_NilValue);
 SEXP stri_trans_tolower(SEXP str, SEXP locale=R_NilValue);
 SEXP stri_trans_toupper(SEXP str, SEXP locale=R_NilValue);
+SEXP stri_trans_casefold(SEXP str);
 
 // trans_normalization.cpp:
 SEXP stri_trans_nfc(SEXP s);

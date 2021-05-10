@@ -52,9 +52,8 @@ Vectorized over \code{str} and \code{n}.
 
 If \code{n} is negative (the default), then all text pieces are extracted.
 
-Otherwise, if \code{tokens_only} is \code{FALSE} (this is the default,
-for compatibility with the \pkg{stringr} package), then \code{n-1}
-tokens are extracted (if possible) and the \code{n}-th string
+Otherwise, if \code{tokens_only} is \code{FALSE} (which is the default),
+then \code{n-1} tokens are extracted (if possible) and the \code{n}-th string
 gives the (non-split) remainder (see Examples).
 On the other hand, if \code{tokens_only} is \code{TRUE},
 then only full tokens (up to \code{n} pieces) are extracted.
@@ -99,6 +98,7 @@ Other locale_sensitive:
 \code{\link{stri_locate_all_boundaries}()},
 \code{\link{stri_opts_collator}()},
 \code{\link{stri_order}()},
+\code{\link{stri_rank}()},
 \code{\link{stri_sort_key}()},
 \code{\link{stri_sort}()},
 \code{\link{stri_trans_tolower}()},

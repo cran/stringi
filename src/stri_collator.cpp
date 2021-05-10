@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2020, Marek Gagolewski <https://www.gagolewski.com>
+ * Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include "stri_stringi.h"
 #include <unicode/ucol.h>
 #include <unicode/usearch.h>
+
 
 /**
  * Create & set up an ICU Collator
@@ -74,7 +75,7 @@ UCollator* stri__ucol_open(SEXP opts_collator)
 
     if (narg <= 0) { // no custom settings - use default Collator
         UErrorCode status = U_ZERO_ERROR;
-        UCollator* col = ucol_open(NULL, &status);
+        UCollator* col = ucol_open(uloc_getDefault(), &status);
         STRI__CHECKICUSTATUS_RFERROR(status, {/* do nothing special on err */}) // error() allowed here
         return col;
     }
@@ -93,7 +94,7 @@ UCollator* stri__ucol_open(SEXP opts_collator)
     UColAttributeValue  opt_STRENGTH =  UCOL_DEFAULT_STRENGTH;
     UColAttributeValue  opt_NUMERIC_COLLATION = UCOL_DEFAULT;
 //   USearchAttributeValue  opt_OVERLAP = USEARCH_OFF;
-    const char*         opt_LOCALE = NULL;
+    const char*         opt_LOCALE = uloc_getDefault();
 
     for (R_len_t i=0; i<narg; ++i) {
         if (STRING_ELT(names, i) == NA_STRING)
@@ -155,7 +156,7 @@ UCollator* stri__ucol_open(SEXP opts_collator)
 //      STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here
 //   }
 
-    if (opt_STRENGTH != UCOL_DEFAULT) {
+    if (opt_STRENGTH != UCOL_DEFAULT_STRENGTH) {
         status = U_ZERO_ERROR;
         ucol_setAttribute(col, UCOL_STRENGTH, opt_STRENGTH, &status);
         STRI__CHECKICUSTATUS_RFERROR(status, { ucol_close(col); }) // error() allowed here

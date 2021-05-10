@@ -1,5 +1,5 @@
 # `stringi` configure.win
-# (C) 2015-2018 Marek Gagolewski
+# Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
 
 # this is an architecture-independent configure.win file
 
@@ -8,10 +8,12 @@
    fout <- "src/uconfig_local.h";
    f <- readLines(fin);
    f <- gsub("@ICU_FOUND@", 0, f, fixed = TRUE);
-   f <- gsub("@ICUDT_DIR@", "icu61/data", f, fixed = TRUE);
-   f <- gsub("@ICU_BUNDLE_VERSION@", "61", f, fixed = TRUE);
+   f <- gsub("@ICUDT_DIR@", "icu69/data", f, fixed = TRUE);
+   f <- gsub("@ICU_BUNDLE_VERSION@", "69", f, fixed = TRUE);
    f <- gsub("@ICUDT_ENDIANNESS@", .Platform$endian, f, fixed = TRUE);
-   writeLines(f, fout);
+   con <- file(fout, "wb")  # LF line ending
+   writeLines(f, con);
+   close(con)
 ' `
 
 "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e '
@@ -19,8 +21,10 @@
    fout <- "src/install.libs.R";
    f <- readLines(fin);
    f <- gsub("@ICU_FOUND@", 0, f, fixed = TRUE);
-   f <- gsub("@ICUDT_DIR@", "icu61/data", f, fixed = TRUE);
-   f <- gsub("@ICU_BUNDLE_VERSION@", "61", f, fixed = TRUE);
+   f <- gsub("@ICUDT_DIR@", "icu69/data", f, fixed = TRUE);
+   f <- gsub("@ICU_BUNDLE_VERSION@", "69", f, fixed = TRUE);
    f <- gsub("@ICUDT_ENDIANNESS@", .Platform$endian, f, fixed = TRUE);
-   writeLines(f, fout);
+   con <- file(fout, "wb")  # LF line ending
+   writeLines(f, con);
+   close(con)
 ' `
