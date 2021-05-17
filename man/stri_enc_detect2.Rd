@@ -21,7 +21,7 @@ this function returns a list of length equal to the length of \code{str}.
 Each list element is a data frame with the following three named components:
 \itemize{
    \item \code{Encoding} -- string; guessed encodings; \code{NA} on failure
-   (iff \code{encodings} is empty),
+   (if and only if \code{encodings} is empty),
    \item \code{Language} -- always \code{NA},
    \item \code{Confidence} -- numeric in [0,1]; the higher the value,
    the more confidence there is in the match; \code{NA} on failure.
@@ -59,6 +59,8 @@ If you have no initial guess on the language and encoding, try with
 \code{\link{stri_enc_detect}} (uses \pkg{ICU} facilities).
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
 \code{\link{about_locale}},
@@ -88,3 +90,6 @@ Other encoding_detection:
 }
 \concept{encoding_detection}
 \concept{locale_sensitive}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

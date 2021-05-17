@@ -65,7 +65,7 @@ a backslash in order to remove its special meaning.
 A malformed pattern always results in an error.
 
 Set expressions at a glance
-(according to \url{http://userguide.icu-project.org/strings/regexp}):
+(according to \url{https://unicode-org.github.io/icu/userguide/strings/regexp.html}):
 
 
 Some examples:
@@ -267,13 +267,13 @@ to a portable code (again, in POSIX-like regex engines).
 \url{https://www.unicode.org/reports/tr44/}
 
 \emph{UnicodeSet} -- ICU User Guide,
-\url{http://userguide.icu-project.org/strings/unicodeset}
+\url{https://unicode-org.github.io/icu/userguide/strings/unicodeset.html}
 
 \emph{Properties} -- ICU User Guide,
-\url{http://userguide.icu-project.org/strings/properties}
+\url{https://unicode-org.github.io/icu/userguide/strings/properties.html}
 
 \emph{C/POSIX Migration} -- ICU User Guide,
-\url{http://userguide.icu-project.org/posix}
+\url{https://unicode-org.github.io/icu/userguide/icu/posix.html}
 
 \emph{Unicode Script Data}, \url{https://www.unicode.org/Public/UNIDATA/Scripts.txt}
 
@@ -281,6 +281,8 @@ to a portable code (again, in POSIX-like regex engines).
 \url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/classicu_1_1UnicodeSet.html}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other search_charclass: 
 \code{\link{about_search}},
 \code{\link{stri_trim_both}()}
@@ -298,3 +300,6 @@ Other stringi_general_topics:
 }
 \concept{search_charclass}
 \concept{stringi_general_topics}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

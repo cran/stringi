@@ -80,7 +80,7 @@
 #'
 #' @references
 #' \emph{General Transforms} -- ICU User Guide,
-#' \url{http://userguide.icu-project.org/transforms/general}
+#' \url{https://unicode-org.github.io/icu/userguide/transforms/general/}
 #'
 #' @family transform
 #' @export
@@ -94,7 +94,7 @@
 #' stri_trans_general('tato nie wraca ranki wieczory', 'pl-pl_FONIPA')
 #' stri_trans_general('\u2620', 'any-name') # character name
 #' stri_trans_general('\\N{latin small letter a}', 'name-any') # decode name
-#' stri_trans_general('\u2620', 'hex') # to hex
+#' stri_trans_general('\u2620', 'hex/c') # to hex
 stri_trans_general <- function(str, id)
 {
     .Call(C_stri_trans_general, str, id)
@@ -113,11 +113,16 @@ stri_trans_general <- function(str, id)
 #'
 #' @references
 #' \emph{General Transforms} -- ICU User Guide,
-#' \url{http://userguide.icu-project.org/transforms/general}
+#' \url{https://unicode-org.github.io/icu/userguide/transforms/general/}
+#'
+#' @examples
+#' stri_trans_list()
 #'
 #' @family transform
 #' @export
 stri_trans_list <- function()
 {
-    .Call(C_stri_trans_list)
+    stri_sort(
+        .Call(C_stri_trans_list), locale="en_US", numeric=TRUE, strength=1
+    )
 }

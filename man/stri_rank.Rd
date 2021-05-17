@@ -44,10 +44,12 @@ X[order(stri_rank(X$a), X$b), ]
 
 }
 \references{
-\emph{Collation} - ICU User Guide,
-\url{http://userguide.icu-project.org/collation}
+\emph{Collation} -- ICU User Guide,
+\url{https://unicode-org.github.io/icu/userguide/collation/}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},
 \code{\link{about_locale}},
@@ -69,3 +71,6 @@ Other locale_sensitive:
 \code{\link{stri_wrap}()}
 }
 \concept{locale_sensitive}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

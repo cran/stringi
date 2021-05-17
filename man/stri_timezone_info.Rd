@@ -24,7 +24,7 @@ Returns a list with the following named components:
 \item \code{ID} (time zone identifier),
 \item \code{Name} (localized human-readable time zone name),
 \item \code{Name.Daylight} (localized human-readable time zone
-      name when DST is used, if available),
+name when DST is used, if available),
 \item \code{Name.Windows} (Windows time zone ID, if available),
 \item \code{RawOffset} (raw GMT offset, in hours, before taking
 daylight savings into account), and
@@ -51,6 +51,8 @@ sapply(c('short', 'long', 'generic_short', 'generic_long',
 
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other datetime: 
 \code{\link{stri_datetime_add}()},
 \code{\link{stri_datetime_create}()},
@@ -68,3 +70,6 @@ Other timezone:
 }
 \concept{datetime}
 \concept{timezone}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

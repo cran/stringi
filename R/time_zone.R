@@ -81,14 +81,11 @@
 #' \emph{TimeZone} class -- ICU API Documentation,
 #' \url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/classicu_1_1TimeZone.html}
 #'
-#' \emph{ICU 4.8 Time Zone Names}.
-#' \url{http://site.icu-project.org/design/formatting/timezone/icu-4-8-time-zone-names}
-#'
 #' \emph{ICU TimeZone classes} -- ICU User Guide,
-#' \url{http://userguide.icu-project.org/datetime/timezone}
+#' \url{https://unicode-org.github.io/icu/userguide/datetime/timezone/}
 #'
 #' \emph{Date/Time Services} -- ICU User Guide,
-#' \url{http://userguide.icu-project.org/datetime}
+#' \url{https://unicode-org.github.io/icu/userguide/datetime/}
 #'
 #' @examples
 #' stri_timezone_list()
@@ -98,16 +95,19 @@
 #' stri_timezone_list(region='PL')
 #' stri_timezone_list(region='US', offset=-10)
 #'
-#' # Fetch info on all time zones
+#' # Fetch information on all time zones
 #' do.call(rbind.data.frame,
 #'    lapply(stri_timezone_list(), function(tz) stri_timezone_info(tz)))
 #'
 #' @family datetime
 #' @family timezone
 #' @export
-stri_timezone_list <- function(region = NA_character_, offset = NA_integer_)
+stri_timezone_list <- function(region=NA_character_, offset=NA_integer_)
 {
-    .Call(C_stri_timezone_list, region, offset)
+    stri_sort(
+        .Call(C_stri_timezone_list, region, offset),
+        locale="en_US", numeric=TRUE, strength=1
+    )
 }
 
 
@@ -198,7 +198,7 @@ stri_timezone_set <- function(tz)
 #' \item \code{ID} (time zone identifier),
 #' \item \code{Name} (localized human-readable time zone name),
 #' \item \code{Name.Daylight} (localized human-readable time zone
-#'       name when DST is used, if available),
+#' name when DST is used, if available),
 #' \item \code{Name.Windows} (Windows time zone ID, if available),
 #' \item \code{RawOffset} (raw GMT offset, in hours, before taking
 #' daylight savings into account), and
@@ -216,8 +216,8 @@ stri_timezone_set <- function(tz)
 #' @family datetime
 #' @family timezone
 #' @export
-stri_timezone_info <- function(tz = NULL, locale = NULL, display_type = "long")
+stri_timezone_info <- function(tz=NULL, locale=NULL, display_type="long")
 {
+    # TODO: when does DST start???
     .Call(C_stri_timezone_info, tz, locale, display_type)
-    ### TO DO: when does DST start???
 }

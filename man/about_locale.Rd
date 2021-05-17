@@ -90,18 +90,22 @@ for the description on how to tune its settings, and its \code{locale}
 argument in particular.
 
 Other locale-sensitive functions include, e.g.,
- \code{\link{stri_trans_tolower}} (that does character case mapping).
+\code{\link{stri_trans_tolower}} (that does character case mapping).
 }
 
 \references{
-\emph{Locale} -- ICU User Guide, \url{http://userguide.icu-project.org/locale}
+\emph{Locale} -- ICU User Guide,
+\url{https://unicode-org.github.io/icu/userguide/locale/}
 
 \emph{ISO 639: Language Codes},
 \url{https://www.iso.org/iso-639-language-codes.html}
 
-\emph{ISO 3166: Country Codes}, \url{https://www.iso.org/iso-3166-country-codes.html}
+\emph{ISO 3166: Country Codes},
+\url{https://www.iso.org/iso-3166-country-codes.html}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other locale_management: 
 \code{\link{stri_locale_info}()},
 \code{\link{stri_locale_list}()},
@@ -141,3 +145,6 @@ Other stringi_general_topics:
 \concept{locale_management}
 \concept{locale_sensitive}
 \concept{stringi_general_topics}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

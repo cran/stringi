@@ -102,17 +102,18 @@ IBM424 \tab Hebrew \cr
 }
 }
 \examples{
-\dontrun{
-f <- rawToChar(readBin('test.txt', 'raw', 100000))
-stri_enc_detect(f)
-}
+## Not run:
+## f <- rawToChar(readBin('test.txt', 'raw', 100000))
+## stri_enc_detect(f)
 
 }
 \references{
 \emph{Character Set Detection} -- ICU User Guide,
-\url{http://userguide.icu-project.org/conversion/detection}
+\url{https://unicode-org.github.io/icu/userguide/conversion/detection.html}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other encoding_detection: 
 \code{\link{about_encoding}},
 \code{\link{stri_enc_detect2}()},
@@ -121,3 +122,6 @@ Other encoding_detection:
 \code{\link{stri_enc_isutf8}()}
 }
 \concept{encoding_detection}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

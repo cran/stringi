@@ -30,17 +30,19 @@ and how to tune it up
 in \pkg{stringi}, refer to \code{\link{stri_opts_collator}}.
 
 Please note that \pkg{ICU}'s \code{StringSearch}-based functions
-are  often much slower that those to perform fixed pattern searches.
+are often much slower that those to perform fixed pattern searches.
 }
 
 \references{
 \emph{ICU String Search Service} -- ICU User Guide,
- \url{http://userguide.icu-project.org/collation/icu-string-search-service}
+\url{https://unicode-org.github.io/icu/userguide/collation/string-search.html}
 
 L. Werner, \emph{Efficient Text Searching in Java}, 1999,
 \url{https://icu-project.org/docs/papers/efficient_text_searching_in_java.html}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other search_coll: 
 \code{\link{about_search}},
 \code{\link{stri_opts_collator}()}
@@ -79,3 +81,6 @@ Other stringi_general_topics:
 \concept{locale_sensitive}
 \concept{search_coll}
 \concept{stringi_general_topics}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

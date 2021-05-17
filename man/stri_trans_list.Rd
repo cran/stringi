@@ -14,11 +14,17 @@ Returns a list of available text transform identifiers.
 Each of them may be used in \code{\link{stri_trans_general}}
 tasks.
 }
+\examples{
+stri_trans_list()
+
+}
 \references{
 \emph{General Transforms} -- ICU User Guide,
-\url{http://userguide.icu-project.org/transforms/general}
+\url{https://unicode-org.github.io/icu/userguide/transforms/general/}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other transform: 
 \code{\link{stri_trans_char}()},
 \code{\link{stri_trans_general}()},
@@ -26,3 +32,6 @@ Other transform:
 \code{\link{stri_trans_tolower}()}
 }
 \concept{transform}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

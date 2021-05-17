@@ -37,7 +37,7 @@ Manual pages on general topics:
    ranking, sorting, case-folding, and searching.
 
 \item \link{about_arguments} -- information on how \pkg{stringi}
-   treats its functions' arguments.
+   handles the arguments passed to its function.
 }
 }
 \section{Facilities available}{
@@ -105,7 +105,7 @@ some code points.
 \item \code{\link{stri_rand_strings}}, \code{\link{stri_rand_shuffle}},
 and \code{\link{stri_rand_lipsum}} for generating (pseudo)random strings.
 
-\item DRAFT API: \code{\link{stri_read_raw}},
+\item \code{\link{stri_read_raw}},
 \code{\link{stri_read_lines}}, and  \code{\link{stri_write_lines}}
 for reading and writing text files.
 }
@@ -127,6 +127,8 @@ interesting facilities and topics.
 \url{https://tools.ietf.org/html/rfc3629}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other stringi_general_topics: 
 \code{\link{about_arguments}},
 \code{\link{about_encoding}},

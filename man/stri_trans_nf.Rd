@@ -95,13 +95,15 @@ stri_trans_nfkc('\ufdfa') # 1 codepoint -> 18 codepoints
 -- W3C Working Draft, \url{https://www.w3.org/TR/charmod-norm/}
 
 \emph{Normalization} -- ICU User Guide,
-   \url{http://userguide.icu-project.org/transforms/normalization}
+   \url{https://unicode-org.github.io/icu/userguide/transforms/normalization/}
    (technical details)
 
 \emph{Unicode Equivalence} -- Wikipedia,
 \url{https://en.wikipedia.org/wiki/Unicode_equivalence}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other transform: 
 \code{\link{stri_trans_char}()},
 \code{\link{stri_trans_general}()},
@@ -109,3 +111,6 @@ Other transform:
 \code{\link{stri_trans_tolower}()}
 }
 \concept{transform}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

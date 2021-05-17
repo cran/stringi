@@ -59,7 +59,7 @@ stri_timezone_list(offset=5.75)
 stri_timezone_list(region='PL')
 stri_timezone_list(region='US', offset=-10)
 
-# Fetch info on all time zones
+# Fetch information on all time zones
 do.call(rbind.data.frame,
    lapply(stri_timezone_list(), function(tz) stri_timezone_info(tz)))
 
@@ -68,16 +68,15 @@ do.call(rbind.data.frame,
 \emph{TimeZone} class -- ICU API Documentation,
 \url{https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/classicu_1_1TimeZone.html}
 
-\emph{ICU 4.8 Time Zone Names}.
-\url{http://site.icu-project.org/design/formatting/timezone/icu-4-8-time-zone-names}
-
 \emph{ICU TimeZone classes} -- ICU User Guide,
-\url{http://userguide.icu-project.org/datetime/timezone}
+\url{https://unicode-org.github.io/icu/userguide/datetime/timezone/}
 
 \emph{Date/Time Services} -- ICU User Guide,
-\url{http://userguide.icu-project.org/datetime}
+\url{https://unicode-org.github.io/icu/userguide/datetime/}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other datetime: 
 \code{\link{stri_datetime_add}()},
 \code{\link{stri_datetime_create}()},
@@ -95,3 +94,6 @@ Other timezone:
 }
 \concept{datetime}
 \concept{timezone}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

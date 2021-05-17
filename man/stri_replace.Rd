@@ -183,8 +183,8 @@ stri_replace_all_regex('abaca', 'a', c('!', '*'))
 stri_replace_all_regex('123|456|789', '(\\\\p{N}).(\\\\p{N})', '$2-$1')
 stri_replace_all_regex(c('stringi R', 'REXAMINE', '123'), '( R|R.)', ' r ')
 
+# named capture groups are available since ICU 55
 \dontrun{
-# named capture groups available since ICU 55
 stri_replace_all_regex('words 123 and numbers 456',
    '(?<numbers>[0-9]+)', '!${numbers}!')
 }
@@ -208,8 +208,13 @@ stri_replace_last_regex("agAGA", "aga", "*", case_insensitive=TRUE)
 
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other search_replace: 
 \code{\link{about_search}},
 \code{\link{stri_trim_both}()}
 }
 \concept{search_replace}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

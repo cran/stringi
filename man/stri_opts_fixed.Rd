@@ -39,11 +39,16 @@ stri_detect_fixed('ala', 'ALA', case_insensitive=TRUE) # equivalent
 }
 \references{
 \emph{C/POSIX Migration} -- ICU User Guide,
-\url{http://userguide.icu-project.org/posix#case_mappings}
+\url{https://unicode-org.github.io/icu/userguide/icu/posix.html}
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other search_fixed: 
 \code{\link{about_search_fixed}},
 \code{\link{about_search}}
 }
 \concept{search_fixed}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}

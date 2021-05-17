@@ -14,7 +14,7 @@ stri_paste(..., sep = "", collapse = NULL, ignore_null = FALSE)
 }
 \arguments{
 \item{...}{character vectors (or objects coercible to character vectors)
-which corresponding elements are to be concatenated}
+whose corresponding elements are to be concatenated}
 
 \item{sep}{a single string; separates terms}
 
@@ -64,6 +64,8 @@ stri_join(c('abc', '123', 'xyz'),'###', 1:6, sep=',', collapse='; ')
 
 }
 \seealso{
+The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
 Other join: 
 \code{\link{\%s+\%}()},
 \code{\link{stri_dup}()},
@@ -71,3 +73,6 @@ Other join:
 \code{\link{stri_join_list}()}
 }
 \concept{join}
+\author{
+\href{https://www.gagolewski.com/}{Marek Gagolewski} and other contributors
+}
