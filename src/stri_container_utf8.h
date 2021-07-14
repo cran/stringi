@@ -33,8 +33,9 @@
 #ifndef __stri_container_utf8_h
 #define __stri_container_utf8_h
 
+#include "stri_string8.h"
 #include "stri_container_base.h"
-
+#include <vector>
 
 /**
  * A class to handle conversion between R character vectors
@@ -105,6 +106,7 @@ public:
 
 
     /** get the vectorized ith element
+     *
      * @param i index
      * @return string, read only
      */
@@ -119,7 +121,22 @@ public:
     }
 
 
-    /** get the vectorized ith element
+    /** get the vectorized ith element, no NA check here
+     *
+     * @param i index
+     * @return string, read only
+     */
+    inline const String8& getNAble(R_len_t i) const {
+#ifndef NDEBUG
+        if (i < 0 || i >= nrecycle)
+            throw StriException("StriContainerUTF8::get(): INDEX OUT OF BOUNDS");
+#endif
+        return str[i%n];
+    }
+
+
+    /** get the vectorized ith element, but not as const
+     *
      * @param i index
      * @return string
      */
@@ -199,5 +216,10 @@ public:
     }
 
 };
+
+
+SEXP stri__subset_by_logical(const StriContainerUTF8& str_cont,
+                             const std::vector<int>& which, int result_counter);
+
 
 #endif

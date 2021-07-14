@@ -33,6 +33,104 @@
 #include "stri_stringi.h"
 #include <unicode/uloc.h>
 
+
+
+
+// for R_tryCatchError -------------------------------------------------------
+
+SEXP stri__call_as_character(void* data)
+{
+    SEXP call;
+    SEXP x = (SEXP)data;
+    PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+    PROTECT(x = Rf_eval(call, R_BaseEnv));  // Q: BaseEnv has the generic as.*
+    UNPROTECT(2);
+    return x;
+}
+
+
+SEXP stri__call_as_integer(void* data)
+{
+    SEXP call;
+    SEXP x = (SEXP)data;
+    PROTECT(call = Rf_lang2(Rf_install("as.integer"), x));
+    PROTECT(x = Rf_eval(call, R_BaseEnv));  // Q: BaseEnv has the generic as.*
+    UNPROTECT(2);
+    return x;
+}
+
+
+SEXP stri__call_as_double(void* data)
+{
+    SEXP call;
+    SEXP x = (SEXP)data;
+    PROTECT(call = Rf_lang2(Rf_install("as.double"), x));
+    PROTECT(x = Rf_eval(call, R_BaseEnv));  // Q: BaseEnv has the generic as.*
+    UNPROTECT(2);
+    return x;
+}
+
+
+SEXP stri__call_as_logical(void* data)
+{
+    SEXP call;
+    SEXP x = (SEXP)data;
+    PROTECT(call = Rf_lang2(Rf_install("as.logical"), x));
+    PROTECT(x = Rf_eval(call, R_BaseEnv));  // Q: BaseEnv has the generic as.*
+    UNPROTECT(2);
+    return x;
+}
+
+
+SEXP stri__call_as_raw(void* data)
+{
+    SEXP call;
+    SEXP x = (SEXP)data;
+    PROTECT(call = Rf_lang2(Rf_install("as.raw"), x));
+    PROTECT(x = Rf_eval(call, R_BaseEnv));  // Q: BaseEnv has the generic as.*
+    UNPROTECT(2);
+    return x;
+}
+
+
+SEXP stri__call_as_POSIXct(void* data)
+{
+    SEXP call;
+    SEXP x = (SEXP)data;
+    PROTECT(call = Rf_lang2(Rf_install("as.POSIXct"), x));
+    PROTECT(x = Rf_eval(call, R_BaseEnv));  // Q: BaseEnv has the generic as.*
+    UNPROTECT(2);
+    return x;
+}
+
+
+
+SEXP stri__handler_null(SEXP /*cond*/, void* /*data*/)
+{
+    return R_NilValue;
+}
+
+
+// ---------------------------------------------------------------------------
+
+/** check if a list is empty or is a list of atomic vectors each of length 1 */
+bool stri__check_list_of_scalars(SEXP x)
+{
+    STRI_ASSERT(Rf_isVectorList(x));
+    R_len_t nv = LENGTH(x);
+    for (R_len_t i=0; i<nv; ++i) {
+        SEXP cur = VECTOR_ELT(x, i);
+        if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+// ---------------------------------------------------------------------------
+
+
 /**
  * Prepare list argument
  *
@@ -42,7 +140,7 @@
  *
  * @version 1.3.2 (Marek Gagolewski, 2019-02-21)
  */
-SEXP stri_prepare_arg_list(SEXP x, const char* argname)
+SEXP stri__prepare_arg_list(SEXP x, const char* argname)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
@@ -73,7 +171,7 @@ SEXP stri_prepare_arg_list(SEXP x, const char* argname)
  *
  * @version 0.1-?? (Marek Gagolewski, 2013-08-08)
  */
-SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
+SEXP stri__prepare_arg_list_raw(SEXP x, const char* argname)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
@@ -93,7 +191,7 @@ SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
         return x;
     }
     else
-        return stri_prepare_arg_string(x, argname);
+        return stri__prepare_arg_string(x, argname);
 }
 
 
@@ -113,7 +211,7 @@ SEXP stri_prepare_arg_list_raw(SEXP x, const char* argname)
  *
  * @version 0.2-1 (Marek Gagolewski, 2014-03-25)
  */
-SEXP stri_prepare_arg_list_integer(SEXP x, const char* argname)
+SEXP stri__prepare_arg_list_integer(SEXP x, const char* argname)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
@@ -132,9 +230,9 @@ SEXP stri_prepare_arg_list_integer(SEXP x, const char* argname)
             for (R_len_t i=0; i<narg; ++i) {
                 if ((bool)isNull(VECTOR_ELT(xold, i)))
                     SET_VECTOR_ELT(x, i, R_NilValue);
-                // @TODO: stri_prepare_arg_integer may call Rf_error, no UNPROTECT
+                // @TODO: stri__prepare_arg_integer may call Rf_error, no UNPROTECT
                 else
-                    SET_VECTOR_ELT(x, i, stri_prepare_arg_integer(VECTOR_ELT(xold, i), argname));
+                    SET_VECTOR_ELT(x, i, stri__prepare_arg_integer(VECTOR_ELT(xold, i), argname));
             }
             UNPROTECT(1);
             return x;
@@ -143,12 +241,12 @@ SEXP stri_prepare_arg_list_integer(SEXP x, const char* argname)
             // the object may be modified in place
             for (R_len_t i=0; i<narg; ++i)
                 if (!isNull(VECTOR_ELT(x, i)))
-                    SET_VECTOR_ELT(x, i, stri_prepare_arg_integer(VECTOR_ELT(x, i), argname));
+                    SET_VECTOR_ELT(x, i, stri__prepare_arg_integer(VECTOR_ELT(x, i), argname));
             return x;
         }
     }
     else
-        return stri_prepare_arg_integer(x, argname);
+        return stri__prepare_arg_integer(x, argname);
 }
 
 
@@ -169,7 +267,7 @@ SEXP stri_prepare_arg_list_integer(SEXP x, const char* argname)
  *
  * @version 0.1-?? (Marek Gagolewski, 2013-06-16)
  */
-SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
+SEXP stri__prepare_arg_list_string(SEXP x, const char* argname)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
@@ -185,8 +283,8 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
         SEXP xold = x;
         PROTECT(x = Rf_allocVector(VECSXP, narg));
         for (R_len_t i=0; i<narg; ++i) {
-            // @TODO: stri_prepare_arg_string may call Rf_error, no UNPROTECT
-            SET_VECTOR_ELT(x, i, stri_prepare_arg_string(VECTOR_ELT(xold, i), argname));
+            // @TODO: stri__prepare_arg_string may call Rf_error, no UNPROTECT
+            SET_VECTOR_ELT(x, i, stri__prepare_arg_string(VECTOR_ELT(xold, i), argname));
         }
         UNPROTECT(1);
         return x;
@@ -194,7 +292,7 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
     else {
         // the object may be modified in place
         for (R_len_t i=0; i<narg; ++i)
-            SET_VECTOR_ELT(x, i, stri_prepare_arg_string(VECTOR_ELT(x, i), argname));
+            SET_VECTOR_ELT(x, i, stri__prepare_arg_string(VECTOR_ELT(x, i), argname));
         return x;
     }
 }
@@ -205,12 +303,13 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
  *
  * If the object cannot be coerced, then an error will be generated
  *
- * WARNING: this function is allowed to call the error() function.
+ * WARNING: By default (allow_error=true), this function is allowed to call the error() function.
  * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
  *
  *
  * @param x a character vector or an object that can be coerced to a character vector
  * @param argname argument name (message formatting)
+ * @param allow_error if false, protect a call to as.* and return NilValue on fail.
  * @return character vector
  *
  * @version 0.1-?? (Marek Gagolewski)
@@ -229,37 +328,28 @@ SEXP stri_prepare_arg_list_string(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-20)
+ *    allow_error
  */
-SEXP stri_prepare_arg_string(SEXP x, const char* argname)
+SEXP stri__prepare_arg_string(SEXP x, const char* argname, bool allow_error)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    if (Rf_isFactor(x))
+    if (Rf_isVectorList(x) || isObject(x))  // factor is an object too
     {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        UNPROTECT(2);
-        return x;
-    }
-    else if (Rf_isVectorList(x) || isObject(x))
-    {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
-            }
-        }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        UNPROTECT(2);
-        return x;
+        if (Rf_isVectorList(x) && !stri__check_list_of_scalars(x))
+            Rf_warning(MSG__WARN_LIST_COERCION);
+
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            return stri__call_as_character((void*)x);
+        else
+            return R_tryCatchError(stri__call_as_character, (void*)x, stri__handler_null, NULL);
+#else
+        return stri__call_as_character((void*)x);
+#endif
     }
     else if ((bool)isString(x))
         return x; // return as-is
@@ -278,12 +368,14 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
  *
  * If the object cannot be coerced, then an error will be generated
  *
- * WARNING: this function is allowed to call the error() function.
+ * WARNING: By default (allow_error=true), this function is allowed to call the error() function.
  * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
  *
  *
  * @param x a numeric vector or an object that can be coerced to a numeric vector
  * @param argname argument name (message formatting)
+ * @param factors_as_strings treat factors with as.character or as.double?
+ * @param allow_error if false, protect a call to as.* and return NilValue on fail.
  * @return numeric vector
  *
  * @version 0.1-?? (Bartek Tartanus)
@@ -302,38 +394,55 @@ SEXP stri_prepare_arg_string(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-19)
+ *    factors_as_strings, allow_error
  */
-SEXP stri_prepare_arg_double(SEXP x, const char* argname)
+SEXP stri__prepare_arg_double(SEXP x, const char* argname, bool factors_as_strings, bool allow_error)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    if (Rf_isFactor(x))
+    if (factors_as_strings && Rf_isFactor(x))
     {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        PROTECT(x = Rf_coerceVector(x, REALSXP));
-        UNPROTECT(3);
-        return x;
-    }
-    else if (Rf_isVectorList(x) || isObject(x))
-    {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         PROTECT(x = Rf_coerceVector(x, REALSXP));
+//         UNPROTECT(3);
+//         return x;
+
+        // as.double(as.character(x))
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            PROTECT(x = stri__call_as_character((void*)x));
+        else {
+            PROTECT(x = R_tryCatchError(stri__call_as_character, (void*)x, stri__handler_null, NULL));
+            if (isNull(x)) {
+                UNPROTECT(1);
+                return x;
             }
         }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.double"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+#else
+        PROTECT(x = stri__call_as_character((void*)x));
+#endif
+        PROTECT(x = Rf_coerceVector(x, REALSXP));
         UNPROTECT(2);
         return x;
+    }
+    else if (Rf_isVectorList(x) || isObject(x))  // factor is an object too
+    {
+        if (Rf_isVectorList(x) && !stri__check_list_of_scalars(x))
+            Rf_warning(MSG__WARN_LIST_COERCION);
+
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            return stri__call_as_double((void*)x);
+        else
+            return R_tryCatchError(stri__call_as_double, (void*)x, stri__handler_null, NULL);
+#else
+        return stri__call_as_double((void*)x);
+#endif
     }
     else if ((bool)isReal(x))
         return x; //return as-is
@@ -345,64 +454,20 @@ SEXP stri_prepare_arg_double(SEXP x, const char* argname)
 }
 
 
-/**
- * POSIXt
- *
- * If the object cannot be coerced, then an error will be generated
- *
- * WARNING: this function is allowed to call the error() function.
- * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
- *
- *
- * @param x a numeric vector with class POSIXct
- * @param argname argument name (message formatting)
- * @return numeric vector
- *
- * @version 0.5-1 (Marek Gagolewski, 2014-12-30)
- * @version 1.1.6 (Marek Gagolewski, 2020-02-17) bugfix #370
- *
- */
-SEXP stri_prepare_arg_POSIXct(SEXP x, const char* argname)
-{
-    int num_protect = 0;
-    if ((SEXP*)argname == (SEXP*)R_NilValue)
-        argname = "<noname>";
-
-    if (Rf_inherits(x, "POSIXlt") || Rf_inherits(x, "Date")) {
-        SEXP tmp1;
-        PROTECT(tmp1 = Rf_lang2(Rf_install("as.POSIXct"), x));
-        PROTECT(x = Rf_eval(tmp1, R_GlobalEnv));
-        num_protect += 2;
-    }
-
-    if (!Rf_inherits(x, "POSIXct")) {
-        Rf_error(MSG__ARG_EXPECTED_POSIXct, argname);
-    }
-
-    SEXP attrib_class, attrib_tzone, robj_class, robj_tzone;
-    PROTECT(robj_class = Rf_ScalarString(Rf_mkChar("class")));
-    PROTECT(robj_tzone = Rf_ScalarString(Rf_mkChar("tzone")));
-    PROTECT(attrib_class = Rf_getAttrib(x, robj_class));
-    PROTECT(attrib_tzone = Rf_getAttrib(x, robj_tzone));
-    PROTECT(x = stri_prepare_arg_double(x, argname));
-    Rf_setAttrib(x, robj_class, attrib_class);
-    Rf_setAttrib(x, robj_tzone, attrib_tzone);
-    UNPROTECT(num_protect+5);
-    return x;
-}
-
 
 /**
  * Prepare integer vector argument
  *
  * If the object cannot be coerced, then an error will be generated
  *
- * WARNING: this function is allowed to call the error() function.
+ * WARNING: By default (allow_error=true), this function is allowed to call the error() function.
  * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
  *
  *
  * @param x an integer vector or an object that can be coerced to an integer vector
  * @param argname argument name (message formatting)
+ * @param factors_as_strings treat factors with as.character or as.integer?
+ * @param allow_error if false, protect a call to as.* and return NilValue on fail.
  * @return integer vector
  *
  * @version 0.1?? (Bartek Tartanus)
@@ -421,38 +486,55 @@ SEXP stri_prepare_arg_POSIXct(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-19)
+ *    factors_as_strings, allow_error
  */
-SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
+SEXP stri__prepare_arg_integer(SEXP x, const char* argname, bool factors_as_strings, bool allow_error)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    if (Rf_isFactor(x)) // factors must be checked first (as they are currently represented as integer vectors)
+    if (factors_as_strings && Rf_isFactor(x)) // factors must be checked first (as they are currently represented as integer vectors)
     {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        PROTECT(x = Rf_coerceVector(x, INTSXP));
-        UNPROTECT(3);
-        return x;
-    }
-    else if (Rf_isVectorList(x) || isObject(x))
-    {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         PROTECT(x = Rf_coerceVector(x, INTSXP));
+//         UNPROTECT(3);
+//         return x;
+
+        // as.integer(as.character(x))
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            PROTECT(x = stri__call_as_character((void*)x));
+        else {
+            PROTECT(x = R_tryCatchError(stri__call_as_character, (void*)x, stri__handler_null, NULL));
+            if (isNull(x)) {
+                UNPROTECT(1);
+                return x;
             }
         }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.integer"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+#else
+        PROTECT(x = stri__call_as_character((void*)x));
+#endif
+        PROTECT(x = Rf_coerceVector(x, INTSXP));
         UNPROTECT(2);
         return x;
+    }
+    else if (Rf_isVectorList(x) || isObject(x))  // factor is an object too
+    {
+        if (Rf_isVectorList(x) && !stri__check_list_of_scalars(x))
+            Rf_warning(MSG__WARN_LIST_COERCION);
+
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            return stri__call_as_integer((void*)x);
+        else
+            return R_tryCatchError(stri__call_as_integer, (void*)x, stri__handler_null, NULL);
+#else
+        return stri__call_as_integer((void*)x);
+#endif
     }
     else if (Rf_isInteger(x))
         return x; // return as-is
@@ -462,6 +544,9 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
     Rf_error(MSG__ARG_EXPECTED_INTEGER, argname); //allowed here
     return x; // avoid compiler warning
 }
+
+
+
 
 
 /**
@@ -493,38 +578,47 @@ SEXP stri_prepare_arg_integer(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.2 (Marek Gagolewski, 2021-05-19)
+ *    call as.logical on factors (not as.character+coerce to LGLSXP)
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-20)
+ *    allow_error
  */
-SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
+SEXP stri__prepare_arg_logical(SEXP x, const char* argname, bool allow_error)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
     if (Rf_isFactor(x))
     {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        PROTECT(x = Rf_coerceVector(x, LGLSXP));
-        UNPROTECT(3);
-        return x;
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         PROTECT(x = Rf_coerceVector(x, LGLSXP));
+//         UNPROTECT(3);
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            return stri__call_as_logical((void*)x);
+        else
+            return R_tryCatchError(stri__call_as_logical, (void*)x, stri__handler_null, NULL);
+#else
+        return stri__call_as_logical((void*)x);
+#endif
     }
     else if (Rf_isVectorList(x) || isObject(x))
     {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
-            }
-        }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.logical"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        UNPROTECT(2);
-        return x;
+        if (Rf_isVectorList(x) && !stri__check_list_of_scalars(x))
+            Rf_warning(MSG__WARN_LIST_COERCION);
+
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            return stri__call_as_logical((void*)x);
+        else
+            return R_tryCatchError(stri__call_as_logical, (void*)x, stri__handler_null, NULL);
+#else
+        return stri__call_as_logical((void*)x);
+#endif
     }
     else if ((bool)isLogical(x))
         return x; // return as-is
@@ -562,38 +656,54 @@ SEXP stri_prepare_arg_logical(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-19)
+ *    factors_as_strings, allow_error
  */
-SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
+SEXP stri__prepare_arg_raw(SEXP x, const char* argname, bool factors_as_strings, bool allow_error)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    if (Rf_isFactor(x))
+    if (factors_as_strings && Rf_isFactor(x))
     {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         PROTECT(x = Rf_coerceVector(x, RAWSXP));
+//         UNPROTECT(3);
+//         return x;
+        // as.raw(as.character(x))
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            PROTECT(x = stri__call_as_character((void*)x));
+        else {
+            PROTECT(x = R_tryCatchError(stri__call_as_character, (void*)x, stri__handler_null, NULL));
+            if (isNull(x)) {
+                UNPROTECT(1);
+                return x;
+            }
+        }
+#else
+        PROTECT(x = stri__call_as_character((void*)x));
+#endif
         PROTECT(x = Rf_coerceVector(x, RAWSXP));
-        UNPROTECT(3);
+        UNPROTECT(2);
         return x;
     }
     else if (Rf_isVectorList(x) || isObject(x))
     {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
-            }
-        }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.raw"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        UNPROTECT(2);
-        return x;
+        if (Rf_isVectorList(x) && !stri__check_list_of_scalars(x))
+            Rf_warning(MSG__WARN_LIST_COERCION);
+
+#if defined(R_VERSION) && R_VERSION >= R_Version(3, 5, 0)
+        if (allow_error)
+            return stri__call_as_raw((void*)x);
+        else
+            return R_tryCatchError(stri__call_as_raw, (void*)x, stri__handler_null, NULL);
+#else
+        return stri__call_as_raw((void*)x);
+#endif
     }
     else if (TYPEOF(x) == RAWSXP)
         return x; // return as-is
@@ -603,6 +713,59 @@ SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
     Rf_error(MSG__ARG_EXPECTED_RAW, argname); // allowed here
     return x; // avoid compiler warning
 }
+
+
+
+/**
+ * POSIXt
+ *
+ * If the object cannot be coerced, then an error will be generated
+ *
+ * WARNING: this function is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ *
+ * @param x a numeric vector with class POSIXct or something coercible to
+ * @param argname argument name (message formatting)
+ * @return numeric vector
+ *
+ * @version 0.5-1 (Marek Gagolewski, 2014-12-30)
+ * @version 1.1.6 (Marek Gagolewski, 2020-02-17) bugfix #370
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-26) call as.POSIXct more eagerly
+ */
+SEXP stri__prepare_arg_POSIXct(SEXP x, const char* argname)
+{
+    int num_protect = 0;
+    if ((SEXP*)argname == (SEXP*)R_NilValue)
+        argname = "<noname>";
+
+    if (/*factors_as_strings &&*/ Rf_isFactor(x)) {
+        PROTECT(x = stri__call_as_character((void*)x));
+        num_protect += 1;
+        // will convert from character below
+    }
+
+    if (Rf_inherits(x, "POSIXlt") || Rf_inherits(x, "Date") || (TYPEOF(x) == STRSXP)) {
+        PROTECT(x = stri__call_as_POSIXct((void*)x));
+        num_protect += 1;
+    }
+
+    if (!Rf_inherits(x, "POSIXct")) {
+        Rf_error(MSG__ARG_EXPECTED_POSIXct, argname);
+    }
+
+    SEXP attrib_class, attrib_tzone, robj_class, robj_tzone;
+    PROTECT(robj_class = Rf_ScalarString(Rf_mkChar("class")));
+    PROTECT(robj_tzone = Rf_ScalarString(Rf_mkChar("tzone")));
+    PROTECT(attrib_class = Rf_getAttrib(x, robj_class));
+    PROTECT(attrib_tzone = Rf_getAttrib(x, robj_tzone));
+    PROTECT(x = stri__prepare_arg_double(x, argname));
+    Rf_setAttrib(x, robj_class, attrib_class);
+    Rf_setAttrib(x, robj_tzone, attrib_tzone);
+    UNPROTECT(num_protect+5);
+    return x;
+}
+
 
 
 /** Prepare string argument - one string
@@ -625,51 +788,57 @@ SEXP stri_prepare_arg_raw(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *    refactor: use stri__prepare_arg_xxx (again, as in pre-64651ed-commits)
  */
-SEXP stri_prepare_arg_string_1(SEXP x, const char* argname)
+SEXP stri__prepare_arg_string_1(SEXP x, const char* argname)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    int nprotect = 0;
-    if (Rf_isFactor(x))
-    {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        nprotect = 2;
-    }
-    else if (Rf_isVectorList(x) || isObject(x))
-    {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
-            }
-        }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        nprotect = 2;
-    }
-    else if ((bool)isString(x))
-        nprotect = 0;
-    else if (Rf_isVectorAtomic(x) || isNull(x)) {
-        PROTECT(x = Rf_coerceVector(x, STRSXP));
-        nprotect = 1;
-    }
-    else if ((bool)isSymbol(x)) {
-        PROTECT(x = Rf_ScalarString(PRINTNAME(x)));
-        nprotect = 1;
-    }
-    else {
-        Rf_error(MSG__ARG_EXPECTED_STRING, argname); // allowed here
-        return x; // avoid compiler warning
-    }
+    PROTECT(x = stri__prepare_arg_string(x, argname));
+    int nprotect = 1;
+
+//     if ((SEXP*)argname == (SEXP*)R_NilValue)
+//         argname = "<noname>";
+//      int nprotect = 0;
+//     if (Rf_isFactor(x))
+//     {
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         nprotect = 2;
+//     }
+//     else if (Rf_isVectorList(x) || isObject(x))
+//     {
+//         if (Rf_isVectorList(x)) {
+//             R_len_t nv = LENGTH(x);
+//             for (R_len_t i=0; i<nv; ++i) {
+//                 SEXP cur = VECTOR_ELT(x, i);
+//                 if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
+//                     Rf_warning(MSG__WARN_LIST_COERCION);
+//                     break;
+//                 }
+//             }
+//         }
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         nprotect = 2;
+//     }
+//     else if ((bool)isString(x))
+//         nprotect = 0;
+//     else if (Rf_isVectorAtomic(x) || isNull(x)) {
+//         PROTECT(x = Rf_coerceVector(x, STRSXP));
+//         nprotect = 1;
+//     }
+//     else if ((bool)isSymbol(x)) {
+//         PROTECT(x = Rf_ScalarString(PRINTNAME(x)));
+//         nprotect = 1;
+//     }
+//     else {
+//         Rf_error(MSG__ARG_EXPECTED_STRING, argname); // allowed here
+//         return x; // avoid compiler warning
+//     }
 
 
     R_len_t nx = LENGTH(x);
@@ -716,48 +885,58 @@ SEXP stri_prepare_arg_string_1(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-19)
+ *    factors_as_strings
+ *    refactor: use stri__prepare_arg_xxx (again, as in pre-64651ed-commits)
  */
-SEXP stri_prepare_arg_double_1(SEXP x, const char* argname)
+SEXP stri__prepare_arg_double_1(SEXP x, const char* argname, bool factors_as_strings)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    int nprotect = 0;
-    if (Rf_isFactor(x))
-    {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        PROTECT(x = Rf_coerceVector(x, REALSXP));
-        nprotect = 3;
-    }
-    else if (Rf_isVectorList(x) || isObject(x))
-    {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
-            }
-        }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.double"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        nprotect = 2;
-    }
-    else if ((bool)isReal(x))
-        nprotect = 0;
-    else if (Rf_isVectorAtomic(x) || isNull(x)) {
-        PROTECT(x = Rf_coerceVector(x, REALSXP));
-        nprotect = 1;
-    }
-    else {
-        Rf_error(MSG__ARG_EXPECTED_NUMERIC, argname); // allowed here
-        return x; // avoid compiler warning
-    }
+    PROTECT(x = stri__prepare_arg_double(x, argname, factors_as_strings));
+    int nprotect = 1;
+
+//     if ((SEXP*)argname == (SEXP*)R_NilValue)
+//         argname = "<noname>";
+//
+//     int nprotect = 0;
+//     if (factors_as_strings && Rf_isFactor(x))
+//     {
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         PROTECT(x = Rf_coerceVector(x, REALSXP));
+//         nprotect = 3;
+//     }
+//     else if (Rf_isVectorList(x) || isObject(x))
+//     {
+//         if (Rf_isVectorList(x)) {
+//             R_len_t nv = LENGTH(x);
+//             for (R_len_t i=0; i<nv; ++i) {
+//                 SEXP cur = VECTOR_ELT(x, i);
+//                 if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
+//                     Rf_warning(MSG__WARN_LIST_COERCION);
+//                     break;
+//                 }
+//             }
+//         }
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.double"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         nprotect = 2;
+//     }
+//     else if ((bool)isReal(x))
+//         nprotect = 0;
+//     else if (Rf_isVectorAtomic(x) || isNull(x)) {
+//         PROTECT(x = Rf_coerceVector(x, REALSXP));
+//         nprotect = 1;
+//     }
+//     else {
+//         Rf_error(MSG__ARG_EXPECTED_NUMERIC, argname); // allowed here
+//         return x; // avoid compiler warning
+//     }
 
     R_len_t nx = LENGTH(x);
 
@@ -803,48 +982,58 @@ SEXP stri_prepare_arg_double_1(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-19)
+ *    factors_as_strings
+ *    refactor: use stri__prepare_arg_xxx (again, as in pre-64651ed-commits)
  */
-SEXP stri_prepare_arg_integer_1(SEXP x, const char* argname)
+SEXP stri__prepare_arg_integer_1(SEXP x, const char* argname, bool factors_as_strings)
 {
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    int nprotect = 0;
-    if (Rf_isFactor(x)) // factors must be checked first (as they are currently represented as integer vectors)
-    {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        PROTECT(x = Rf_coerceVector(x, INTSXP));
-        nprotect = 3;
-    }
-    else if (Rf_isVectorList(x) || isObject(x))
-    {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
-            }
-        }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.integer"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        nprotect = 2;
-    }
-    else if (Rf_isInteger(x))
-        nprotect = 0;
-    else if (Rf_isVectorAtomic(x) || isNull(x)) {
-        PROTECT(x = Rf_coerceVector(x, INTSXP));
-        nprotect = 1;
-    }
-    else {
-        Rf_error(MSG__ARG_EXPECTED_INTEGER, argname); //allowed here
-        return x; // avoid compiler warning
-    }
+    PROTECT(x = stri__prepare_arg_integer(x, argname, factors_as_strings));
+    int nprotect = 1;
+
+//     if ((SEXP*)argname == (SEXP*)R_NilValue)
+//         argname = "<noname>";
+//
+//     int nprotect = 0;
+//     if (factors_as_strings && Rf_isFactor(x)) // factors must be checked first (as they are currently represented as integer vectors)
+//     {
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         PROTECT(x = Rf_coerceVector(x, INTSXP));
+//         nprotect = 3;
+//     }
+//     else if (Rf_isVectorList(x) || isObject(x))
+//     {
+//         if (Rf_isVectorList(x)) {
+//             R_len_t nv = LENGTH(x);
+//             for (R_len_t i=0; i<nv; ++i) {
+//                 SEXP cur = VECTOR_ELT(x, i);
+//                 if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
+//                     Rf_warning(MSG__WARN_LIST_COERCION);
+//                     break;
+//                 }
+//             }
+//         }
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.integer"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         nprotect = 2;
+//     }
+//     else if (Rf_isInteger(x))
+//         nprotect = 0;
+//     else if (Rf_isVectorAtomic(x) || isNull(x)) {
+//         PROTECT(x = Rf_coerceVector(x, INTSXP));
+//         nprotect = 1;
+//     }
+//     else {
+//         Rf_error(MSG__ARG_EXPECTED_INTEGER, argname); //allowed here
+//         return x; // avoid compiler warning
+//     }
 
     R_len_t nx = LENGTH(x);
 
@@ -890,51 +1079,66 @@ SEXP stri_prepare_arg_integer_1(SEXP x, const char* argname)
  *
  * @version 1.2.1 (Marek Gagolewski, 2018-04-21)
  *    #285: warn if coercing from a non-trivial list
+ *
+ * @version 1.6.2 (Marek Gagolewski, 2021-05-19)
+ *    call as.logical on factors (not as.character+coerce to LGLSXP)
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-20)
+ *    refactor: use stri__prepare_arg_xxx (again, as in pre-64651ed-commits)
  */
-SEXP stri_prepare_arg_logical_1(SEXP x, const char* argname)
+SEXP stri__prepare_arg_logical_1(SEXP x, const char* argname)
 {
-    int nprotect = 0;
-
     if ((SEXP*)argname == (SEXP*)R_NilValue)
         argname = "<noname>";
 
-    if (Rf_isFactor(x))
-    {
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        PROTECT(x = Rf_coerceVector(x, LGLSXP));
-        nprotect = 3;
-    }
-    else if (Rf_isVectorList(x) || isObject(x))
-    {
-        if (Rf_isVectorList(x)) {
-            R_len_t nv = LENGTH(x);
-            for (R_len_t i=0; i<nv; ++i) {
-                SEXP cur = VECTOR_ELT(x, i);
-                if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
-                    Rf_warning(MSG__WARN_LIST_COERCION);
-                    break;
-                }
-            }
-        }
-        SEXP call;
-        PROTECT(call = Rf_lang2(Rf_install("as.logical"), x));
-        PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
-        nprotect = 2;
-    }
-    else if ((bool)isLogical(x)) {
-        nprotect = 0;
-        // do nothing
-    }
-    else if (Rf_isVectorAtomic(x) || isNull(x)) {
-        PROTECT(x = Rf_coerceVector(x, LGLSXP));
-        nprotect = 1;
-    }
-    else {
-        Rf_error(MSG__ARG_EXPECTED_LOGICAL, argname); // allowed here
-        return x; // avoid compiler warning
-    }
+    PROTECT(x = stri__prepare_arg_logical(x, argname));
+    int nprotect = 1;
+
+//     int nprotect = 0;
+//
+//     if ((SEXP*)argname == (SEXP*)R_NilValue)
+//         argname = "<noname>";
+//
+//     if (Rf_isFactor(x))
+//     {
+//         SEXP call;
+// //         PROTECT(call = Rf_lang2(Rf_install("as.character"), x));
+// //         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+// //         PROTECT(x = Rf_coerceVector(x, LGLSXP));
+// //         nprotect = 3;
+//         PROTECT(call = Rf_lang2(Rf_install("as.logical"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         nprotect = 2;
+//     }
+//     else if (Rf_isVectorList(x) || isObject(x))
+//     {
+//         if (Rf_isVectorList(x)) {
+//             R_len_t nv = LENGTH(x);
+//             for (R_len_t i=0; i<nv; ++i) {
+//                 SEXP cur = VECTOR_ELT(x, i);
+//                 if (!(Rf_isVectorAtomic(cur) && LENGTH(cur) == 1)) {
+//                     Rf_warning(MSG__WARN_LIST_COERCION);
+//                     break;
+//                 }
+//             }
+//         }
+//         SEXP call;
+//         PROTECT(call = Rf_lang2(Rf_install("as.logical"), x));
+//         PROTECT(x = Rf_eval(call, R_GlobalEnv)); // this will mark its encoding manually
+//         nprotect = 2;
+//     }
+//     else if ((bool)isLogical(x)) {
+//         nprotect = 0;
+//         // do nothing
+//     }
+//     else if (Rf_isVectorAtomic(x) || isNull(x)) {
+//         PROTECT(x = Rf_coerceVector(x, LGLSXP));
+//         nprotect = 1;
+//     }
+//     else {
+//         Rf_error(MSG__ARG_EXPECTED_LOGICAL, argname); // allowed here
+//         return x; // avoid compiler warning
+//     }
 
     R_len_t nx = LENGTH(x);
 
@@ -980,7 +1184,7 @@ SEXP stri_prepare_arg_logical_1(SEXP x, const char* argname)
  */
 bool stri__prepare_arg_logical_1_notNA(SEXP x, const char* argname)
 {
-    PROTECT(x = stri_prepare_arg_logical_1(x, argname));
+    PROTECT(x = stri__prepare_arg_logical_1(x, argname));
     int xval = LOGICAL(x)[0];
     UNPROTECT(1);
     if (xval == NA_LOGICAL)
@@ -1007,7 +1211,7 @@ bool stri__prepare_arg_logical_1_notNA(SEXP x, const char* argname)
  */
 int stri__prepare_arg_logical_1_NA(SEXP x, const char* argname)
 {
-    PROTECT(x = stri_prepare_arg_logical_1(x, argname));
+    PROTECT(x = stri__prepare_arg_logical_1(x, argname));
     int xval = LOGICAL(x)[0];
     UNPROTECT(1);
     return xval;
@@ -1034,7 +1238,7 @@ int stri__prepare_arg_logical_1_NA(SEXP x, const char* argname)
  */
 int stri__prepare_arg_integer_1_notNA(SEXP x, const char* argname)
 {
-    PROTECT(x = stri_prepare_arg_integer_1(x, argname));
+    PROTECT(x = stri__prepare_arg_integer_1(x, argname));
     int xval = INTEGER(x)[0];
     UNPROTECT(1);
     if (xval == NA_INTEGER)
@@ -1060,7 +1264,7 @@ int stri__prepare_arg_integer_1_notNA(SEXP x, const char* argname)
  */
 int stri__prepare_arg_integer_1_NA(SEXP x, const char* argname)
 {
-    PROTECT(x = stri_prepare_arg_integer_1(x, argname));
+    PROTECT(x = stri__prepare_arg_integer_1(x, argname));
     int xval = INTEGER(x)[0];
     UNPROTECT(1);
     return (int)xval;
@@ -1087,7 +1291,7 @@ int stri__prepare_arg_integer_1_NA(SEXP x, const char* argname)
  */
 double stri__prepare_arg_double_1_notNA(SEXP x, const char* argname)
 {
-    PROTECT(x = stri_prepare_arg_double_1(x, argname));
+    PROTECT(x = stri__prepare_arg_double_1(x, argname));
     double xval = REAL(x)[0];
     UNPROTECT(1);
     if (ISNA(xval))
@@ -1113,7 +1317,7 @@ double stri__prepare_arg_double_1_notNA(SEXP x, const char* argname)
  */
 double stri__prepare_arg_double_1_NA(SEXP x, const char* argname)
 {
-    PROTECT(x = stri_prepare_arg_double_1(x, argname));
+    PROTECT(x = stri__prepare_arg_double_1(x, argname));
     double xval = REAL(x)[0];
     UNPROTECT(1);
     return (double)xval;
@@ -1153,6 +1357,42 @@ const char* stri__copy_string_Ralloc(SEXP x, const char* argname)
 
 
 
+/** Prepare string argument - one value, can be NA [no re-encoding done!!!]
+ *
+ * If there are 0 elements -> error
+ * If there are >1 elements -> warning
+ *
+ * WARNING: this function is allowed to call the error() function.
+ * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
+ *
+ *
+ * @param x R object to be checked/coerced
+ * @param argname argument name (message formatting)
+ * @return a character string or NULL
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+const char* stri__prepare_arg_string_1_NA(SEXP x, const char* argname)
+{
+    PROTECT(x = stri__prepare_arg_string_1(x, argname));
+    if (STRING_ELT(x, 0) == NA_STRING)
+        return nullptr;
+    const char* ret_tmp = (const char*)CHAR(STRING_ELT(x, 0)); // ret may be gc'ed
+    size_t ret_n = strlen(ret_tmp);
+    /* R_alloc ==  Here R will reclaim the memory at the end of the call to .Call */
+    char* ret = R_alloc(ret_n+1, (int)sizeof(char));
+    STRI_ASSERT(ret);
+    if (!ret) {
+        UNPROTECT(1);
+        Rf_error(MSG__MEM_ALLOC_ERROR);
+    }
+    memcpy(ret, ret_tmp, ret_n+1);
+    UNPROTECT(1);
+    return ret;
+}
+
+
+
 /** Prepare string argument - one value, not NA [no re-encoding done!!!]
  *
  * If there are 0 elements -> error
@@ -1170,22 +1410,12 @@ const char* stri__copy_string_Ralloc(SEXP x, const char* argname)
  */
 const char* stri__prepare_arg_string_1_notNA(SEXP x, const char* argname)
 {
-    PROTECT(x = stri_prepare_arg_string_1(x, argname));
-    if (STRING_ELT(x, 0) == NA_STRING)
+    const char* ret = stri__prepare_arg_string_1_NA(x, argname);
+    if (ret == nullptr)
         Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // allowed here
-    const char* ret_tmp = (const char*)CHAR(STRING_ELT(x, 0)); // ret may be gc'ed
-    size_t ret_n = strlen(ret_tmp);
-    /* R_alloc ==  Here R will reclaim the memory at the end of the call to .Call */
-    char* ret = R_alloc(ret_n+1, (int)sizeof(char));
-    STRI_ASSERT(ret);
-    if (!ret) {
-        UNPROTECT(1);
-        Rf_error(MSG__MEM_ALLOC_ERROR);
-    }
-    memcpy(ret, ret_tmp, ret_n+1);
-    UNPROTECT(1);
     return ret;
 }
+
 
 
 /**
@@ -1224,12 +1454,16 @@ const char* stri__prepare_arg_string_1_notNA(SEXP x, const char* argname)
  * @version 1.5.4 (Marek Gagolewski, 2021-04-07)
  *    BUGFIX: locale='' is the default
  */
-const char* stri__prepare_arg_locale(SEXP loc, const char* argname, bool allowdefault, bool allowna)
-{
+const char* stri__prepare_arg_locale(
+    SEXP loc,
+    const char* argname,
+    bool allowdefault,
+    bool allowna
+) {
     if (allowdefault && isNull(loc))
         return uloc_getDefault();
     else {
-        PROTECT(loc = stri_prepare_arg_string_1(loc, argname));
+        PROTECT(loc = stri__prepare_arg_string_1(loc, argname));
         if (STRING_ELT(loc, 0) == NA_STRING) {
             UNPROTECT(1);
             if (allowna) return NULL;
@@ -1311,7 +1545,7 @@ TimeZone* stri__prepare_arg_timezone(SEXP tz, const char* argname, bool allowdef
     UnicodeString tz_val("");
 
     if (!isNull(tz)) {
-        PROTECT(tz = stri_prepare_arg_string_1(tz, argname));
+        PROTECT(tz = stri__prepare_arg_string_1(tz, argname));
         if (STRING_ELT(tz, 0) == NA_STRING) {
             UNPROTECT(1);
             Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // Rf_error allowed here
@@ -1321,7 +1555,7 @@ TimeZone* stri__prepare_arg_timezone(SEXP tz, const char* argname, bool allowdef
     }
 
 //   if (tz_val.length() == 0 && !isNull(defaulttz)) {
-//      PROTECT(defaulttz = stri_prepare_arg_string_1(defaulttz, argname));
+//      PROTECT(defaulttz = stri__prepare_arg_string_1(defaulttz, argname));
 //      if (STRING_ELT(defaulttz, 0) == NA_STRING) {
 //         UNPROTECT(1);
 //         Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // Rf_error allowed here
@@ -1383,7 +1617,7 @@ const char* stri__prepare_arg_enc(SEXP enc, const char* argname, bool allowdefau
     if (allowdefault && isNull(enc))
         return (const char*)NULL;
     else {
-        PROTECT(enc = stri_prepare_arg_string_1(enc, argname));
+        PROTECT(enc = stri__prepare_arg_string_1(enc, argname));
         if (STRING_ELT(enc, 0) == NA_STRING) {
             UNPROTECT(1);
             Rf_error(MSG__ARG_EXPECTED_NOT_NA, argname); // allowed here
@@ -1414,4 +1648,158 @@ const char* stri__prepare_arg_enc(SEXP enc, const char* argname, bool allowdefau
 
     // won't come here anyway
     return NULL; // avoid compiler warning
+}
+
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_string_1(SEXP x, SEXP argname)
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_string_1(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_double_1(SEXP x, SEXP argname) // TODO: factors_as_strings
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_double_1(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_integer_1(SEXP x, SEXP argname) // TODO: factors_as_strings
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_integer_1(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_logical_1(SEXP x, SEXP argname)
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_logical_1(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_string(SEXP x, SEXP argname)
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_string(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_double(SEXP x, SEXP argname) // TODO: factors_as_strings
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_double(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_integer(SEXP x, SEXP argname) // TODO: factors_as_strings
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_integer(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_logical(SEXP x, SEXP argname)
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_logical(x, argname_s);
+}
+
+
+/* Wrapper for stri__prepare_arg_*, mainly for testing purposes
+ *
+ * Can call error()
+ *
+ * @param x R object
+ * @param argname single string
+ * @return R object of desired type
+ *
+ * @version 1.6.3 (Marek Gagolewski, 2021-05-21)
+ */
+SEXP stri_prepare_arg_raw(SEXP x, SEXP argname)  // TODO: factors_as_strings
+{
+    const char* argname_s = stri__prepare_arg_string_1_notNA(argname, "argname");
+    return stri__prepare_arg_raw(x, argname_s);
 }

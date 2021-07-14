@@ -35,16 +35,18 @@
 #' Passing Arguments to Functions in \pkg{stringi}
 #'
 #' @description
-#' Below we explain how \pkg{stringi} deals (in most of the cases)
-#' with its functions' arguments.
+#' Below we explain how \pkg{stringi} deals with its functions' arguments.
+#'
+#' If some function violates one of the following rules
+#' (for a very important reason),
+#' this is clearly indicated in its documentation (with discussion).
 #'
 #' @section Coercion of Arguments:
 #'
 #' When a character vector argument is expected, factors and other vectors
-#' coercible to characters vectors
-#' are silently converted with \code{\link{as.character}},
-#' otherwise an error is generated.
-#' Coercion from a list of non-atomic vectors each of length 1
+#' coercible to characters vectors are silently converted with
+#' \code{\link{as.character}}, otherwise an error is generated.
+#' Coercion from a list which does not consist of length-1 atomic vectors
 #' issues a warning.
 #'
 #' When a logical, numeric, or integer vector argument is expected,
@@ -61,12 +63,10 @@
 #' for instance, search for one pattern in each given string,
 #' search for each pattern in one given string,
 #' and search for the i-th pattern within the i-th string.
-#' This behavior sometimes leads to peculiar results - we assume you know what
-#' you are doing.
 #'
 #' We of course took great care of performance issues:
 #' e.g., in regular expression searching, regex matchers are reused
-#' from iteration to iteration, as long it is possible.
+#' from iteration to iteration, as long as it is possible.
 #'
 #' Functions with some non-vectorized arguments are rare:
 #' e.g., regular expression matcher's settings are established
@@ -88,14 +88,15 @@
 #' For any vectorized operation, if at least one vector element is missing,
 #' then the corresponding resulting value is also set to \code{NA}.
 #'
-#' @section Preserving Input Objects' Attributes:
+#'
+#' @section Preserving Object Attributes:
 #'
 #' Generally, all our functions drop input objects' attributes
 #' (e.g., \code{\link{names}}, \code{\link{dim}}, etc.).
-#' This is generally because of advanced vectorization and for efficiency reasons.
-#' Thus, if arguments' preserving is needed,
-#' please remember to copy important attributes manually
-#' or use, e.g., the subsetting operation like \code{x[] <- stri_...(x, ...)}.
+#' This is due to deep vectorization as well as for efficiency reasons.
+#' If the preservation of attributes is needed,
+#' important attributes can be manually copied. Alternatively, the notation
+#' \code{x[] <- stri_...(x, ...)} can sometimes be used too.
 #'
 #' @rdname about_arguments
 #' @name about_arguments
@@ -126,7 +127,7 @@ invisible(NULL)
 # @family prepare_arg
 stri_prepare_arg_string <- function(x)
 {
-    .Call(C_stri_prepare_arg_string, x, NULL)
+    .Call(C_stri_prepare_arg_string, x, deparse(substitute(x)))
 }
 
 
@@ -137,6 +138,7 @@ stri_prepare_arg_string <- function(x)
 # This is an internal function. However, the interested user may play with it
 # in order to get more insight on how \pkg{stringi} deals with its
 # functions' arguments. See `Value' section for details.
+# TODO: factors_as_strings
 #
 # @param x argument to be checked
 #
@@ -152,7 +154,7 @@ stri_prepare_arg_string <- function(x)
 # @family prepare_arg
 stri_prepare_arg_double <- function(x)
 {
-    .Call(C_stri_prepare_arg_double, x, NULL)
+    .Call(C_stri_prepare_arg_double, x, deparse(substitute(x)))
 }
 
 
@@ -163,6 +165,7 @@ stri_prepare_arg_double <- function(x)
 # This is an internal function. However, the interested user may play with it
 # in order to get more insight on how \pkg{stringi} deals with its
 # functions' arguments. See `Value' section for details.
+# TODO: factors_as_strings
 #
 # @param x argument to be checked
 #
@@ -178,7 +181,7 @@ stri_prepare_arg_double <- function(x)
 # @family prepare_arg
 stri_prepare_arg_integer <- function(x)
 {
-    .Call(C_stri_prepare_arg_integer, x, NULL)
+    .Call(C_stri_prepare_arg_integer, x, deparse(substitute(x)))
 }
 
 
@@ -189,6 +192,7 @@ stri_prepare_arg_integer <- function(x)
 # This is an internal function. However, the interested user may play with it
 # in order to get more insight on how \pkg{stringi} deals with its
 # functions' arguments. See `Value' section for details.
+# TODO: factors_as_strings
 #
 # @param x argument to be checked
 #
@@ -204,7 +208,7 @@ stri_prepare_arg_integer <- function(x)
 # @family prepare_arg
 stri_prepare_arg_logical <- function(x)
 {
-    .Call(C_stri_prepare_arg_logical, x, NULL)
+    .Call(C_stri_prepare_arg_logical, x, deparse(substitute(x)))
 }
 
 
@@ -215,6 +219,7 @@ stri_prepare_arg_logical <- function(x)
 # This is an internal function. However, the interested user may play with it
 # in order to get more insight on how \pkg{stringi} deals with its
 # functions' arguments. See `Value' section for details.
+# TODO: factors_as_strings
 #
 # @param x argument to be checked
 #
@@ -230,7 +235,7 @@ stri_prepare_arg_logical <- function(x)
 # @family prepare_arg
 stri_prepare_arg_raw <- function(x)
 {
-    .Call(C_stri_prepare_arg_raw, x, NULL)
+    .Call(C_stri_prepare_arg_raw, x, deparse(substitute(x)))
 }
 
 
@@ -252,7 +257,7 @@ stri_prepare_arg_raw <- function(x)
 # @family prepare_arg
 stri_prepare_arg_string_1 <- function(x)
 {
-    .Call(C_stri_prepare_arg_string_1, x, NULL)
+    .Call(C_stri_prepare_arg_string_1, x, deparse(substitute(x)))
 }
 
 
@@ -263,6 +268,7 @@ stri_prepare_arg_string_1 <- function(x)
 # This is an internal function. However, the interested user may play with it
 # in order to get more insight on how \pkg{stringi} deals with its
 # functions' arguments. See `Value' section for details.
+# TODO: factors_as_strings
 #
 # @param x argument to be checked
 # @return
@@ -274,7 +280,7 @@ stri_prepare_arg_string_1 <- function(x)
 # @family prepare_arg
 stri_prepare_arg_double_1 <- function(x)
 {
-    .Call(C_stri_prepare_arg_double_1, x, NULL)
+    .Call(C_stri_prepare_arg_double_1, x, deparse(substitute(x)))
 }
 
 
@@ -286,17 +292,19 @@ stri_prepare_arg_double_1 <- function(x)
 # in order to get more insight on how \pkg{stringi} deals with its
 # functions' arguments. See `Value' section for details.
 #
+# TODO: factors_as_strings
+#
 # @param x argument to be checked
 # @return
 # In the first place, \code{\link{stri_prepare_arg_integer}} is called.
-# On ab empty vector, an error is generated.
+# On an empty vector, an error is generated.
 # If there are more than 1 elements, a warning is generated.
 # A vector with one element (the first in \code{x}) is returned.
 #
 # @family prepare_arg
 stri_prepare_arg_integer_1 <- function(x)
 {
-    .Call(C_stri_prepare_arg_integer_1, x, NULL)
+    .Call(C_stri_prepare_arg_integer_1, x, deparse(substitute(x)))
 }
 
 
@@ -318,5 +326,5 @@ stri_prepare_arg_integer_1 <- function(x)
 # @family prepare_arg
 stri_prepare_arg_logical_1 <- function(x)
 {
-    .Call(C_stri_prepare_arg_logical_1, x, NULL)
+    .Call(C_stri_prepare_arg_logical_1, x, deparse(substitute(x)))
 }

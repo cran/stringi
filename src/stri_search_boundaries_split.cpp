@@ -69,9 +69,9 @@
 SEXP stri_split_boundaries(SEXP str, SEXP n, SEXP tokens_only, SEXP simplify, SEXP opts_brkiter)
 {
     bool tokens_only1 = stri__prepare_arg_logical_1_notNA(tokens_only, "tokens_only");
-    PROTECT(simplify = stri_prepare_arg_logical_1(simplify, "simplify"));
-    PROTECT(str = stri_prepare_arg_string(str, "str"));
-    PROTECT(n = stri_prepare_arg_integer(n, "n"));
+    PROTECT(simplify = stri__prepare_arg_logical_1(simplify, "simplify"));
+    PROTECT(str = stri__prepare_arg_string(str, "str"));
+    PROTECT(n = stri__prepare_arg_integer(n, "n"));
     StriBrkIterOptions opts_brkiter2(opts_brkiter, "line_break");
 
     STRI__ERROR_HANDLER_BEGIN(3)
@@ -98,7 +98,7 @@ SEXP stri_split_boundaries(SEXP str, SEXP n, SEXP tokens_only, SEXP simplify, SE
         }
 
         if (n_cur >= INT_MAX-1)
-            throw StriException(MSG__EXPECTED_SMALLER, "n");
+            throw StriException(MSG__INCORRECT_NAMED_ARG "; " MSG__EXPECTED_SMALLER, "n");
         else if (n_cur < 0)
             n_cur = INT_MAX;
         else if (n_cur == 0) {

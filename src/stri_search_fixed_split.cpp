@@ -92,11 +92,11 @@ SEXP stri_split_fixed(SEXP str, SEXP pattern, SEXP n,
 {
     uint32_t pattern_flags = StriContainerByteSearch::getByteSearchFlags(opts_fixed);
     bool tokens_only1 = stri__prepare_arg_logical_1_notNA(tokens_only, "tokens_only");
-    PROTECT(simplify = stri_prepare_arg_logical_1(simplify, "simplify"));
-    PROTECT(str = stri_prepare_arg_string(str, "str"));
-    PROTECT(pattern = stri_prepare_arg_string(pattern, "pattern"));
-    PROTECT(n = stri_prepare_arg_integer(n, "n"));
-    PROTECT(omit_empty = stri_prepare_arg_logical(omit_empty, "omit_empty"));
+    PROTECT(simplify = stri__prepare_arg_logical_1(simplify, "simplify"));
+    PROTECT(str = stri__prepare_arg_string(str, "str"));
+    PROTECT(pattern = stri__prepare_arg_string(pattern, "pattern"));
+    PROTECT(n = stri__prepare_arg_integer(n, "n"));
+    PROTECT(omit_empty = stri__prepare_arg_logical(omit_empty, "omit_empty"));
 
     STRI__ERROR_HANDLER_BEGIN(5)
     R_len_t vectorize_length = stri__recycling_rule(true, 4,
@@ -130,7 +130,7 @@ SEXP stri_split_fixed(SEXP str, SEXP pattern, SEXP n,
         const char* str_cur_s = str_cont.get(i).c_str();
 
         if (n_cur >= INT_MAX-1)
-            throw StriException(MSG__EXPECTED_SMALLER, "n");
+            throw StriException(MSG__INCORRECT_NAMED_ARG "; " MSG__EXPECTED_SMALLER, "n");
         else if (n_cur < 0)
             n_cur = INT_MAX;
         else if (n_cur == 0) {

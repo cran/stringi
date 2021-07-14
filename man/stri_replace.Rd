@@ -17,7 +17,7 @@
 \alias{stri_replace_all_regex}
 \alias{stri_replace_first_regex}
 \alias{stri_replace_last_regex}
-\title{Replace Occurrences of a Pattern}
+\title{Replace Pattern Occurrences}
 \usage{
 stri_replace_all(str, replacement, ..., regex, fixed, coll, charclass)
 
@@ -138,7 +138,7 @@ Input that is not part of any match is left unchanged;
 each match is replaced in the result by the replacement string.
 
 However, for \code{stri_replace_all*}, if \code{vectorize_all} is \code{FALSE},
-the each substring matching any of the supplied \code{pattern}s
+then each substring matching any of the supplied \code{pattern}s
 is replaced by a corresponding \code{replacement} string.
 In such a case, the vectorization is over \code{str},
 and - independently - over \code{pattern} and \code{replacement}.
@@ -212,6 +212,7 @@ The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.c
 
 Other search_replace: 
 \code{\link{about_search}},
+\code{\link{stri_replace_rstr}()},
 \code{\link{stri_trim_both}()}
 }
 \concept{search_replace}

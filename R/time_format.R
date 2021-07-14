@@ -39,39 +39,39 @@
 #' to a character vector, or vice versa.
 #'
 #' @details
-#' Vectorized over \code{time} or \code{str}.
+#' Vectorized over \code{format} and \code{time} or \code{str}.
 #'
 #' By default, \code{stri_datetime_format} (for the sake of compatibility
-#' with the \code{\link{strftime}} function, but unlike \code{format.POSIXst})
+#' with the \code{\link[base]{strftime}} function)
 #' formats a date/time object using the current default time zone.
 #'
 #' \code{format} may be one of \code{DT_STYLE} or \code{DT_relative_STYLE},
 #' where \code{DT} is equal to \code{date}, \code{time}, or \code{datetime},
 #' and \code{STYLE} is equal to \code{full}, \code{long}, \code{medium},
 #' or \code{short}. This gives a locale-dependent date and/or time format.
-#' Note that currently \pkg{ICU} does not support \code{relative} \code{time} formats,
-#' so this flag is currently ignored in such a context.
+#' Note that currently \pkg{ICU} does not support \code{relative}
+#' \code{time} formats, thus this flag is currently ignored in such a context.
 #'
 #' Otherwise, \code{format} is a pattern:
-#' a string, where specific sequences of characters are replaced
-#' with date and time data from a calendar when formatting or used
+#' a string where specific sequences of characters are replaced
+#' with date/time data from a calendar when formatting or used
 #' to generate data for a calendar when parsing.
-#' For example, \code{y} stands for the year. Characters
+#' For example, \code{y} stands for 'year'. Characters
 #' may be used multiple times:
 #' \code{yy} might produce \code{99}, whereas \code{yyyy} yields \code{1999}.
-#' For most of the numerical fields, the number of characters specifies
+#' For most numerical fields, the number of characters specifies
 #' the field width. For example, if \code{h} is the hour, \code{h} might
 #' produce \code{5}, but \code{hh} yields \code{05}.
 #' For some characters, the count specifies whether an abbreviated
-#' or full form should be used, but may have other choices, as given below.
+#' or full form should be used.
 #'
 #' Two single quotes represent a literal single quote, either
 #' inside or outside single quotes. Text within single quotes
 #' is not interpreted in any way (except for two adjacent single quotes).
-#' Otherwise all ASCII letter from \code{a} to \code{z} and \code{A} to \code{Z}
-#' are reserved as syntax characters, and require quoting if
-#' they are to represent literal characters. In addition, certain
-#' ASCII punctuation characters may become variable in the future
+#' Otherwise, all ASCII letters from \code{a} to \code{z} and
+#' \code{A} to \code{Z} are reserved as syntax characters, and require quoting
+#' if they are to represent literal characters. In addition, certain
+#' ASCII punctuation characters may become available in the future
 #' (e.g., \code{:} being interpreted as the time separator and \code{/}
 #' as a date separator, and replaced by respective
 #' locale-sensitive characters in display).
@@ -174,13 +174,14 @@
 #' For instance, characters like \code{:}, \code{.}, \code{ } (a space),
 #' \code{#} and \code{@@} will appear in the resulting time text
 #' even if they are not enclosed within single quotes. The single quote is used
-#' to ``escape'' letters. Two single quotes in a row,
+#' to ``escape'' the letters. Two single quotes in a row,
 #' inside or outside a quoted sequence, represent a ``real'' single quote.
 #'
-#' Here are some examples:
+#'
+#' A few examples:
 #'
 #' \tabular{ll}{
-#' \bold{Exemplary Pattern} \tab  \bold{Result} \cr
+#' \bold{Example Pattern} \tab  \bold{Result} \cr
 #' yyyy.MM.dd 'at' HH:mm:ss zzz \tab 2015.12.31 at 23:59:59 GMT+1 \cr
 #' EEE, MMM d, ''yy \tab czw., gru 31, '15 \cr
 #' h:mm a \tab 11:59 PM \cr
@@ -190,16 +191,18 @@
 #' uuuu-MM-dd'T'HH:mm:ssZ \tab 2015-12-31T23:59:59+0100 (the ISO 8601 guideline) \cr
 #' }
 #'
-#' @param time an object of class \code{\link{POSIXct}} or an object coercible to
-#' @param format single string, see Details; see also \code{\link{stri_datetime_fstr}}
+#' @param time an object of class \code{\link{POSIXct}}
+#'     (\code{as.POSIXct} will be called on character vectors
+#'     and objects of class \code{POSIXlt}, \code{Date}, and \code{factor})
+#' @param format character vector, see Details; see also \code{\link{stri_datetime_fstr}}
 #' @param str character vector
-#' @param tz  \code{NULL} or \code{''} for the default time zone
-#' or a single string with a timezone identifier,
-#' see \code{\link{stri_timezone_list}}
+#' @param tz \code{NULL} or \code{''} for the default time zone
+#'     or a single string with a timezone identifier,
+#'     see \code{\link{stri_timezone_get}} and \code{\link{stri_timezone_list}}
 #' @param lenient single logical value; should date/time parsing be lenient?
-#' @param locale \code{NULL} or \code{''} for default locale,
-#' or a single string with locale identifier; a non-Gregorian calendar
-#' may be specified by setting the \code{@@calendar=name} keyword
+#' @param locale \code{NULL} or \code{''} for the default locale,
+#'     or a single string with locale identifier; a non-Gregorian calendar
+#'     may be specified by setting the \code{@@calendar=name} keyword
 #'
 #' @return
 #' \code{stri_datetime_format} returns a character vector.
@@ -207,7 +210,7 @@
 #' \code{stri_datetime_parse} returns an object of class \code{\link{POSIXct}}.
 #'
 #' @references
-#' \emph{Formatting Dates and Times} - ICU User Guide,
+#' \emph{Formatting Dates and Times} -- ICU User Guide,
 #' \url{https://unicode-org.github.io/icu/userguide/format_parse/datetime/}
 #'
 #'
@@ -220,9 +223,9 @@
 #' @rdname stri_datetime_format
 #' @family datetime
 #' @export
-stri_datetime_format <- function(time, format = "uuuu-MM-dd HH:mm:ss", tz = NULL,
-    locale = NULL)
-{
+stri_datetime_format <- function(
+    time, format = "uuuu-MM-dd HH:mm:ss", tz = NULL, locale = NULL
+) {
     .Call(C_stri_datetime_format, time, format, tz, locale)
 }
 
@@ -230,35 +233,42 @@ stri_datetime_format <- function(time, format = "uuuu-MM-dd HH:mm:ss", tz = NULL
 #' @export
 #' @rdname stri_datetime_format
 #' @aliases stri_datetime_format
-stri_datetime_parse <- function(str, format = "uuuu-MM-dd HH:mm:ss", lenient = FALSE,
-    tz = NULL, locale = NULL)
-{
+stri_datetime_parse <- function(
+    str, format = "uuuu-MM-dd HH:mm:ss",
+    lenient = FALSE, tz = NULL, locale = NULL
+) {
     .Call(C_stri_datetime_parse, str, format, lenient, tz, locale)
 }
 
 
 #' @title
-#' Convert strptime-Style Format Strings
+#' Convert \code{strptime}-Style Format Strings
 #'
 #' @description
-#' A function to convert \code{\link{strptime}}/\code{\link{strftime}}-style
+#' This function converts \code{\link[base]{strptime}} or
+#' \code{\link[base]{strftime}}-style
 #' format strings to \pkg{ICU} format strings that may be used
 #' in \code{\link{stri_datetime_parse}} and \code{\link{stri_datetime_format}}
 #' functions.
 #'
 #' @details
 #' For more details on conversion specifiers please refer to
-#' the manual page of \code{\link{strptime}}. Most of the formatters
+#' the manual page of \code{\link[base]{strptime}}. Most of the formatters
 #' of the form \code{\%x}, where \code{x} is a letter, are supported.
 #' Moreover, each \code{\%\%} is replaced with \code{\%}.
 #'
-#' Warnings are given in case of \code{\%x}, \code{\%X}, \code{\%u}, \code{\%w},
-#' \code{\%g}, \code{\%G}, \code{\%c}, \code{\%U} and \code{\%W}
+#' Warnings are given in the case of \code{\%x}, \code{\%X}, \code{\%u},
+#' \code{\%w}, \code{\%g}, \code{\%G}, \code{\%c}, \code{\%U}, and \code{\%W}
 #' as in such circumstances either \pkg{ICU} does not
-#' support the  functionality requested using the format-strings API
+#' support the functionality requested using the string format API
 #' or there are some inconsistencies between base R and \pkg{ICU}.
 #'
-#' @param x character vector consisting of date/time format strings
+#' @param x character vector of date/time format strings
+#'
+#' @param ignore_special if \code{FALSE}, special identifiers like
+#'     \code{"datetime_full"} or \code{date_relative_short}
+#'     (see \code{\link{stri_datetime_format}}) are left as-is
+#'
 #' @return Returns a character vector.
 #'
 #' @examples
@@ -266,59 +276,29 @@ stri_datetime_parse <- function(str, format = "uuuu-MM-dd HH:mm:ss", lenient = F
 #'
 #' @family datetime
 #' @export
-stri_datetime_fstr <- function(x)
+stri_datetime_fstr <- function(x, ignore_special=TRUE)
 {
-    # %U, %W -> %V + warn
-    # %x, %X -> warn
-    # %u, %w -> warn
+    x <- .Call(C_stri_datetime_fstr, x)
 
-    # problematic entities:
-    warn <- c("%U", "%V", "%x", "%X", "%u", "%w", "%r", "%g", "%G", "%c")
-    search <- c("%U", "%W", "%g", "%G")
-    needle <- c("ww", "ww", "yy", "Y")
+    ignore_special <- (is.logical(ignore_special) && length(ignore_special) == 1L && !is.na(ignore_special) && ignore_special)  # isTRUE(ignore_special)
+    if (length(x) > 0 && !ignore_special) {
+        formats <- outer(
+            c("date", "time", "datetime", "date_relative", "datetime_relative"),
+            c("full", "long", "medium", "short"),
+            stri_paste,
+            sep="_"
+        )
 
-    search <- c(search, "%a", "%A", "%b", "%B")
-    needle <- c(needle, "ccc", "cccc", "MMM", "MMMM")
-
-    search <- c(search, "%c", "%d", "%D")
-    needle <- c(needle, "eee MMM d HH:mm:ss yyyy", "dd", "MM/dd/yy")
-
-    search <- c(search, "%e", "%F", "%h", "%H")
-    needle <- c(needle, "d", "yyyy-MM-dd", "MMM", "HH")
-
-    search <- c(search, "%I", "%j", "%m", "%M", "%n", "%p")
-    needle <- c(needle, "hh", "D", "MM", "mm", "\n", "a")
-
-    search <- c(search, "%r", "%R", "%S", "%t", "%T", "%u")
-    needle <- c(needle, "hh:mm:ss", "HH:mm", "ss", "\t", "HH:mm:ss", "c")
-
-    search <- c(search, "%V", "%w", "%x", "%X", "%y", "%Y", "%z", "%Z")
-    needle <- c(needle, "ww", "c", "yy/MM/dd", "HH:mm:ss", "yy", "yyyy", "Z", "z")
-
-    x <- stri_replace_all_fixed(x, "'", "\\'")
-    x <- stri_replace_all_fixed(x, "%%", "%!")  # well, that's not very elegant...
-    x <- stri_replace_all_regex(x, "(?:(?<=[%][A-Za-z])|^(?![%][A-Za-z]))(.+?)(?:(?<![%][A-Za-z])$|(?=[%][A-Za-z]))",
-        "'$1'")
-    if (any(stri_detect_regex(x, stri_flatten(warn, collapse = "|"))))
-        warning(sprintf("Formatters %s might not be 100%% compatible with ICU", stri_flatten(warn,
-            collapse = ", ")))
-    x <- stri_replace_all_fixed(x, search, needle, vectorize_all = FALSE)
-    if (any(stri_detect_regex(x, "%[A-Za-z]"))) {
-        warning("Unsupported date/time format specifier. Ignoring")
-        x <- stri_replace_all_regex(x, "%[A-Za-z]", "%?")  # unsupported formatter
+        which_p <- match(x, stringi::stri_sprintf("'%s'", formats))
+        # works for NAs and no items from the above list too
+        x[which(!is.na(which_p))] <- formats[which_p[!is.na(which_p)]]
     }
-    x <- stri_replace_all_fixed(x, "%!", "%")  # well, that's not very elegant...
+
     x
 }
 
 
 # ?DateTimeClasses
-
-# seq.POSIXst
-
-# rep.POSIXst
-
-# diff.POSIXt
 
 # cut
 
@@ -330,12 +310,3 @@ stri_datetime_fstr <- function(x)
 # z + time
 # time - z
 # time1 lop time2
-
-# #' @rdname stri_datetime_format
-# #' @export
-# #' @param usetz single logical value; should the time zone be appended
-# #' to the output?
-# format.POSIXst <- function(x, format='uuuu-MM-dd HH:mm:ss', tz=attr(x, 'tzone'), usetz=FALSE, ...) {
-#    if (identical(usetz, TRUE)) format <- stri_paste(format, ' z') # this is not too intelligent
-#    stri_datetime_format(x, format=format, tz=tz) # ignore ... arg purposedly
-# }

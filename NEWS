@@ -1,6 +1,89 @@
 # What Is New in *stringi*
 
 
+## 1.7.2 (2021-07-14)
+
+* [BUGFIX] Workaround for a bug in `tools::checkFF` failing
+   when `NA_character_` is passed to `.Call`.
+
+
+## 1.7.1 (2021-07-14)
+
+* [BACKWARD INCOMPATIBILITY] `%s$%` and `%stri$%` now use the new `stri_sprintf`
+  (see below) function instead of `base::sprintf`.
+
+* [BACKWARD INCOMPATIBILITY, NEW FEATURE] In `stri_sub<-` and `stri_sub_all<-`,
+  providing a negative `length` from now on does not result in the corresponding
+  input string being altered.
+
+* [BACKWARD INCOMPATIBILITY, NEW FEATURE] In `stri_sub` and `stri_sub_all`,
+  negative `length` results in the corresponding output being `NA`
+  or not extracted at all, depending on the setting of the new argument
+  `ignore_negative_length`.
+
+* [BACKWARD INCOMPATIBILITY, BUGFIX, NEW FEATURE] In `stri_subset*`
+  and their replacement versions, `pattern` and `value` cannot be longer
+  than `str` (but now they are recycled if necessary).
+
+* [BACKWARD INCOMPATIBILITY, NEW FEATURE] `stri_sub*` now accept the
+  `from` argument being a matrix like `cbind(from, length=length)`.
+  Unnamed columns or any other names are still interpreted as `cbind(from, to)`.
+  Also, the new argument `use_matrix` can be used to disable
+  the special treatment of such matrices.
+
+* [DOCUMENTATION] It has been clarified that the syntax of `*_charclass`
+  (e.g., used in `stri_trim*`) differs slightly from regex character
+  classes.
+
+* [NEW FEATURE] #420: `stri_sprintf` (alias: `stri_string_format`)
+  is a Unicode-aware replacement for and enhancement of the base `sprintf`:
+  it adds a customised handling of `NA`s (on demand), computing field size
+  based on code point width, outputting substrings of at most given width,
+  variable width and precision (both at the same time), etc. Moreover,
+  `stri_printf` can be used to display formatted strings conveniently.
+
+* [NEW FEATURE] #153: `stri_match_*_regex` now extract capture group names.
+
+* [NEW FEATURE] #25: `stri_locate_*_regex` now have a new argument,
+  `capture_groups`, which allows for extracting positions of matches
+  to parenthesised subexpressions.
+
+* [NEW FEATURE] `stri_locate_*` now have a new argument, `get_length`,
+  whose setting may result in generating *from-length* matrices
+  (instead of *from-to* ones).
+
+* [NEW FEATURE] #438: `stri_trans_general` now supports rule-based
+  as well as reverse-direction transliteration.
+
+* [NEW FEATURE] #434: `stri_datetime_format` and `stri_datetime_parse`
+  are now vectorised also with respect to the `format` argument.
+
+* [NEW FEATURE] `stri_datetime_fstr` has a new argument, `ignore_special`,
+  which defaults to `TRUE` for backward compatibility.
+
+* [NEW FEATURE] `stri_datetime_format`, `stri_datetime_add`, and
+  `stri_datetime_fields` now call `as.POSIXct` more eagerly.
+
+* [NEW FEATURE] `stri_trim*` now have a new argument, `negate`.
+
+* [NEW FEATURE] `stri_replace_rstr` converts `gsub`-style replacement strings
+  to `stri_replace`-style.
+
+* [INTERNAL] `stri_prepare_arg*` have been refactored, buffer overruns
+  in the exception handling subsystem are now avoided.
+
+* [BUGFIX] Few functions (`stri_length`, `stri_enc_toutf32`, etc.)
+  did not throw an exception on an invalid UTF-8
+  byte sequence (and merely issues a warning instead).
+
+* [BUGFIX] `stri_datetime_fstr` did not honour `NA_character_`
+  and did not parse format strings such as `"%Y%m%d"` correctly.
+  It has now been completely rewritten (in C).
+
+* [BUGFIX] `stri_wrap` did not recognise the width of certain Unicode sequences
+  correctly.
+
+
 ## 1.6.2 (2021-05-14)
 
 * [BACKWARD INCOMPATIBILITY] In `stri_enc_list()`,
@@ -12,13 +95,13 @@
 * [NEW FEATURE] #428: In `stri_flatten`, `na_empty=NA` now omits missing values.
 
 * [BUILD TIME] #431: Pre-4.9.0 GCC has `::max_align_t`,
-  but not `std::max_align_t`, added a (possible) workaround, see the INSTALL
+  but not `std::max_align_t`, added a (possible) workaround, see the `INSTALL`
   file.
 
 * [BUGFIX] #429: `stri_width()` misclassified the width of certain
   code points (including grave accent, Eszett, etc.);
-  General category Sk (Symbol, modifier) is no longer of width 0,
-  UCHAR_EAST_ASIAN_WIDTH of U_EA_AMBIGUOUS is no longer of width 2.
+  General category *Sk* (Symbol, modifier) is no longer of width 0,
+  `UCHAR_EAST_ASIAN_WIDTH` of `U_EA_AMBIGUOUS` is no longer of width 2.
 
 * [BUGFIX] #354: `ALTREP` `CHARSXP`s were not copied, and thus could have been
   garbage collected in the so-called meanwhile (with thanks to @jimhester).

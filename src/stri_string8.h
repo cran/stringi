@@ -33,10 +33,15 @@
 #ifndef __stri_string8_h
 #define __stri_string8_h
 
+#include "stri_stringi.h"
+#include <deque>
+
 
 /**
- * A class to represent an UTF-8 string
+ * A class to represent a (TODO: read-only?) UTF-8 string.
  *
+ * It can mark string as missing (NA), count the number of Unicode code points,
+ * remove BOMs
  *
  * @version 0.1-?? (Marek Gagolewski)
  *
@@ -70,8 +75,8 @@ private:
 
     char* m_str;      ///< character data in UTF-8, NULL denotes NA
     R_len_t m_n;      ///< string length (in bytes), not including NUL
-    bool m_memalloc;  ///< should the memory be freed at the end
-    bool m_isASCII;   ///< ASCII or UTF-8?
+    bool m_memalloc;  ///< should the memory be freed at the end?
+    bool m_isASCII;   ///< ASCII or UTF-8?  TODO: is it used anywhere?
 
 
 public:
@@ -222,17 +227,17 @@ public:
         return !this->m_str;
     }
 
-    /** does this String8 is in ASCII? */
+    /** is this String8 in ASCII? */
     inline bool isASCII() const {
         return this->m_isASCII;
     }
 
-    /** does this String8 is in UTF-8? */
+    /** is this String8 in UTF-8? */
     inline bool isUTF8() const {
         return !this->m_isASCII;
     }
 
-    /** misleading name: did we allocate mem in String8
+    /** Misleading name: did we allocate mem in String8
      *  or is this string a shallow copy of some "external" resource?
      */
     inline bool isReadOnly() const {
@@ -260,7 +265,7 @@ public:
     }
 
 
-    /** number of utf-8 code points */
+    /** The number of Unicode code points */
     inline R_len_t countCodePoints() const
     {
 #ifndef NDEBUG
@@ -269,19 +274,8 @@ public:
 #endif
         if (m_isASCII)
             return m_n;
-
-        UChar32 c = 0;
-        R_len_t j = 0;
-        R_len_t i = 0;
-        while (j < m_n) {
-            U8_NEXT(m_str, j, m_n, c); // faster that U8_FWD_1 & gives bad UChar32s
-            i++;
-
-            if (c < 0)
-                Rf_warning(MSG__INVALID_UTF8);
-        }
-
-        return i;
+        else
+            return stri__length_string(m_str, m_n);
     }
 
 

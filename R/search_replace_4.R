@@ -32,7 +32,7 @@
 
 
 #' @title
-#' Replace Occurrences of a Pattern
+#' Replace Pattern Occurrences
 #'
 #' @description
 #' These functions replace, with the given replacement string, every/first/last
@@ -46,7 +46,7 @@
 #' each match is replaced in the result by the replacement string.
 #'
 #' However, for \code{stri_replace_all*}, if \code{vectorize_all} is \code{FALSE},
-#' the each substring matching any of the supplied \code{pattern}s
+#' then each substring matching any of the supplied \code{pattern}s
 #' is replaced by a corresponding \code{replacement} string.
 #' In such a case, the vectorization is over \code{str},
 #' and - independently - over \code{pattern} and \code{replacement}.
@@ -354,4 +354,23 @@ stri_replace_last_regex <- function(str, pattern, replacement, ..., opts_regex =
     if (!missing(...))
         opts_regex <- do.call(stri_opts_regex, as.list(c(opts_regex, ...)))
     .Call(C_stri_replace_last_regex, str, pattern, replacement, opts_regex)
+}
+
+
+#' Convert gsub-Style Replacement Strings
+#'
+#' @description
+#' Converts a \code{\link[base]{gsub}}-style replacement strings
+#' to those which can be used in \code{\link{stri_replace}}.
+#' In particular, \code{$} becomes \code{\\$} and \code{\\1} becomes \code{$1}.
+#'
+#' @param x character vector
+#'
+#' @return Returns a character vector.
+#'
+#' @family search_replace
+#' @export
+stri_replace_rstr <- function(x)
+{
+    .Call(C_stri_replace_rstr, x)
 }

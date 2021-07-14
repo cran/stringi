@@ -33,7 +33,43 @@
 #ifndef __stri_messages_h
 #define __stri_messages_h
 
-/// inccorect uchar class id, see stri_char_getpropertyid and stri_char_getcategoryid
+
+// CONVENTION: start with a lowercase letter, do not end with a dot
+// separate messages with "; " like "hello" "; " "it is me you're looking for"
+// or MSG__INCORRECT_NAMED_ARG "; " MSG__EXPECTED_SMALLER
+
+// arg names and symbols should be `backticked`
+// string-like objects should be 'quoted'
+
+// ASCII only
+
+// ensure proper capitalisation: ASCII, Unicode, UTF-8, ...
+
+
+// see stri_exception.cpp for more messages
+
+
+
+#define MSG__INCORRECT_INTERNAL_ARG \
+   "incorrect argument"
+
+#define MSG__INCORRECT_NAMED_ARG \
+   "incorrect argument `%s`"
+
+#define MSG__INTERNAL_ERROR \
+   "internal error"
+
+#define MSG__ICU_ERROR \
+   "%s (%s)"
+
+#define MSG__ICU_ERROR_WITH_CONTEXT \
+   "%s (%s, context=`%s`)"
+
+#define MSG__ICU_WARNING \
+   "%s (%s)"
+
+
+/// incorrect uchar class id, see stri_char_getpropertyid and stri_char_getcategoryid
 #define MSG__INCORRECT_UCHAR_CLASS_ID \
    "incorrect character class identifier"
 
@@ -41,7 +77,7 @@
    "incorrect option for `%s`"
 
 #define MSG__INCORRECT_COLLATOR_OPTION \
-   "incorrect opts_collator setting: `%s`; ignoring"
+   "incorrect opts_collator setting: '%s'; ignoring"
 
 #define MSG__INCORRECT_COLLATOR_OPTION_SPEC \
    "incorrect collator option specifier, see ?stri_opts_collator"
@@ -50,10 +86,10 @@
    "incorrect break iterator option specifier, see ?stri_opts_brkiter"
 
 #define MSG__INCORRECT_FIXED_OPTION \
-   "incorrect opts_fixed setting: `%s`; ignoring"
+   "incorrect opts_fixed setting: '%s'; ignoring"
 
 #define MSG__INCORRECT_REGEX_OPTION \
-   "incorrect opts_regex setting: `%s`; ignoring"
+   "incorrect opts_regex setting: '%s'; ignoring"
 
 #define MSG__INVALID_CODE_POINT \
    "invalid Unicode code point \\U%08.8x"
@@ -72,6 +108,9 @@
 
 #define MSG__REPLACEMENT_ZERO \
    "replacement has length zero"
+
+#define MSG_REPLACEMENT_MULTIPLE \
+   "number of items to replace is not a multiple of replacement length"
 
 #define MSG__UNCONVERTABLE_CODE_POINT \
    "the Unicode code point \\U%08.8x cannot be converted to destination encoding"
@@ -101,32 +140,27 @@
 #define MSG__WARN_RECYCLING_RULE2 \
    "vector length not consistent with other arguments"
 
-#define MSG__INCORRECT_INTERNAL_ARG \
-   "incorrect argument"
-
-#define MSG__INTERNAL_ERROR \
-   "internal error"
-
-#define MSG__ICU_ERROR \
-   "%s (%s)"
-
-#define MSG__ICU_ERROR_WITH_CONTEXT \
-   "%s (%s, context=`%s`)"
-
-#define MSG__ICU_WARNING \
-   "%s (%s)"
+#define MSG__WARN_EMPTY_VECTOR \
+   "vector has length zero"
 
 #define MSG__EXPECTED_NONNEGATIVE \
-   "argument `%s`: expected a nonnegative numeric value"
+   "expected a nonnegative numeric value"
 
 #define MSG__EXPECTED_POSITIVE \
-   "argument `%s`: expected a positive numeric value"
+   "expected a positive numeric value"
 
 #define MSG__EXPECTED_SMALLER \
-   "argument `%s`: value too large"
+   "value too large"
+
+#define MSG__EXPECTED_LARGER \
+   "value too small"
 
 #define MSG__EXPECTED_ASCII \
-   "incorrect argument: the string contains non-ASCII characters"
+   "expected a string that consists of ASCII characters only"
+
+#define MSG__EXPECTED_CHAR_IN_SET \
+   "expected a character in [%s]"
+
 
 #define MSG__TIMEZONE_INCORRECT_ID \
    "incorrect time zone identifier"
@@ -150,7 +184,7 @@
    "incorrect character encoding identifier"
 
 #define MSG__ENC_INCORRECT_ID_WHAT \
-   "incorrect character encoding identifier: %s"
+   "incorrect character encoding identifier: '%s'"
 
 #define MSG__ENC_NOT8BIT \
    "encoding %s is not an 8-bit encoding"
@@ -158,17 +192,17 @@
 #define MSG__BYTESENC \
    "bytes encoding is not supported by this function"
 
-#define MSG__REGEXP_FAILED \
+#define MSG__REGEX_FAILED \
    "regex search failed"
 
-#define MSG__REGEXP_CONFIG_FAILED \
+#define MSG__REGEX_CONFIG_FAILED \
    "regex engine configuration failed"
+
+#define MSG__REGEX_FAILED_DETAILS \
+   "regex search failed: %s"
 
 #define MSG__FIXED_CONFIG_FAILED \
    "fixed search engine configuration failed"
-
-#define MSG__REGEXP_FAILED_DETAILS \
-   "regex search failed: %s"
 
 #define MSG__STRSEARCH_FAILED \
    "string search failed"
@@ -185,6 +219,9 @@
 #define MSG__LOCATE_DIM_END \
    "end"
 
+#define MSG__LOCATE_DIM_LENGTH \
+   "length"
+
 #define MSG__NEWLINE_FOUND \
    "newline character found in a string"
 
@@ -195,13 +232,13 @@
    "each string in `%s` should consist of code points of total width %d"
 
 #define MSG__CHARCLASS_INCORRECT_WHICH \
-   "unknown character class `%s`; assuming NA"
+   "unknown character class '%s'; assuming NA"
 
 #define MSG__CHARCLASS_INCORRECT \
    "unknown character class"
 
 #define MSG__ARG_EXPECTED_NOT_NA \
-   "missing value in argument `%s` is not supported"
+   "missing values in argument `%s` is not supported"
 
 #define MSG__ARG_EXPECTED_NOT_EMPTY \
    "argument `%s` should be a non-empty vector"
@@ -230,6 +267,8 @@
 #define MSG__ARG_EXPECTED_LIST_INTEGER \
    "argument `%s` should be a list of integer vectors or an integer vector (or an object coercible to)"
 
+#define MSG__ARG_EXPECTED_VECTOR \
+   "argument `%s` should be a vector"
 
 #define MSG__ARG_EXPECTED_RAW \
    "argument `%s` should be a raw vector (or an object coercible to)"
@@ -276,6 +315,26 @@
 #define MSG__ARG_EXCLUSIVE \
    "arguments `%s` and `%s` are mutually exclusive in this context"
 
+#define MSG__ARG_NEED_MORE \
+   "too few arguments"
+
+#define MSG__ARG_UNUSED \
+   "some arguments have not been used"
+
+#define MSG__ARG_UNUSED_1 \
+   "one argument has not been used"
+
+#define MSG__ARG_UNUSED_N \
+   "%d arguments have not been used"
+
+#define MSG__PROBLEMATIC_FORMAT_SPECIFIER_CHAR \
+   "conversion specifier '%%%c' might be non-portable/problematic"
+
+#define MSG__INVALID_FORMAT_SPECIFIER \
+   "conversion specifier '%%%s' is not valid"
+
+#define MSG__INVALID_FORMAT_SPECIFIER_SUB \
+   "conversion specifier '%%%.*s' is not valid"
 
 #define MSG__EMPTY_SEARCH_PATTERN_UNSUPPORTED \
    "empty search patterns are not supported"

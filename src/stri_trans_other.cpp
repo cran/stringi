@@ -47,7 +47,7 @@ void stri__split_codepoints(vector<UChar32>& out, const char* s, int n) {
         out.push_back(c);
 
         if (c < 0)
-            Rf_warning(MSG__INVALID_UTF8);
+            throw StriException(MSG__INVALID_UTF8);
     }
 }
 
@@ -67,9 +67,9 @@ void stri__split_codepoints(vector<UChar32>& out, const char* s, int n) {
  *     BUGFIX: overlapping maps (#343)
  */
 SEXP stri_trans_char(SEXP str, SEXP pattern, SEXP replacement) {
-    PROTECT(str          = stri_prepare_arg_string(str, "str"));
-    PROTECT(pattern      = stri_prepare_arg_string_1(pattern, "pattern"));
-    PROTECT(replacement  = stri_prepare_arg_string_1(replacement, "replacement"));
+    PROTECT(str          = stri__prepare_arg_string(str, "str"));
+    PROTECT(pattern      = stri__prepare_arg_string_1(pattern, "pattern"));
+    PROTECT(replacement  = stri__prepare_arg_string_1(replacement, "replacement"));
     R_len_t vectorize_length = LENGTH(str);
 
     STRI__ERROR_HANDLER_BEGIN(3)
@@ -124,7 +124,7 @@ SEXP stri_trans_char(SEXP str, SEXP pattern, SEXP replacement) {
         R_len_t j = 0; // current pos
         while (j < n) {
             U8_NEXT(s, j, n, c);
-            if (c < 0) Rf_warning(MSG__INVALID_UTF8);
+            if (c < 0) throw StriException(MSG__INVALID_UTF8);
 
             // considering only the first m elements in d_pat and d_rep, from last
             for (R_len_t k=m-1; k>=0; --k) {

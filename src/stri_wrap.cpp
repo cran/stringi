@@ -254,17 +254,17 @@ SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent,
     if (width_val <= 0) width_val = 0;
 
     int indent_val = stri__prepare_arg_integer_1_notNA(indent, "indent");
-    if (indent_val < 0) Rf_error(MSG__EXPECTED_POSITIVE, "indent");
+    if (indent_val < 0) Rf_error(MSG__INCORRECT_NAMED_ARG "; " MSG__EXPECTED_POSITIVE, "indent");
 
     int exdent_val = stri__prepare_arg_integer_1_notNA(exdent, "exdent");
-    if (exdent_val < 0) Rf_error(MSG__EXPECTED_POSITIVE, "exdent");
+    if (exdent_val < 0) Rf_error(MSG__INCORRECT_NAMED_ARG "; " MSG__EXPECTED_POSITIVE, "exdent");
 
 
     const char* qloc = stri__prepare_arg_locale(locale, "locale", true); /* this is R_alloc'ed */
     Locale loc = Locale::createFromName(qloc);
-    PROTECT(str     = stri_prepare_arg_string(str, "str"));
-    PROTECT(prefix  = stri_prepare_arg_string_1(prefix, "prefix"));
-    PROTECT(initial = stri_prepare_arg_string_1(initial, "initial"));
+    PROTECT(str     = stri__prepare_arg_string(str, "str"));
+    PROTECT(prefix  = stri__prepare_arg_string_1(prefix, "prefix"));
+    PROTECT(initial = stri__prepare_arg_string_1(initial, "initial"));
 
     BreakIterator* briter = NULL;
     UText* str_text = NULL;
@@ -374,7 +374,9 @@ SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent,
         std::vector<R_len_t> end_pos_trim(nwords);
         // detect line endings (fail on a match)
 
+        UChar32 p;
         UChar32 c = 0;
+        bool reset = true;
         R_len_t j = 0;
         R_len_t cur_block = 0;
         R_len_t cur_width_orig = 0;
@@ -384,6 +386,7 @@ SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent,
         R_len_t cur_end_pos_trim = 0;
         while (j < str_cur_n) {
             R_len_t jlast = j;
+            p = c;
             U8_NEXT(str_cur_s, j, str_cur_n, c);
             if (c < 0) // invalid utf-8 sequence
                 throw StriException(MSG__INVALID_UTF8);
@@ -391,7 +394,8 @@ SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent,
             if (uset_linebreaks.contains(c))
                 throw StriException(MSG__NEWLINE_FOUND);
 
-            cur_width_orig += stri__width_char(c);
+            // OLD: cur_width_orig += stri__width_char(c);
+            cur_width_orig += stri__width_char_with_context(c, p, reset);
             ++cur_count_orig;
             if (uset_whitespaces.contains(c)) {
 // OLD: trim all white spaces from the end:
@@ -399,7 +403,8 @@ SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent,
 //           [we have the normalize arg for that]
 
 // NEW: trim just one white space at the end:
-                cur_width_trim = stri__width_char(c);
+                // OLD: cur_width_trim = stri__width_char(c);
+                cur_width_trim = stri__width_char_with_context(c, p, reset);
                 cur_count_trim = 1;
                 cur_end_pos_trim = jlast;
             }
@@ -426,6 +431,7 @@ SEXP stri_wrap(SEXP str, SEXP width, SEXP cost_exponent,
                 cur_count_orig = 0;
                 cur_count_trim = 0;
                 cur_end_pos_trim = j;
+                reset = true;
             }
         }
 

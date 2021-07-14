@@ -38,9 +38,9 @@ stri_numbytes(letters)
 stri_numbytes(c('abc', '123', '\u0105\u0104'))
 
 \dontrun{
-# this used to fail on Windows, as there was no native support for 4-bytes
-# Unicode characters; see, however, stri_escape_unicode():
-stri_numbytes('\U7fffffff') # compare stri_length('\U7fffffff')
+# this used to fail on Windows, where there were no native support
+# for 4-bytes Unicode characters; see, however, stri_unescape_unicode():
+stri_numbytes('\U001F600') # compare stri_length('\U001F600')
 }
 
 }
@@ -48,8 +48,11 @@ stri_numbytes('\U7fffffff') # compare stri_length('\U7fffffff')
 The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
 
 Other length: 
+\code{\link{\%s$\%}()},
 \code{\link{stri_isempty}()},
 \code{\link{stri_length}()},
+\code{\link{stri_pad_both}()},
+\code{\link{stri_sprintf}()},
 \code{\link{stri_width}()}
 }
 \concept{length}
