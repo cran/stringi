@@ -1,8 +1,8 @@
-43bf71f131e658adfdaf6a90700d2cbe *DESCRIPTION
+052f8a1b560b4c052a5d35831ce95922 *DESCRIPTION
 5ef553fa9ca5362d5d2eb3767e5c9a9b *INSTALL
 ea009710270517d85bc85e847dc16675 *LICENSE
 fbccc8447bec59bda28786a6a59b3442 *NAMESPACE
-e8601c57c6a158baee541077e5c51d08 *NEWS
+f431a2637c56aad0772ff30333836636 *NEWS
 1ea0729bef8d5195fcc6add5fe81cb34 *R/ICU_settings.R
 c507270a96e05cf68a1bd85514006cc9 *R/compare.R
 baae46b5292523d2fa53a5149b87fea9 *R/encoding.R
@@ -859,7 +859,7 @@ cdd315664d45ceeb931f740427eba956 *src/icu55/unicode/ucharstrie.h
 91c4ddd63f3f9299d8ba2389d72f3472 *src/icu55/unicode/ucnv_cb.h
 b10886833192c0a3fe6c5e628ee11127 *src/icu55/unicode/ucnv_err.h
 58b4eb2566e323e4cb062563571be396 *src/icu55/unicode/ucnvsel.h
-8802dc747862b0e7e9095e358ee06133 *src/icu55/unicode/ucol.h
+507a955f40166a77cdb503085d8e6041 *src/icu55/unicode/ucol.h
 ef8dbbe9edb963849ee7b89ab2f4871f *src/icu55/unicode/ucoleitr.h
 8d991f433df2879502ee34d6d06dedfa *src/icu55/unicode/uconfig.h
 638031e16403c61f3b96048ebc623205 *src/icu55/unicode/ucsdet.h
@@ -873,7 +873,7 @@ dc79faba32def9d7b0f0735d33a91ef8 *src/icu55/unicode/udisplaycontext.h
 0b6cadda8d413e5a8b5d04b0995eb31b *src/icu55/unicode/ufieldpositer.h
 257f1dd17c788b7f5eab9ee3627f654c *src/icu55/unicode/uformattable.h
 be7155c7b25e2a7b7ea4d22ffc939557 *src/icu55/unicode/ugender.h
-877b38cd878d5dda502904cf8e4e634d *src/icu55/unicode/uidna.h
+e9db2b3849c2a3937dcd15c41f45ecff *src/icu55/unicode/uidna.h
 02f25a898a84abea3f81af8dc6d1be80 *src/icu55/unicode/uiter.h
 5e6820edcd69cb8dbf80a331fed897c1 *src/icu55/unicode/uldnames.h
 7cc055037a3de88e185ca826277fbfce *src/icu55/unicode/ulistformatter.h
