@@ -1,8 +1,8 @@
-4398f96535b5234966f862d98e607858 *DESCRIPTION
-5ef553fa9ca5362d5d2eb3767e5c9a9b *INSTALL
+f5e322cb77549f0088e7d6ffca6d507a *DESCRIPTION
+93a28262388ca0313fb3c53a9b299b60 *INSTALL
 ea009710270517d85bc85e847dc16675 *LICENSE
 fbccc8447bec59bda28786a6a59b3442 *NAMESPACE
-5c8981a4efcff6493c35076442467120 *NEWS
+f347145f11cc0bd5babda405b65f9eea *NEWS
 1ea0729bef8d5195fcc6add5fe81cb34 *R/ICU_settings.R
 c507270a96e05cf68a1bd85514006cc9 *R/compare.R
 baae46b5292523d2fa53a5149b87fea9 *R/encoding.R
@@ -39,7 +39,7 @@ e0b426075f0e4162124d97d1161b1327 *R/search_split_4.R
 8b90e9a1d5351479772d08d411f8118f *R/sort.R
 75e36240d0575ffba7981e0c9224ac2f *R/sprintf.R
 ca38b0f652a8b218ce32d989bd138aad *R/stats.R
-ef25bba269e9d28e8c582878f5d1cb7a *R/stringi-package.R
+101d04ba16695484d9d3b6b1258facf4 *R/stringi-package.R
 16098c6214949abe6543c41ceb4b247a *R/sub.R
 63b9488a7d42b5d5ce457ac6fc162198 *R/time_calendar.R
 1c1b376d36a084f0fae76ec2d36c88d9 *R/time_format.R
@@ -58,11 +58,11 @@ e7425da3f4c76150d9f912e07e6e5b06 *R/trim.R
 cc309afacf2412390b3eeb0be1f2a6c1 *R/utils.R
 673ac3a91e1c5d930a93782a2b85c855 *R/wrap.R
 443ba1b1851d717bfe96bd73f705a194 *cleanup
-c4014b6d06cd18dddc323fdd7cfc41a5 *configure
-4803df8340c47c1023e5bdcc492a0e11 *configure.ac
+9d9dcb51a72d006549165fcb774d14ab *configure
+d36a89a9da89457deb344cf95c32def0 *configure.ac
 b9e37db23f5cea5675cde7069f5dea9f *configure.win
-318e9b262b91bf25596529716f22cc7f *inst/AUTHORS
-ba2cf3da3c0a24953e9fc76f6085c27e *inst/CITATION
+38b67183c21edfed2579b09685839d00 *inst/AUTHORS
+c6658dc28e91f74808241e5ad49f6371 *inst/CITATION
 4b2e2964e6dc185856bc572fa17f2d93 *man/about_arguments.Rd
 4be56e3372d58c3e3cd5e5caaa7cc606 *man/about_encoding.Rd
 5bc6f943426b941440977a6dc41f5d00 *man/about_locale.Rd
@@ -72,7 +72,7 @@ eb72feb6b6abecd499f023fd120dd65b *man/about_search_boundaries.Rd
 29ce7f8dce5632d69493dd849542826b *man/about_search_coll.Rd
 ceb8a0ed7ff6eb71447abfba65322ed2 *man/about_search_fixed.Rd
 e41bbb98c7915ce32eeaa7b7d7c308f2 *man/about_search_regex.Rd
-2b08a1629546f3963f76247fd8914d56 *man/about_stringi.Rd
+739082ced6dcaddf805d723d19175b98 *man/about_stringi.Rd
 a6d43d13b8da08ec9e9853c611f8d042 *man/operator_add.Rd
 56fb5320e118c88c5e599e33bd6f1f30 *man/operator_compare.Rd
 c5c3c82e11c2c56e5e6d18f65e5fcc36 *man/operator_dollar.Rd
@@ -1882,11 +1882,11 @@ b3eaf13c1effbb28f9b4ee6232cd9f14 *src/stri_container_usearch.cpp
 0846917e77b68d26718fb55c340ae737 *src/stri_container_usearch.h
 62d6e4c6b2ba2a2c8adc83756d03e85c *src/stri_container_utf16.cpp
 288633733cfd683f0e6387d30f5d9fbd *src/stri_container_utf16.h
-d5396d10dbe34c03b67f98d0ee48a0e4 *src/stri_container_utf8.cpp
+d4d10c01d66345615f40f9e0823c5b72 *src/stri_container_utf8.cpp
 a2b7e8ead9b9849283085d577cbc4b50 *src/stri_container_utf8.h
 5f075696e22c0f1b7be635b5c909fbb9 *src/stri_container_utf8_indexable.cpp
 13c191522bf92950644b1d44b0bd73fe *src/stri_container_utf8_indexable.h
-d2b3f63c96d80ec82e0b9665a329c5db *src/stri_cpp.txt
+8ee0e1cd1434c623e54d383ddea580f4 *src/stri_cpp.txt
 4c9625246fd65d309e4f68ca5714fc0a *src/stri_encoding_conversion.cpp
 87bbf05793c587a1eda6f0ebda680f51 *src/stri_encoding_detection.cpp
 90c3f0c439f7a6512dcc7617df86eb85 *src/stri_encoding_management.cpp
@@ -1894,7 +1894,7 @@ d2b3f63c96d80ec82e0b9665a329c5db *src/stri_cpp.txt
 cbbc36fc5bf6edaf5fda03386c284b77 *src/stri_exception.cpp
 322978ec517e7ec25fd9dfc713904dd7 *src/stri_exception.h
 08ce5cba535973450777ececd0807c79 *src/stri_exports.h
-2e23a1f3dbbd29944506443ed6326ae8 *src/stri_external.h
+81f917f3fcdb086da997b6e95e186e22 *src/stri_external.h
 0f41966cbd7beea20d77581d6289abd8 *src/stri_interval.h
 233407c3e45df942ab98125100ad108a *src/stri_intvec.h
 e3c979968369a6fbc28abc64b5215f36 *src/stri_join.cpp
@@ -1948,7 +1948,8 @@ eb7639599b77002ece26ba0ac7c0588e *src/stri_search_regex_split.cpp
 d601dfafa049b0523e1feda4162935b6 *src/stri_sort.cpp
 9a2e4ce08bea849db477f98e4703b0f9 *src/stri_sprintf.cpp
 fc56b0014409982bb20539cb7aca70de *src/stri_stats.cpp
-abd92b6d5cbc9785ab03d8639b0590d5 *src/stri_string8.h
+706bd23090b69eca55816c4da1b3024b *src/stri_string8.cpp
+6093dcfab6ddc693fd1c6262b2d534c0 *src/stri_string8.h
 008dbeddc9524f829eef092d4d449513 *src/stri_string8buf.h
 df6ad73402678153c01b9ae7cb7c5d60 *src/stri_stringi.cpp
 955dec4715783b9d62e68974ebeed7d0 *src/stri_stringi.h
@@ -1968,5 +1969,5 @@ d5098f2c480b512e48a06b159fd6a5e9 *src/stri_trans_normalization.cpp
 787b0c80ac20ee0bd150986146e18f6a *src/stri_utils.cpp
 b1110ceeb5aba7f788c24c287d1c042a *src/stri_wrap.cpp
 f3a06503f8735f1c926470af6a2d6ab0 *src/uconfig_local.h.in
-76e141c22944bab65d23bb0386f8b176 *tools/AC_CXX_HAVE_STL.m4
-42c479928dea3b7651add0a735217e28 *tools/AC_CXX_NAMESPACES.m4
+7c699ef342589de58701f093695d4ab4 *tools/AC_CXX_HAVE_STL.m4
+b58a26e64432c535ed081494fc39783e *tools/AC_CXX_NAMESPACES.m4
