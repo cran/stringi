@@ -1,8 +1,8 @@
-f5e322cb77549f0088e7d6ffca6d507a *DESCRIPTION
-93a28262388ca0313fb3c53a9b299b60 *INSTALL
+0448e8480527a5312d8ea7208c384c2b *DESCRIPTION
+528f0d069b1e901ac16efd0a1fcf954d *INSTALL
 ea009710270517d85bc85e847dc16675 *LICENSE
 fbccc8447bec59bda28786a6a59b3442 *NAMESPACE
-f347145f11cc0bd5babda405b65f9eea *NEWS
+014137c991bc6039a98ee0c843c59538 *NEWS
 1ea0729bef8d5195fcc6add5fe81cb34 *R/ICU_settings.R
 c507270a96e05cf68a1bd85514006cc9 *R/compare.R
 baae46b5292523d2fa53a5149b87fea9 *R/encoding.R
@@ -1355,7 +1355,7 @@ eb10904eb15f5e1dc17a721135c47132 *src/icu69/i18n/double-conversion-ieee.h
 4b108aa8a0d0f584c7fe2a6ab25f8db0 *src/icu69/i18n/double-conversion-string-to-double.h
 b5f872b9b44179207ba93dec04391f1e *src/icu69/i18n/double-conversion-strtod.cpp
 3e521e3256ff699c3f6bbc15c3fa226e *src/icu69/i18n/double-conversion-strtod.h
-5f31675b6598b5b309e4fc68cc945e95 *src/icu69/i18n/double-conversion-utils.h
+6a3fe2505e7c29e00a25adc024a585f6 *src/icu69/i18n/double-conversion-utils.h
 b734b48b27dc655feaff3862676843fe *src/icu69/i18n/double-conversion.h
 c3038698ed7a5d14bc836adb779a7ea5 *src/icu69/i18n/dt_impl.h
 f714de7a6958611392858423bafc81fa *src/icu69/i18n/dtfmtsym.cpp
@@ -1882,7 +1882,7 @@ b3eaf13c1effbb28f9b4ee6232cd9f14 *src/stri_container_usearch.cpp
 0846917e77b68d26718fb55c340ae737 *src/stri_container_usearch.h
 62d6e4c6b2ba2a2c8adc83756d03e85c *src/stri_container_utf16.cpp
 288633733cfd683f0e6387d30f5d9fbd *src/stri_container_utf16.h
-d4d10c01d66345615f40f9e0823c5b72 *src/stri_container_utf8.cpp
+99c16eab83e4bf3f958f14ba2c4fcfce *src/stri_container_utf8.cpp
 a2b7e8ead9b9849283085d577cbc4b50 *src/stri_container_utf8.h
 5f075696e22c0f1b7be635b5c909fbb9 *src/stri_container_utf8_indexable.cpp
 13c191522bf92950644b1d44b0bd73fe *src/stri_container_utf8_indexable.h
@@ -1964,7 +1964,7 @@ d5098f2c480b512e48a06b159fd6a5e9 *src/stri_trans_normalization.cpp
 4d265e43bfad353d51108a9bd83abb0e *src/stri_trans_other.cpp
 29d6c9ba93fb5ac4ecf8682f20fe6200 *src/stri_trans_transliterate.cpp
 583c69dec835cf430f4f3acc7da05717 *src/stri_ucnv.cpp
-77e21de9162c1dec2fd4c3b4c7a2dafb *src/stri_ucnv.h
+acdbc90f66d3e60927445e6531df5589 *src/stri_ucnv.h
 39baa860fd840e2be26fad4bf4efe38d *src/stri_uloc.cpp
 787b0c80ac20ee0bd150986146e18f6a *src/stri_utils.cpp
 b1110ceeb5aba7f788c24c287d1c042a *src/stri_wrap.cpp
