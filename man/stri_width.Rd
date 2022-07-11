@@ -18,7 +18,7 @@ might use to print a string using a mono-spaced font.
 }
 \details{
 The Unicode standard does not formalize the notion of a character
-width. Roughly based on \url{https://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c},
+width. Roughly based on \url{http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c},
 \url{https://github.com/nodejs/node/blob/master/src/node_i18n.cc},
 and UAX #11 we proceed as follows.
 The following code points are of width 0:
@@ -60,6 +60,8 @@ stri_width(stri_trans_nfkd('\ubc1f')) # includes Hangul Jamo medial vowels and f
 }
 \seealso{
 The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
+Gagolewski M., \pkg{stringi}: Fast and portable character string processing in R, \emph{Journal of Statistical Software} 103(2), 2022, 1-59, \doi{10.18637/jss.v103.i02}
 
 Other length: 
 \code{\link{\%s$\%}()},

@@ -65,7 +65,8 @@ normalization is performed}
 \item{numeric}{single logical value;
 when turned on, this attribute generates a collation key for
 the numeric value of substrings of digits;
-this is a way to get '100' to sort AFTER '2'}
+this is a way to get '100' to sort AFTER '2';
+note that negative numbers will not be ordered properly}
 
 \item{...}{[DEPRECATED] any other arguments passed to this function
 generate a warning; this argument will be removed in the future}
@@ -107,6 +108,8 @@ stri_cmp('above mentioned', 'above-mentioned', alternate_shifted=TRUE)
 }
 \seealso{
 The official online manual of \pkg{stringi} at \url{https://stringi.gagolewski.com/}
+
+Gagolewski M., \pkg{stringi}: Fast and portable character string processing in R, \emph{Journal of Statistical Software} 103(2), 2022, 1-59, \doi{10.18637/jss.v103.i02}
 
 Other locale_sensitive: 
 \code{\link{\%s<\%}()},

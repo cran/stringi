@@ -1,5 +1,5 @@
 # autoconf/configure script for stringi
-# Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+# Copyright (c) 2013-2022, Marek Gagolewski <https://www.gagolewski.com>
 # https://stringi.gagolewski.com/
 
 
@@ -16,6 +16,21 @@
 # TODO: In the future, support only ICU >= 61 and R 3.4 (C++11 only) --
 # TODO: this will simplify the build chain. Yet, what follows is battle-tested,
 # TODO: so why don't do it unless absolutely necessary.
+
+
+# TODO: The standard way to use external libraries on macOS and Windows
+# TODO: in R is via the corresponding toolchain. For macOS, it is built via
+# TODO: recipes maintained by Simon Urbanek:
+# TODO: https://github.com/R-macos/recipes/blob/master/recipes/icu
+
+# TODO: For Windows, in the new toolchain, it is built by MXE
+# TODO: (with changes for R maintained by Tomas Kalibera):
+# TODO: https://github.com/mxe/mxe/blob/master/src/icu4c.mk
+# TODO: https://svn.r-project.org/R-dev-web/trunk/WindowsBuilds/winutf8/ucrt3/toolchain_libs/mxe/src/icu4c.mk
+
+# TODO: Contribute updates to ICU via these channels
+
+
 
 ##### INIT ####################################################################
 
@@ -82,7 +97,7 @@ AC_ARG_ENABLE([cxx11],
         If C++11 is disabled, the older ICU4C 55.1 bundle will be used.]))
 
 AC_ARG_VAR([STRINGI_DISABLE_CXX11],
-    [Disable C++11, see also --disable-cxx11.])
+    [Disable C++11; see also --disable-cxx11.])
 
 
 if test "x$enable_cxx11" != "xno" -a -z "${STRINGI_DISABLE_CXX11}"; then
@@ -98,7 +113,7 @@ AC_ARG_ENABLE([icu_bundle],
         [Enforce system ICU.]))
 
 AC_ARG_VAR([STRINGI_DISABLE_ICU_BUNDLE],
-    [Enforce system ICU, see also --disable-icu-bundle.])
+    [Enforce system ICU; see also --disable-icu-bundle.])
 
 if test "x$enable_icu_bundle" != "xno" -a -z "${STRINGI_DISABLE_ICU_BUNDLE}"; then
     enable_icu_bundle="yes"
@@ -118,7 +133,7 @@ AC_ARG_ENABLE([pkg_config],
         (strongly recommended for portability across platforms).]))
 
 AC_ARG_VAR([STRINGI_DISABLE_PKG_CONFIG],
-    [Enforce our ICU source bundle, see also --disable-pkg-config.])
+    [Enforce our ICU source bundle; see also --disable-pkg-config.])
 
 if test "x$enable_pkg_config" != "xno" -a -z "${STRINGI_DISABLE_PKG_CONFIG}"; then
     enable_pkg_config="yes"
@@ -152,38 +167,38 @@ fi
 
 AC_ARG_WITH([extra_cflags],
     AS_HELP_STRING([--with-extra-cflags=FLAGS],
-        [Additional C compiler flags, see also the STRINGI_CFLAGS environment variable]))
+        [Additional C compiler flags; see also the STRINGI_CFLAGS environment variable]))
 
 AC_ARG_WITH([extra_cppflags],
     AS_HELP_STRING([--with-extra-cppflags=FLAGS],
-        [Additional C/C++ preprocessor flags, see also the STRINGI_CPPFLAGS environment variable]))
+        [Additional C/C++ preprocessor flags; see also the STRINGI_CPPFLAGS environment variable]))
 
 AC_ARG_WITH([extra_cxxflags],
     AS_HELP_STRING([--with-extra-cxxflags=FLAGS],
-        [Additional C++ compiler flags, see also the STRINGI_CXXFLAGS environment variable]))
+        [Additional C++ compiler flags; see also the STRINGI_CXXFLAGS environment variable]))
 
 AC_ARG_WITH([extra_ldflags],
     AS_HELP_STRING([--with-extra-ldflags=FLAGS],
-        [Additional linker flags, see also the STRINGI_LDFLAGS environment variable]))
+        [Additional linker flags; see also the STRINGI_LDFLAGS environment variable]))
 
 AC_ARG_WITH([extra_libs],
     AS_HELP_STRING([--with-extra-libs=FLAGS],
-        [Additional libraries to link against, see also the STRINGI_LIBS environment variable]))
+        [Additional libraries to link against; see also the STRINGI_LIBS environment variable]))
 
 AC_ARG_VAR([STRINGI_CFLAGS],
-    [Additional C compiler flags, see also --with-extra-cflags.])
+    [Additional C compiler flags; see also --with-extra-cflags.])
 
 AC_ARG_VAR([STRINGI_CPPFLAGS],
-    [Additional C/C++ preprocessor flags, see also --with-extra-cppflags.])
+    [Additional C/C++ preprocessor flags; see also --with-extra-cppflags.])
 
 AC_ARG_VAR([STRINGI_CXXFLAGS],
-    [Additional C++ compiler flags, see also --with-extra-cxxflags.])
+    [Additional C++ compiler flags; see also --with-extra-cxxflags.])
 
 AC_ARG_VAR([STRINGI_LDFLAGS],
-    [Additional linker flags, see also --with-extra-ldflags.])
+    [Additional linker flags; see also --with-extra-ldflags.])
 
 AC_ARG_VAR([STRINGI_LIBS],
-    [Additional libraries to link against, see also --with-extra-libs.])
+    [Additional libraries to link against; see also --with-extra-libs.])
 
 
 with_extra_cflags="${with_extra_cflags} ${STRINGI_CFLAGS}"
