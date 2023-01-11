@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -31,9 +31,7 @@
 ## EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-#' @title
-#' Locate Text Boundaries
-#'
+#' @title Locate Text Boundaries
 #'
 #' @description
 #' These functions locate text boundaries

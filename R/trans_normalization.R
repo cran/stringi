@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2022, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -84,7 +84,7 @@
 #'    \url{https://unicode.org/reports/tr15/}
 #'
 #' \emph{Unicode Format for Network Interchange}
-#' -- RFC5198, \url{https://tools.ietf.org/rfc/rfc5198.txt}
+#' -- RFC5198, \url{https://www.rfc-editor.org/rfc/rfc5198}
 #'
 #' \emph{Character Model for the World Wide Web 1.0: Normalization}
 #' -- W3C Working Draft, \url{https://www.w3.org/TR/charmod-norm/}

@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2022, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -167,7 +167,7 @@
 #' \url{https://home.unicode.org/}
 #'
 #' \emph{UTF-8, A Transformation Format of ISO 10646} -- RFC 3629,
-#' \url{https://tools.ietf.org/html/rfc3629}
+#' \url{https://www.rfc-editor.org/rfc/rfc3629}
 #'
 #' @family stringi_general_topics
 #' @useDynLib stringi, .registration = TRUE

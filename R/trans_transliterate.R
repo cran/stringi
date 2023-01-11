@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -96,6 +96,8 @@
 #' stri_trans_general('\u2620', 'any-name') # character name
 #' stri_trans_general('\\N{latin small letter a}', 'name-any') # decode name
 #' stri_trans_general('\u2620', 'hex/c') # to hex
+#' stri_trans_general("\u201C\u2026\u201D \u0105\u015B\u0107\u017C",
+#'     "NFKD; NFC; [^\\p{L}] latin-ascii")
 #'
 #' x <- "\uC885\uB85C\uAD6C \uC0AC\uC9C1\uB3D9"
 #' stringi::stri_trans_general(x, "Hangul-Latin")
