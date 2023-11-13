@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+ * Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,9 +82,10 @@ double      stri__prepare_arg_double_1_NA(SEXP x, const char* argname);
 int stri__prepare_arg_logical_1_NA(SEXP x, const char* argname);
 int stri__prepare_arg_integer_1_NA(SEXP x, const char* argname);
 
+bool stri__is_C_locale(const char* str);
 const char* stri__prepare_arg_locale(
     SEXP loc, const char* argname,
-    bool allowdefault, bool allowna=false
+    bool allowdefault=true, bool allownull=true
 );
 const char* stri__prepare_arg_enc(
     SEXP loc, const char* argname,
@@ -120,6 +121,7 @@ void stri__locate_set_dimnames_matrix(
 
 // date/time
 void stri__set_class_POSIXct(SEXP x);
+Calendar* stri__get_calendar(const char* locale_val);
 
 // ------------------------------------------------------------------------
 

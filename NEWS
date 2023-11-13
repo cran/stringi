@@ -1,36 +1,76 @@
-# What Is New in *stringi*
+# Changelog
+
+
+## 1.8.1 (2023-11-09)
+
+* [GENERAL] ICU bundle updated to version 74.1 (Unicode 15.1, CLDR 44).
+
+* [BACKWARD INCOMPATIBILITY] [BUILD TIME] Support for Solaris has now been
+  dropped. The package is no longer shipped with the very outdated ICU55 bundle.
+  A compiler supporting at least C++11 as well as ICU >= 61 are now required.
+
+* [BACKWARD INCOMPATIBILITY] #469: Missing date-time fields in
+  `stri_datetime_parse` and `stri_datetime_create` now default to today's
+  midnight local time.
+
+* [BACKWARD INCOMPATIBILITY] Removed the long-deprecated and defunct
+  `fallback_encoding` parameter of `stri_read_lines` and the ellipsis
+  parameter of `stri_opts_collator`, `stri_opts_regex`, `stri_opts_fixed`,
+  and `stri_opts_regex`.
+
+* [BUILD TIME] As per the suggestion of Prof. Brian Ripley, `icudt74l`
+  (ICU data - little endian) is now included in the source tarball (compressed
+  with xz to save space). This allows for building *stringi* on systems with
+  no internet access.
+
+* [NEW FEATURE] #476: In break iterator-, date-time-, and collator-based
+  operations (e.g., `stri_sort`), a warning is emitted when the *root* ICU
+  resource bundle is returned when using an *explicitly* requested locale.
+  This might happen when we pass an 'unknown' `locale` argument to these
+  functions. Note that when relying on the default `locale=NULL` argument,
+  no warning is emitted. In such a case, checking
+  if the default locale as returned by `stri_enc_get` is amongst
+  those listed in `stri_enc_list` is recommended.
+
+* [NEW FEATURE] The `C` locale identifier now resolves to `en_US_POSIX`.
+
+* [BUGFIX] #469: `stri_datetime_parse` did not reset the `Calendar`
+  object when parsing multiple dates.
+
+* [BUGFIX] #487: Some functions did not accept ASCII strings longer than
+  858993457 characters on input.
 
 
 ## 1.7.12 (2023-01-09)
 
-* [BUGFIX] Fixed some potential problems reported by `rchk`.
+* [BUGFIX] Fixed a few issues reported by `rchk`.
 
 * [NOTE] [BACKWARD INCOMPATIBLE CHANGE IF ICU >= 72]
-  If building against ICU >= 72,
-  note a backward incompatible change: `@` is no longer a word break;
-  see <https://github.com/unicode-org/cldr/pull/2256> for more details.
+  If building against ICU >= 72, note a backward incompatible change:
+  `@` is no longer considered a word break; for more details, see
+  <https://github.com/unicode-org/cldr/pull/2256>.
 
 
 ## 1.7.8 (2022-07-11)
 
 * [DOCUMENTATION] Paper on *stringi* has been published in
-    the *Journal of Statistical Software*;
-    see <https://doi.org/10.18637/jss.v103.i02>.
+  the *Journal of Statistical Software*;
+  see <https://doi.org/10.18637/jss.v103.i02>.
 
-* [BUGFIX] #473, #397: Fixed buffer overflow in `stri_dup`.
-    `stri_dup`, `stri_paste`, ... fail more graciously on attempts to
-    generate strings of length >= 2^31 each.
+* [BUGFIX] #473, #397: Fixed buffer overflow in `stri_dup`; Also,
+  `stri_dup`, `stri_paste`, ... fail more graciously on attempts to
+  generate strings of length >= 2^31 each.
 
 * [BUILD TIME] #480: Using `Rf_isNull` instead of `isNull`.
 
 * [DOCUMENTATION] #462: That the `numeric=TRUE` collator
-    does not handle negative numbers correctly is now mentioned in the manual.
+  does not handle negative numbers correctly is now mentioned in the manual.
 
 
 ## 1.7.6 (2021-11-29)
 
 * [BUILD TIME] #463: Added loongarch support in ICU's double conversion
-    (@liuxiang88).
+  (@liuxiang88).
 
 * [BUGFIX] #467: The UCRT build on Windows was not marking strings as `latin1`.
 
@@ -42,7 +82,7 @@
   see <https://stringi.gagolewski.com/_static/vignette/stringi.pdf>
   for a draft version.
 
-* [DOCUMENTATION] The *stringi* website at <https://stringi.gagolewski.com>
+* [DOCUMENTATION] The *stringi* website at <https://stringi.gagolewski.com/>
   now features a comprehensive tutorial based on the aforementioned paper.
 
 * [DOCUMENTATION] The *ICU* Project site has been moved to
@@ -213,7 +253,7 @@
 ## 1.5.3 (2020-09-04)
 
 * [DOCUMENTATION] stringi home page has moved to
-  <https://stringi.gagolewski.com> and now includes a comprehensive reference
+  <https://stringi.gagolewski.com/> and now includes a comprehensive reference
   manual.
 
 * [NEW FEATURE] #400: `%s$%` and `%stri$%` are now binary operators

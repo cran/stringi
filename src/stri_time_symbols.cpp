@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+ * Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,8 +50,9 @@
  * @version 0.5-1 (Marek Gagolewski, 2015-01-01)
  *    use calendar keyword in locale
  */
-SEXP stri_datetime_symbols(SEXP locale, SEXP context, SEXP width) {
-    const char* qloc = stri__prepare_arg_locale(locale, "locale", true); /* this is R_alloc'ed */
+SEXP stri_datetime_symbols(SEXP locale, SEXP context, SEXP width)
+{
+    const char* qloc = stri__prepare_arg_locale(locale, "locale"); /* this is R_alloc'ed */
 
     const char* context_str = stri__prepare_arg_string_1_notNA(context, "context");
     const char* context_opts[] = {"format", "standalone", NULL};
@@ -67,7 +68,7 @@ SEXP stri_datetime_symbols(SEXP locale, SEXP context, SEXP width) {
     else Rf_error(MSG__INCORRECT_MATCH_OPTION, "context");
 
     DateFormatSymbols::DtWidthType width_val;
-    if (width_cur == 0)       width_val = DateFormatSymbols::ABBREVIATED;
+    if (width_cur == 0)            width_val = DateFormatSymbols::ABBREVIATED;
     else if (width_cur == 1)       width_val = DateFormatSymbols::WIDE;
     else if (width_cur == 2)       width_val = DateFormatSymbols::NARROW;
     else Rf_error(MSG__INCORRECT_MATCH_OPTION, "width");
@@ -86,6 +87,14 @@ SEXP stri_datetime_symbols(SEXP locale, SEXP context, SEXP width) {
     else
         sym = DateFormatSymbols(loc, calendar_type.data(), status);
     STRI__CHECKICUSTATUS_RFERROR(status, {/* do nothing special on err */})
+
+    if (status == U_USING_DEFAULT_WARNING && qloc) {
+        //UErrorCode status2 = U_ZERO_ERROR;
+        //const char* valid_locale = sym.getLocale(ULOC_VALID_LOCALE, status2).getBaseName();
+        // NOTE! It does not fall back to the "root" locale!
+        //if (valid_locale && !strcmp(valid_locale, "root"))
+        Rf_warning(ICUError::getICUerrorName(status));
+    }
 
     const R_len_t infosize = 5;
     SEXP vals;

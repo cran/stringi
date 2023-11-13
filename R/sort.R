@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com/>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -78,8 +78,9 @@
 #' stri_sort(c('hladny', 'chladny'), locale='pl_PL')
 #' stri_sort(c('hladny', 'chladny'), locale='sk_SK')
 #' stri_sort(sample(LETTERS))
-#' stri_sort(c(1, 100, 2, 101, 11, 10))
-#' stri_sort(c(1, 100, 2, 101, 11, 10), numeric=TRUE)
+#' stri_sort(c(1, 100, 2, 101, 11, 10))  # lexicographic order
+#' stri_sort(c(1, 100, 2, 101, 11, 10), numeric=TRUE)  # OK for integers
+#' stri_sort(c(0.25, 0.5, 1, -1, -2, -3), numeric=TRUE)  # incorrect
 stri_sort <- function(str, decreasing = FALSE, na_last = NA, ..., opts_collator = NULL)
 {
     if (!missing(...))
@@ -137,8 +138,9 @@ stri_sort <- function(str, decreasing = FALSE, na_last = NA, ..., opts_collator 
 #' stri_order(c('hladny', 'chladny'), locale='pl_PL')
 #' stri_order(c('hladny', 'chladny'), locale='sk_SK')
 #'
-#' stri_order(c(1, 100, 2, 101, 11, 10))
-#' stri_order(c(1, 100, 2, 101, 11, 10), numeric=TRUE)
+#' stri_order(c(1, 100, 2, 101, 11, 10))  # lexicographic order
+#' stri_order(c(1, 100, 2, 101, 11, 10), numeric=TRUE)  # OK for integers
+#' stri_order(c(0.25, 0.5, 1, -1, -2, -3), numeric=TRUE)  # incorrect
 stri_order <- function(str, decreasing = FALSE, na_last = TRUE, ..., opts_collator = NULL)
 {
     if (!missing(...))
@@ -258,8 +260,10 @@ stri_unique <- function(str, ..., opts_collator = NULL)
 #' @export
 stri_duplicated <- function(str, from_last = FALSE,
     fromLast = from_last, ..., opts_collator = NULL) {
-    if (!missing(fromLast)) # DEPRECATED
+    if (!missing(fromLast)) {
+        warning("The 'fromLast' argument in stri_duplicated is a deprecated alias of 'from_last' and will be removed in a future release of 'stringi'.")
         from_last <- fromLast
+    }
     if (!missing(...))
         opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
     .Call(C_stri_duplicated, str, from_last, opts_collator)
@@ -270,8 +274,10 @@ stri_duplicated <- function(str, from_last = FALSE,
 #' @export
 stri_duplicated_any <- function(str, from_last = FALSE, fromLast = from_last, ...,
     opts_collator = NULL) {
-    if (!missing(fromLast)) # DEPRECATED
+    if (!missing(fromLast)) {  # DEPRECATED
+        warning("The 'fromLast' argument in stri_duplicated_any is a deprecated alias of 'from_last' and will be removed in a future release of 'stringi'.")
         from_last <- fromLast
+    }
     if (!missing(...))
         opts_collator <- do.call(stri_opts_collator, as.list(c(opts_collator, ...)))
     .Call(C_stri_duplicated_any, str, from_last, opts_collator)
@@ -360,7 +366,8 @@ stri_sort_key <- function(str, ..., opts_collator = NULL)
 #' stri_rank(c('hladny', 'chladny'), locale='sk_SK')
 #'
 #' stri_rank("a" %s+% c(1, 100, 2, 101, 11, 10))  # lexicographic order
-#' stri_rank("a" %s+% c(1, 100, 2, 101, 11, 10), numeric=TRUE)
+#' stri_rank("a" %s+% c(1, 100, 2, 101, 11, 10), numeric=TRUE)  # OK
+#' stri_rank("a" %s+% c(0.25, 0.5, 1, -1, -2, -3), numeric=TRUE)  # incorrect
 #'
 #' # Ordering a data frame with respect to two criteria:
 #' X <- data.frame(a=c("b", NA, "b", "b", NA, "a", "a", "c"), b=runif(8))

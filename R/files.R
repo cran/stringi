@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+## Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com/>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@
 #'
 #' @param con name of the output file or a connection object
 #'        (opened in the binary mode)
-#' @param fname deprecated alias of \code{con}
+#' @param fname [DEPRECATED] alias of \code{con}
 #'
 #' @return
 #' Returns a vector of type \code{raw}.
@@ -56,7 +56,7 @@
 stri_read_raw <- function(con, fname = con)
 {
     if (!missing(fname) && missing(con)) { # DEPRECATED
-        # TODO: warning
+        warning("The 'fname' argument in stri_read_raw is a deprecated alias of 'con' and will be removed in a future release of 'stringi'.")
         con <- fname
     }
 
@@ -102,8 +102,7 @@ stri_read_raw <- function(con, fname = con)
 #'        (opened in the binary mode)
 #' @param encoding single string; input encoding;
 #' \code{NULL} or \code{''} for the current default encoding.
-#' @param fname deprecated alias of \code{con}
-#' @param fallback_encoding deprecated argument, no longer used
+#' @param fname [DEPRECATED] alias of \code{con}
 #'
 #' @return
 #' Returns a character vector, each text line is a separate string.
@@ -112,15 +111,11 @@ stri_read_raw <- function(con, fname = con)
 #' @family files
 #' @export
 stri_read_lines <- function(con, encoding = NULL,
-    fname = con, fallback_encoding = NULL)
+    fname = con)
 {
     if (!missing(fname) && missing(con)) { # DEPRECATED
-        # TODO: warning
+        warning("The 'fname' argument in stri_read_lines is a deprecated alias of 'con' and will be removed in a future release of 'stringi'.")
         con <- fname
-    }
-
-    if (!missing(fallback_encoding)) {  # DEPRECATED
-        warning('`fallback_encoding` is no longer used and has been scheduled for removal')
     }
 
     stopifnot(is.null(encoding) || is.character(encoding))
@@ -158,7 +153,7 @@ stri_read_lines <- function(con, encoding = NULL,
 #' @param encoding output encoding, \code{NULL} or \code{''} for
 #' the current default one
 #' @param sep newline separator
-#' @param fname deprecated alias of \code{con}
+#' @param fname [DEPRECATED] alias of \code{con}
 #'
 #' @return
 #' This function returns nothing noteworthy.
@@ -171,7 +166,7 @@ stri_write_lines <- function(str, con,
     fname = con)
 {
     if (!missing(fname) && missing(con)) { # DEPRECATED
-        # TODO: warning
+        warning("The 'fname' argument in stri_write_lines is a deprecated alias of 'con' and will be removed in a future release of 'stringi'.")
         con <- fname
     }
 

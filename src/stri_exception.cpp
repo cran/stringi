@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+ * Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,9 +54,9 @@ const char* ICUError::getICUerrorName(UErrorCode status)
 {
     switch(status) {
     case U_USING_FALLBACK_WARNING:
-        return "A resource bundle lookup returned a fallback result. (not an error)";
+        return "A resource bundle lookup returned a result from a fallback (more general) locale.";  // (not an error)
     case U_USING_DEFAULT_WARNING:
-        return "A resource bundle lookup returned a result from the root locale. (not an error)";
+        return "A resource bundle lookup returned a result either from the root or the default locale.";  // (not an error)
     case U_SAFECLONE_ALLOCATED_WARNING:
         return "A SafeClone operation required allocating memory. (informational only)";
     case U_STATE_OLD_WARNING:
@@ -72,7 +72,7 @@ const char* ICUError::getICUerrorName(UErrorCode status)
     case U_PLUGIN_CHANGED_LEVEL_WARNING:
         return "A plugin caused a level change. May not be an error, but later plugins may not load.";
     case U_ZERO_ERROR:
-        return "No error, no warning (why did stringi report that??? file a bug report, please; thanks!)";
+        return "No error, no warning (Why have stringi reported this? Please file a bug report.)";
     case U_ILLEGAL_ARGUMENT_ERROR:
         return "Illegal argument.";
     case U_MISSING_RESOURCE_ERROR:

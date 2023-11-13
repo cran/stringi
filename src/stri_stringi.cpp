@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2021, Marek Gagolewski <https://www.gagolewski.com>
+ * Copyright (c) 2013-2023, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -303,6 +303,12 @@ extern "C" void R_init_stringi(DllInfo* dll)
     if (U_FAILURE(status))
         Rf_error("ICU init failed: %s", u_errorName(status));
 
+    if (stri__is_C_locale(uloc_getDefault())) {   // C locale -> en_US_POSIX
+        status = U_ZERO_ERROR;
+        uloc_setDefault("en_US_POSIX", &status);
+        if (U_FAILURE(status)) Rf_error("ICU init failed: %s", u_errorName(status));
+    }
+
     R_registerRoutines(dll, NULL, cCallMethods, NULL, NULL);
     R_useDynamicSymbols(dll, (Rboolean)FALSE);
 #if defined(R_VERSION) && R_VERSION >= R_Version(3, 0, 0)
@@ -319,14 +325,6 @@ extern "C" void R_init_stringi(DllInfo* dll)
         /* Rconfig.h states that all R platforms support that */
         Rf_error("R does not support UTF-8 encoding.");
     }
-
-
-#ifndef NDEBUG
-//    fprintf(stdout, "!NDEBUG: ************************************************\n");
-//    fprintf(stdout, "!NDEBUG: Dynamic library `stringi` loaded\n");
-//    fprintf(stdout, "!NDEBUG: Check out http://stringi.gagolewski.com\n");
-//    fprintf(stdout, "!NDEBUG: ************************************************\n");
-#endif
 }
 
 
@@ -341,9 +339,6 @@ extern "C" void  R_unload_stringi(DllInfo*)
 {
     // see http://bugs.icu-project.org/trac/ticket/10897
     // and https://github.com/Rexamine/stringi/issues/78
-//   fprintf(stdout, "!NDEBUG: ************************************************\n");
-//   fprintf(stdout, "!NDEBUG: Dynamic library 'stringi' unloaded.\n");
-//   fprintf(stdout, "!NDEBUG: ************************************************\n");
     u_cleanup();
 }
 

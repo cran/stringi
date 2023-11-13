@@ -4,7 +4,7 @@
 \alias{stri_read_lines}
 \title{Read Text Lines from a Text File}
 \usage{
-stri_read_lines(con, encoding = NULL, fname = con, fallback_encoding = NULL)
+stri_read_lines(con, encoding = NULL, fname = con)
 }
 \arguments{
 \item{con}{name of the output file or a connection object
@@ -13,9 +13,7 @@ stri_read_lines(con, encoding = NULL, fname = con, fallback_encoding = NULL)
 \item{encoding}{single string; input encoding;
 \code{NULL} or \code{''} for the current default encoding.}
 
-\item{fname}{deprecated alias of \code{con}}
-
-\item{fallback_encoding}{deprecated argument, no longer used}
+\item{fname}{[DEPRECATED] alias of \code{con}}
 }
 \value{
 Returns a character vector, each text line is a separate string.
