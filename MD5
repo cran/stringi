@@ -1,8 +1,8 @@
-7d05b95d8ff6d613813f49e0ce63bf3d *DESCRIPTION
+33ddf3bdec6c0b984a0afd8516b3394e *DESCRIPTION
 5b9bded89d382625aa5194610ef5dc0a *INSTALL
 6887ef4d29e0d4031c5723006dbb6e50 *LICENSE
 fbccc8447bec59bda28786a6a59b3442 *NAMESPACE
-7b46624c7a7cce08b20fbb2542b37b46 *NEWS
+d839f35a09091114df4874fd8b5c92bc *NEWS
 4cb4a691171e7c5347cb33bce66ee744 *R/ICU_settings.R
 55b1d7ae8260820d3ed395e1e182a431 *R/compare.R
 c56fb6aaaae73b1a8f0f5f0ad48c7593 *R/encoding.R
@@ -27,7 +27,7 @@ f068c95dcaefc4e62ba6080f519e2f85 *R/search.R
 5dad0dfb8ef4ec5cf2b57aa0fded43aa *R/search_count_bound.R
 8a6fdf6bea69304563d1c43046e0d9e8 *R/search_detect_4.R
 8a888997beee7cfbe299d4116ea1d2b1 *R/search_extract_4.R
-f0e30a673dcf33158db92d6156053f64 *R/search_extract_bound.R
+140f121af06fe1a32400064db2eff359 *R/search_extract_bound.R
 feb665ff003c11187c6bb4417ae83683 *R/search_locate_4.R
 0929bd19475712a7b2cb70bdf048d3cd *R/search_locate_bound.R
 0f333e377bf24bfc13935afc3a1226a3 *R/search_match_4.R
@@ -54,9 +54,9 @@ bd474a488ff4337570a4bb76cf21483c *R/utils.R
 d851f5c36892e69e77ecad61630ccd4c *R/wrap.R
 7080893e02c49cd296d4424b9be55069 *build/partial.rdb
 e786a8e3195a353a5aa9105b1b18fb29 *cleanup
-1a1cd66837bdca156c8ab8f5804955a3 *configure
-62b08c1dccbb1225a5bc93e137454e02 *configure.ac
-a39d500a542bfbee8e708452c8592881 *configure.win
+71ddb76aba1f2f22ade08e9b754583de *configure
+8a89aa0da4ed9f34d17480c2fdd96603 *configure.ac
+20652bd711302d443655da79189a3883 *configure.win
 0a51dcf4e38b057ee084a85644c6e3a7 *inst/AUTHORS
 11940a3690625fea0670cbee73ede58a *inst/CITATION
 c4d60c0d27d2fbe0af592972ab51759a *man/about_arguments.Rd
@@ -161,8 +161,8 @@ b6bc64dab3bdaf4c09cdcd79accf05cd *man/stri_trans_nf.Rd
 21d0d8d4a922e82733b599963e939e05 *man/stri_width.Rd
 157a0f3cb6d0a3be822f33f030c9c232 *man/stri_wrap.Rd
 49ebee3c32f7fccc0983a04a6980206a *man/stri_write_lines.Rd
-cbdd0d990f7bc526841a796c4918b688 *src/Makevars.in
-ec968a23dd825c9471b602e8d216d793 *src/Makevars.win
+f5bf2b4ea364dafa3736a82a631b1bad *src/Makevars.in
+4181739ac015e8e13d659c6f1855afc6 *src/Makevars.win
 a47d0b87576c49d306558f276511d5d6 *src/icu74/LICENSE
 5f7b2dd77c1660634264fc3210664da9 *src/icu74/common/appendable.cpp
 cee4b1e5cd196870283f2d9dd856a3d7 *src/icu74/common/bmpset.cpp
@@ -608,7 +608,7 @@ c944fbe5f906c1627eb05764fbc620cd *src/icu74/i18n/double-conversion-string-to-dou
 6d6af209112a216d58e477515a2815df *src/icu74/i18n/double-conversion-string-to-double.h
 f265a11a189ab3b5ef0c36121384de02 *src/icu74/i18n/double-conversion-strtod.cpp
 3e521e3256ff699c3f6bbc15c3fa226e *src/icu74/i18n/double-conversion-strtod.h
-78684196f0065b7d846771846ea210ba *src/icu74/i18n/double-conversion-utils.h
+88f1d85eff6833f156fd39aac882b09c *src/icu74/i18n/double-conversion-utils.h
 b734b48b27dc655feaff3862676843fe *src/icu74/i18n/double-conversion.h
 ba5fd1742374a110c6d5bf01f62fd8e5 *src/icu74/i18n/dt_impl.h
 0469131ca7becae0ed846fbc95f21f2d *src/icu74/i18n/dtfmtsym.cpp
@@ -902,9 +902,9 @@ a8036c12a54f9fe58e3257bead6232a5 *src/icu74/i18n/utrans.cpp
 d035f7e39015ccdf8ac0f4199a2aacd6 *src/icu74/i18n/vtzone.cpp
 6d05ea39cd1174cdf6eed94050321b0d *src/icu74/i18n/vzone.cpp
 252d2a07067bedb3ffe026d5bde9a090 *src/icu74/i18n/vzone.h
-a24552da54d919c88d75fb502e28ec38 *src/icu74/i18n/windtfmt.cpp
+0bcc62711eb3576d2ef4c9e915e09047 *src/icu74/i18n/windtfmt.cpp
 5318d59e0ac4c0b58655b28cd242dac5 *src/icu74/i18n/windtfmt.h
-48b64ad0ccb0eb7136c567d3d7e0d7a0 *src/icu74/i18n/winnmfmt.cpp
+f1e0b3f778dea398d9edf30b85b248d9 *src/icu74/i18n/winnmfmt.cpp
 d5ee2e585d1f0bd75ff717b7dc920ded *src/icu74/i18n/winnmfmt.h
 021778c6c0d161f16992a9e1d7d275bc *src/icu74/i18n/wintzimpl.cpp
 efa44197993d058a7f1fe304529b0e53 *src/icu74/i18n/wintzimpl.h
@@ -1115,7 +1115,7 @@ a4070f14b37d8f1acd211650f2ded226 *src/icu74_common_cpp.txt
 cd0d99d38a7d4ac6f0a4bddd70688de4 *src/icu74_i18n_cpp.txt
 d9648c8f0c3712b1f96f6ad9c7d3e683 *src/icu74_stubdata_cpp.txt
 376505d30419fe578aedd1e18bf13e1b *src/install.libs.R.in
-f3b553057f77e06cc82c91ba52d42a61 *src/stri_ICU_settings.cpp
+b14ca2ac2df09c038e0a6a8bb85a789f *src/stri_ICU_settings.cpp
 96c552321f28a8433b1efb3915a44cbf *src/stri_brkiter.cpp
 8a6db61c837ac5097cf0310a047471b6 *src/stri_brkiter.h
 baa4154d9f2418538b8fce58ec7282cf *src/stri_bytesearch_matcher.h
@@ -1206,7 +1206,7 @@ d4eb8bb98afb984eb59d4c33c787cd72 *src/stri_search_regex_replace.cpp
 d6c27c8dc777c962109b358fe46ae4ea *src/stri_search_regex_split.cpp
 e0c75d18176251139b284d6cc8fc19bd *src/stri_search_regex_subset.cpp
 da6ead7c0331d797042fa33d27e2e15c *src/stri_sort.cpp
-f994b6b43428a203802988989a120b41 *src/stri_sprintf.cpp
+2c8a86fe3811813c38d769071c7982f1 *src/stri_sprintf.cpp
 0b7d100e757f640f46f62ac9a92ccda2 *src/stri_stats.cpp
 0763363661efea5c9c24c19cc24937b0 *src/stri_string8.cpp
 04c069073319c408de8d1e710472137d *src/stri_string8.h
@@ -1228,6 +1228,6 @@ e446198532ad1a6031f1488161cfae2e *src/stri_ucnv.cpp
 e0e058107c76121c2eb7c7d2df7c12d4 *src/stri_uloc.cpp
 77fc00d3961477b1848eee62dac53be2 *src/stri_utils.cpp
 d287b2260280b75db582f4109deb92b7 *src/stri_wrap.cpp
-905374df59da064c29cf50c9988f6839 *src/uconfig_local.h.in
+490fa2562b7fb38b08cf40ee4fee5b66 *src/uconfig_local.h.in
 7c699ef342589de58701f093695d4ab4 *tools/AC_CXX_HAVE_STL.m4
 b58a26e64432c535ed081494fc39783e *tools/AC_CXX_NAMESPACES.m4
