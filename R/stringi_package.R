@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the R package 'stringi'.
-## Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+## Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -140,10 +140,6 @@
 #' Note that each man page provides many further links to other
 #' interesting facilities and topics.
 #'
-#' @name about_stringi
-#' @rdname about_stringi
-#' @aliases about_stringi stringi stringi-package
-#'
 #' @docType package
 #' @author Marek Gagolewski,
 #' with contributions from Bartek Tartanus and many others.
@@ -177,4 +173,4 @@
 #' @importFrom utils unzip
 #' @importFrom stats runif
 #' @importFrom stats rnorm
-invisible(NULL)
+"_PACKAGE"

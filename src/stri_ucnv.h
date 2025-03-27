@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -119,7 +119,7 @@ public:
 
         openConverter(false);
         UErrorCode status = U_ZERO_ERROR;
-        // get "offical" encoder name
+        // get "official" encoder name
         const char* ucnv_name = ucnv_getName(m_ucnv, &status);
         STRI__CHECKICUSTATUS_THROW(status, {/* do nothing special on err */})
         m_isutf8 = !strcmp(ucnv_name, "UTF-8");

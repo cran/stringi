@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@
 
 
 #include "stri_stringi.h"
+#include "stri_callables.h"
 #include <cstring>
 #include <cstdlib>
 #include <unicode/uclean.h>
@@ -316,6 +317,12 @@ extern "C" void R_init_stringi(DllInfo* dll)
 #endif
 
     const R_CallMethodDef* methods = cCallMethods;
+    while (methods->name) {
+        R_RegisterCCallable("stringi", methods->name, methods->fun);
+        methods++;
+    }
+
+    methods = stri_callables;
     while (methods->name) {
         R_RegisterCCallable("stringi", methods->name, methods->fun);
         methods++;

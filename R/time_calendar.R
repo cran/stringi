@@ -1,7 +1,7 @@
 # kate: default-dictionary en_US
 
 ## This file is part of the 'stringi' package for R.
-## Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+## Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
 ## All rights reserved.
 ##
 ## Redistribution and use in source and binary forms, with or without
@@ -213,13 +213,17 @@ stri_datetime_fields <- function(time, tz = attr(time, "tzone"), locale = NULL)
 #'
 #' @examples
 #' x <- stri_datetime_now()
+#' print(x)
 #' stri_datetime_add(x, units='months') <- 2
 #' print(x)
-#' stri_datetime_add(x, -2, units='months')
-#' stri_datetime_add(stri_datetime_create(2014, 4, 20), 1, units='years')
-#' stri_datetime_add(stri_datetime_create(2014, 4, 20), 1, units='years', locale='@@calendar=hebrew')
 #'
-#' stri_datetime_add(stri_datetime_create(2016, 1, 31), 1, units='months')
+#' x <- stri_datetime_create(2025, 4, 20)
+#' print(x)
+#' stri_datetime_add(x, -2, units='months')
+#' stri_datetime_add(x, 1, units='years')
+#' stri_datetime_add(x, 1, units='years', locale='@@calendar=hebrew')
+#'
+#' stri_datetime_add(stri_datetime_create(2024, 1, 31), 1, units='months')
 #'
 #' @family datetime
 #' @rdname stri_datetime_add

@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,7 @@ struct StriSortComparer {
  *          using ucol_strcollUTF8 again, as we now require ICU >= 50;
  *          performance difference only observed for sorted vectors
  *          (UTF-8: gain, 8bit: loss);
- *          single function for cmp with and witout collation;
+ *          single function for cmp with and without collation;
  *          new param: na_last
  *
  * @version 0.2-3 (Marek Gagolewski, 2014-05-07)

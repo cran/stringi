@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -212,7 +212,7 @@ double stri__enc_check_utf8(const char* str_cur_s, R_len_t str_cur_n, bool get_c
             }
         }
 
-        // Cook up some sort of confidence score, based on presense of a BOM
+        // Cook up some sort of confidence score, based on BOM's presence
         //    and the existence of valid and/or invalid multi-byte sequences.
         if (hasBOM && numInvalid == 0)
             return 1.0;

@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
 /**
  * Create & set up an ICU Collator
  *
- * WARNING: this fuction is allowed to call the error() function.
+ * WARNING: this function is allowed to call the error() function.
  * Use before STRI__ERROR_HANDLER_BEGIN (with other prepareargs).
  *
  * @param opts_collator named R list

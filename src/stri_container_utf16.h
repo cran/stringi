@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@
  *          lastMatcher cache, supports auto-vectorization
  *
  * @version 0.1-?? (Marek Gagolewski)
- *          improved ASCII performance (seperate ucnv)
+ *          improved ASCII performance (separate ucnv)
  *
  * @version 0.1-?? (Marek Gagolewski)
  *          now NAs are marked as NULLs in str

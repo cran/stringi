@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -235,7 +235,7 @@ SEXP stri_stats_latex(SEXP str)
 
             case stControlSequence:
                 if (isLetter) {
-                    // "\begin{[a-zA-z]+}" is an environment, and you can't define a command like \begin
+                    // "\begin{[a-zA-Z]+}" is an environment, and you can't define a command like \begin
                     if (c == (UChar32)'b' && !strncmp(cs+j, "egin", 4) /* plain ASCII compare - it's OK */) {
                         ++stats[lsEnvir];
                         state = stEnvironment;

@@ -29,56 +29,25 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "stri_stringi.h"
-#include "stri_container_base.h"
+#include <R_ext/Rdynload.h>
 
 
-/**
- * Default constructor
- *
- */
-StriContainerBase::StriContainerBase()
-{
-    this->n = 0;
-    this->nrecycle = 0;
-    this->sexp = (SEXP)NULL;
-#ifndef NDEBUG
-    this->isShallow = true;
-#endif
-}
+
+// the callables library is defined in stri_callables.cpp
+const extern R_CallMethodDef stri_callables[];
 
 
-/**
- * Initialize object data
- *
- */
-void StriContainerBase::init_Base(R_len_t _n, R_len_t _nrecycle, bool _shallowrecycle, SEXP _sexp)
-{
-#ifndef NDEBUG
-    if (this->n != 0 || this->nrecycle != 0 || this->sexp != (SEXP)NULL)
-        throw StriException("StriContainerBase::init_Base(...): already initialized");
-    this->isShallow = _shallowrecycle;
-#endif
+/*
+Third-party packages can retrieve the following functions from
+stringi's shared library via a call to:
 
-    STRI_ASSERT(_n >= 0);
-    STRI_ASSERT(_nrecycle >= 0);
+#include <R_ext/Rdynload.h>
+R_GetCCallable("stringi", "function_name");
 
-    if (_n <= 0 || _nrecycle <= 0) {
-        this->nrecycle = 0;
-        this->n = 0;
-        this->sexp = _sexp;
-    }
-    else {
-        this->nrecycle = _nrecycle;
-        this->n = (_shallowrecycle)?_n:_nrecycle;
-        this->sexp = _sexp;
+If you would like to get access to any additional functions (e.g., from ICU),
+feel free to contact the maintainer of stringi.
+*/
 
-#ifndef NDEBUG
-        if (this->n < _n)
-            throw StriException("StriContainerBase::init_Base(...): this->n < _n");
-        if (this->n > this->nrecycle)
-            throw StriException("StriContainerBase::init_Base(...): this->n > this->nrecycle");
-#endif
-    }
-}
+
+int stric_u_hasBinaryProperty(int c, int which);

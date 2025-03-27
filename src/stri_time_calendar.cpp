@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2024, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -480,7 +480,6 @@ SEXP stri_datetime_create(
 //  */
 // SEXP stri_c_posixst(SEXP x) {
 //     if (!Rf_isVectorList(x)) Rf_error(MSG__INTERNAL_ERROR);
-//     if (NAMED(x) != 0)  Rf_error(MSG__INTERNAL_ERROR);
 //     R_len_t n = LENGTH(x);
 //     R_len_t m = 0;
 //     for (R_len_t i=0; i<n; ++i) {
