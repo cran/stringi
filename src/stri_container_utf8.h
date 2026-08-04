@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2026, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,9 +85,9 @@ public:
 
     StriContainerUTF8();
     StriContainerUTF8(SEXP rstr, R_len_t nrecycle, bool shallowrecycle=true);
-    StriContainerUTF8(StriContainerUTF8& container);
+    StriContainerUTF8(const StriContainerUTF8& container);
     ~StriContainerUTF8();
-    StriContainerUTF8& operator=(StriContainerUTF8& container);
+    StriContainerUTF8& operator=(const StriContainerUTF8& container);
     SEXP toR(R_len_t i) const;
     SEXP toR() const;
 

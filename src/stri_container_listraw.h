@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2026, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,9 +60,9 @@ public:
 
     StriContainerListRaw();
     StriContainerListRaw(SEXP rlist);
-    StriContainerListRaw(StriContainerListRaw& container);
+    StriContainerListRaw(const StriContainerListRaw& container);
     ~StriContainerListRaw();
-    StriContainerListRaw& operator=(StriContainerListRaw& container);
+    StriContainerListRaw& operator=(const StriContainerListRaw& container);
 
 
     /** check if the vectorized ith element is NA

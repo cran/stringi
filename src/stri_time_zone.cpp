@@ -1,5 +1,5 @@
 /* This file is part of the 'stringi' project.
- * Copyright (c) 2013-2025, Marek Gagolewski <https://www.gagolewski.com/>
+ * Copyright (c) 2013-2026, Marek Gagolewski <https://www.gagolewski.com/>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,6 +70,9 @@ SEXP stri_timezone_list(SEXP region, SEXP offset)
 
     tz_enum = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, r, o, status);
     STRI__CHECKICUSTATUS_RFERROR(status, {/* do nothing special on err */})
+
+    STRI_ASSERT(tz_enum);
+    if (!tz_enum) throw StriException(MSG__RESOURCE_ERROR_GET);
 
     status = U_ZERO_ERROR;
     tz_enum->reset(status);
